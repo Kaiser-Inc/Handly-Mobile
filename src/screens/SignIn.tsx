@@ -23,6 +23,24 @@ import SignInImg from '@assets/signIn.svg'
 
 import React from 'react'
 
+import { z } from 'zod'
+
+const signInSchema = z.object({
+  name: z.string(),
+  email: z.string().email('Email invalido'),
+  password: z
+    .string()
+    .min(8, 'A senha deve conter pelo menos 8 caracteres')
+    .refine((val) => /[a-zA-Z]/.test(val), {
+      message: 'A senha deve conter pelo menos uma letra',
+    })
+    .refine((val) => !/^\d+$/.test(val), {
+      message: 'A senha não pode conter apenas números',
+    }),
+})
+
+type SignUpData = z.infer<typeof signInSchema>
+
 export function SignIn() {
   const [showPassword, setShowPassword] = React.useState(false)
   const handleState = () => {
