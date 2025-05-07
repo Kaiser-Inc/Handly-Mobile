@@ -19,11 +19,11 @@ import {
 
 import BackgroundImg from '@assets/bg.png'
 import Logo from '@assets/Logo.svg'
-import SignInImg from '@assets/signIn.svg'
+import SignUpImg from '@assets/signUp.svg'
 
 import React from 'react'
 
-export function SignIn() {
+export function SignUp() {
   const [showPassword, setShowPassword] = React.useState(false)
   const handleState = () => {
     setShowPassword((showState) => {
@@ -40,20 +40,11 @@ export function SignIn() {
       />
       <VStack className="flex flex-1 w-full">
         <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
-          <SignInImg />
+          <SignUpImg />
         </Center>
         <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
           <Logo />
           <FormControl className=" w-full h-fit flex">
-            <VStack className=" w-full px-8 mt-12">
-              <Text className="text-xl font-bold mb-2"> Nome Completo </Text>
-              <Input className="">
-                <InputField
-                  type="text"
-                  className=" border border-purple-300 rounded-lg h-16"
-                />
-              </Input>
-            </VStack>
             <VStack className=" w-full px-8 mt-4">
               <Text className="text-xl font-bold mb-2"> Email </Text>
               <Input className="">
@@ -90,7 +81,7 @@ export function SignIn() {
                 defaultSource={BackgroundImg}
                 className="w-full h-full absolute rounded-full"
               />
-              <ButtonText className=" text-white"> Cadastre-se </ButtonText>
+              <ButtonText className=" text-gray-100"> Cadastre-se </ButtonText>
             </Button>
           </FormControl>
           <Center className=" flex justify-center items-center">
