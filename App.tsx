@@ -1,17 +1,18 @@
 import { Text, Center, GluestackUIProvider } from '@gluestack-ui/themed'
-import { View, StatusBar } from 'react-native'
+import { StatusBar, StyleSheet } from 'react-native'
 import './src/global.css'
 
 import {
   useFonts,
-  Roboto_400Regular,
-  Roboto_700Bold,
-} from '@expo-google-fonts/roboto'
+  Montserrat_400Regular,
+  Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat'
 
 import { Loading } from '@components/Loading'
+import { SignIn } from '@screens/SignIn'
 
 export default function App() {
-  const [fonstsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold })
+  const [fonstsLoaded] = useFonts({ Montserrat_400Regular, Montserrat_700Bold })
   return (
     <GluestackUIProvider>
       <StatusBar
@@ -19,13 +20,7 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      {fonstsLoaded ? (
-        <Center className="bg-stone-900 flex flex-1 justify-center items-center">
-          <Text className=" text-stone-100 text-3xl font-normal"> Handly </Text>
-        </Center>
-      ) : (
-        <Loading />
-      )}
+      {fonstsLoaded ? <SignIn /> : <Loading />}
     </GluestackUIProvider>
   )
 }
