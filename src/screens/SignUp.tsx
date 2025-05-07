@@ -39,8 +39,8 @@ export function SignUp() {
         className="w-full h-full absolute"
       />
       <VStack className="flex flex-1 w-full">
-        <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
-          <SignUpImg />
+        <Center className=" flex  w-full h-3/6 items-end justify-end -mb-48 z-10 ml-24">
+          <SignUpImg width={600} height={600} />
         </Center>
         <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
           <Logo />
@@ -81,17 +81,17 @@ export function SignUp() {
                 defaultSource={BackgroundImg}
                 className="w-full h-full absolute rounded-full"
               />
-              <ButtonText className=" text-gray-100"> Cadastre-se </ButtonText>
+              <ButtonText className=" text-white"> Login </ButtonText>
             </Button>
           </FormControl>
           <Center className=" flex justify-center items-center">
             <Text className=" text-gray-300 "> ou </Text>
             <Text className=" text-gray-400 text-lg">
-              Já tem uma conta?
+              Ainda não tem conta?
               <Link className="">
                 <LinkText className=" text-purple-300 ml-1 mt-0.5 font-bold text-lg">
                   {' '}
-                  Login{' '}
+                  Cadastre-se{' '}
                 </LinkText>
               </Link>
             </Text>

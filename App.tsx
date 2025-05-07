@@ -10,6 +10,8 @@ import {
 
 import { Loading } from '@components/Loading'
 import { SignIn } from '@screens/SignIn'
+import { SignUp } from '@screens/SignUp'
+import React from 'react'
 
 export default function App() {
   const [fonstsLoaded] = useFonts({ Montserrat_400Regular, Montserrat_700Bold })
@@ -20,7 +22,7 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      {fonstsLoaded ? <SignIn /> : <Loading />}
+      {fonstsLoaded ? <SignUp /> : <Loading />}
     </GluestackUIProvider>
   )
 }
