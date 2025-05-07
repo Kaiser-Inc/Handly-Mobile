@@ -15,6 +15,7 @@ import {
   EyeOffIcon,
   Button,
   ButtonText,
+  Alert,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -27,6 +28,8 @@ import { z } from 'zod'
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+import { createUser } from '@services/api/users-services'
 
 const signInSchema = z.object({
   name: z.string(),
@@ -49,16 +52,31 @@ export function SignIn() {
     control,
     handleSubmit,
     register,
+    reset,
     formState: { errors },
   } = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
   })
+  const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(false)
   const handleState = () => {
     setShowPassword((showState) => {
       return !showState
     })
   }
+
+  const handleOnSubmit = async (data: SignInData) => {
+    setIsLoading(true)
+    try {
+      await createUser(data)
+      reset()
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <VStack className=" flex flex-1 justify-center items-center">
       <Image
@@ -133,7 +151,11 @@ export function SignIn() {
                 </InputSlot>
               </Input>
             </VStack>
-            <Button className=" w-10/12 h-16 rounded-full flex justify-center items-center my-4 mx-auto">
+            <Button
+              onPress={handleSubmit(handleOnSubmit)}
+              isDisabled={isLoading}
+              className=" w-10/12 h-16 rounded-full flex justify-center items-center my-4 mx-auto"
+            >
               <Image
                 source={BackgroundImg}
                 alt="gradiente de indigo a lavanda"
