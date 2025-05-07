@@ -25,6 +25,9 @@ import React from 'react'
 
 import { z } from 'zod'
 
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+
 const signInSchema = z.object({
   name: z.string(),
   email: z.string().email('Email invalido'),
@@ -39,7 +42,16 @@ const signInSchema = z.object({
     }),
 })
 
-type SignUpData = z.infer<typeof signInSchema>
+type SignInData = z.infer<typeof signInSchema>
+
+const {
+  control,
+  handleSubmit,
+  register,
+  formState: { errors },
+} = useForm<SignInData>({
+  resolver: zodResolver(signInSchema),
+})
 
 export function SignIn() {
   const [showPassword, setShowPassword] = React.useState(false)
@@ -69,7 +81,14 @@ export function SignIn() {
                 <InputField
                   type="text"
                   className=" border border-purple-300 rounded-lg h-16"
+                  {...register('name')}
                 />
+                {errors.name && (
+                  <Text className="text-danger-300">
+                    {' '}
+                    {errors.name.message}{' '}
+                  </Text>
+                )}
               </Input>
             </VStack>
             <VStack className=" w-full px-8 mt-4">
@@ -77,8 +96,15 @@ export function SignIn() {
               <Input className="">
                 <InputField
                   type="text"
-                  className=" border border-purple-300 rounded-lg h-16  "
+                  className=" border border-purple-300 rounded-lg h-16"
+                  {...register('email')}
                 />
+                {errors.email && (
+                  <Text className="text-danger-300">
+                    {' '}
+                    {errors.email.message}{' '}
+                  </Text>
+                )}
               </Input>
             </VStack>
             <VStack className=" w-full px-8 mt-4">
@@ -87,7 +113,14 @@ export function SignIn() {
                 <InputField
                   type={showPassword ? 'password' : 'text'}
                   className="text-base border border-purple-300 rounded-lg h-16"
+                  {...register('password')}
                 />
+                {errors.password && (
+                  <Text className="text-danger-300">
+                    {' '}
+                    {errors.password.message}{' '}
+                  </Text>
+                )}
                 <InputSlot
                   className="ml-auto -mt-12 mr-4 h-16"
                   onPress={handleState}
