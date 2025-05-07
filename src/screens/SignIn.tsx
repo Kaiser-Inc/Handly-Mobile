@@ -42,18 +42,17 @@ const signInSchema = z.object({
     }),
 })
 
-type SignInData = z.infer<typeof signInSchema>
-
-const {
-  control,
-  handleSubmit,
-  register,
-  formState: { errors },
-} = useForm<SignInData>({
-  resolver: zodResolver(signInSchema),
-})
+export type SignInData = z.infer<typeof signInSchema>
 
 export function SignIn() {
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<SignInData>({
+    resolver: zodResolver(signInSchema),
+  })
   const [showPassword, setShowPassword] = React.useState(false)
   const handleState = () => {
     setShowPassword((showState) => {
