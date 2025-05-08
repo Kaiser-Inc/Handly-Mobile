@@ -83,8 +83,8 @@ export function SignIn() {
         className="w-full h-full absolute"
       />
       <VStack className="flex flex-1 w-full">
-        <Center className=" flex  w-full h-3/6 items-end justify-end -mb-48 z-10 ml-24 mt-20">
-          <SignInImg width={525} height={525} />
+        <Center className=" flex  w-full h-3/6 items-end justify-end ml-10 -mb-20 z-10">
+          <SignInImg height={480} width={480} />
         </Center>
 
         <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
@@ -101,7 +101,7 @@ export function SignIn() {
                     <InputField
                       value={value}
                       onChangeText={onChange}
-                      className=" border border-purple-300 rounded-lg h-16"
+                      className=" border border-purple-300 rounded-lg h-16 w-full"
                     />
                   </Input>
                 )}
