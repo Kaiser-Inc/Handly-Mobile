@@ -52,14 +52,13 @@ export function SignUp() {
   const {
     control,
     handleSubmit,
-    register,
     reset,
     formState: { errors },
   } = useForm<SignUpData>({
     resolver: zodResolver(signUpSchema),
   })
   const [isLoading, setIsLoading] = React.useState(false)
-  const [showPassword, setShowPassword] = React.useState(false)
+  const [showPassword, setShowPassword] = React.useState(true)
   const handleState = () => {
     setShowPassword((showState) => {
       return !showState
@@ -180,7 +179,9 @@ export function SignUp() {
                 defaultSource={BackgroundImg}
                 className="w-full h-full absolute rounded-full"
               />
-              <ButtonText className=" text-white"> Cadastre-se </ButtonText>
+              <ButtonText className=" text-white">
+                {isLoading ? 'Carregando...' : 'Cadastre-se'}
+              </ButtonText>
             </Button>
           </FormControl>
           <Center className=" flex justify-center items-center">
