@@ -16,6 +16,7 @@ import {
   Button,
   ButtonText,
   Alert,
+  onChange,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -26,7 +27,7 @@ import React from 'react'
 
 import { z } from 'zod'
 
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { createUser } from '@services/api/users-services'
@@ -71,7 +72,7 @@ export function SignIn() {
       await createUser(data)
       reset()
     } catch (err) {
-      console.log(err)
+      console.error(err)
     } finally {
       setIsLoading(false)
     }
@@ -94,62 +95,79 @@ export function SignIn() {
           <FormControl className=" w-full h-fit flex">
             <VStack className=" w-full px-8 mt-12">
               <Text className="text-xl font-bold mb-2"> Nome Completo </Text>
-              <Input className="">
-                <InputField
-                  type="text"
-                  className=" border border-purple-300 rounded-lg h-16"
-                  {...register('name')}
-                />
-                {errors.name && (
-                  <Text className="text-danger-300">
-                    {' '}
-                    {errors.name.message}{' '}
-                  </Text>
+              <Controller
+                control={control}
+                name="name"
+                render={({ field: { onChange, value } }) => (
+                  <Input className="">
+                    <InputField
+                      value={value}
+                      onChangeText={onChange}
+                      className=" border border-purple-300 rounded-lg h-16"
+                    />
+                  </Input>
                 )}
-              </Input>
+              />
+              {errors.name && (
+                <Text className="text-danger-300"> {errors.name.message} </Text>
+              )}
             </VStack>
             <VStack className=" w-full px-8 mt-4">
               <Text className="text-xl font-bold mb-2"> Email </Text>
-              <Input className="">
-                <InputField
-                  type="text"
-                  className=" border border-purple-300 rounded-lg h-16"
-                  {...register('email')}
-                />
-                {errors.email && (
-                  <Text className="text-danger-300">
-                    {' '}
-                    {errors.email.message}{' '}
-                  </Text>
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, value } }) => (
+                  <Input className="">
+                    <InputField
+                      value={value}
+                      onChangeText={onChange}
+                      className=" border border-purple-300 rounded-lg h-16"
+                    />
+                  </Input>
                 )}
-              </Input>
+              />
+              {errors.email && (
+                <Text className="text-danger-300">
+                  {' '}
+                  {errors.email.message}{' '}
+                </Text>
+              )}
             </VStack>
             <VStack className=" w-full px-8 mt-4">
               <Text className="text-xl font-bold mb-2"> Senha </Text>
-              <Input className="">
-                <InputField
-                  type={showPassword ? 'password' : 'text'}
-                  className="text-base border border-purple-300 rounded-lg h-16"
-                  {...register('password')}
-                />
-                {errors.password && (
-                  <Text className="text-danger-300">
-                    {' '}
-                    {errors.password.message}{' '}
-                  </Text>
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, value } }) => (
+                  <Input className="">
+                    <InputField
+                      value={value}
+                      onChangeText={onChange}
+                      type={showPassword ? 'password' : 'text'}
+                      className="text-base border border-purple-300 rounded-lg h-16"
+                    />
+
+                    <InputSlot
+                      className="ml-auto -mt-12 mr-4 h-16"
+                      onPress={handleState}
+                    >
+                      <InputIcon
+                        as={showPassword ? EyeOffIcon : EyeIcon}
+                        width={28}
+                        height={30}
+                        color="#CEBDF2"
+                      />
+                    </InputSlot>
+                  </Input>
                 )}
-                <InputSlot
-                  className="ml-auto -mt-12 mr-4 h-16"
-                  onPress={handleState}
-                >
-                  <InputIcon
-                    as={showPassword ? EyeOffIcon : EyeIcon}
-                    width={28}
-                    height={30}
-                    color="#CEBDF2"
-                  />
-                </InputSlot>
-              </Input>
+              />
+              {errors.password && (
+                <Text className="text-danger-300">
+                  {' '}
+                  {errors.password.message}{' '}
+                </Text>
+              )}
             </VStack>
             <Button
               onPress={handleSubmit(handleOnSubmit)}
