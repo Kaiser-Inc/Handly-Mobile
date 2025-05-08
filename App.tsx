@@ -22,7 +22,7 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      {fonstsLoaded ? <SignIn /> : <Loading />}
+      {fonstsLoaded ? <SignUp /> : <Loading />}
     </GluestackUIProvider>
   )
 }
