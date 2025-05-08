@@ -15,6 +15,7 @@ import {
   EyeOffIcon,
   Button,
   ButtonText,
+  HStack,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -82,11 +83,13 @@ export function SignIn() {
         className="w-full h-full absolute"
       />
       <VStack className="flex flex-1 w-full">
-        <Center className=" flex  w-full h-3/6 items-end justify-end -mb-48 z-10 ml-24">
-          <SignInImg width={600} height={600} />
+        <Center className=" flex  w-full h-3/6 items-end justify-end -mb-48 z-10 ml-24 mt-20">
+          <SignInImg width={525} height={525} />
         </Center>
+
         <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
           <Logo />
+
           <FormControl className=" w-full h-fit flex">
             <VStack className=" w-full px-8 mt-4">
               <Text className="text-xl font-bold mb-2"> Email </Text>
@@ -156,22 +159,23 @@ export function SignIn() {
                 defaultSource={BackgroundImg}
                 className="w-full h-full absolute rounded-full"
               />
-              <ButtonText className=" text-white">
+              <ButtonText className=" text-white font-bold">
                 {isLoading ? 'Carregando...' : 'Entrar'}
               </ButtonText>
             </Button>
           </FormControl>
-          <Center className=" flex justify-center items-center">
+          <Center className=" flex items-center ">
             <Text className=" text-gray-300 "> ou </Text>
-            <Text className=" text-gray-400 text-lg">
-              Ainda não tem conta?
-              <Link className="">
-                <LinkText className=" text-purple-300 ml-1 mt-0.5 font-bold text-lg">
-                  {' '}
-                  Cadastre-se{' '}
+            <HStack className=" justify-center items-center flex flex-row ">
+              <Text className=" text-gray-400 text-lg">
+                Ainda não tem uma conta?
+              </Text>
+              <Link>
+                <LinkText className=" text-purple-300 ml-1 font-bold text-lg">
+                  Cadastre-se
                 </LinkText>
               </Link>
-            </Text>
+            </HStack>
           </Center>
         </Center>
       </VStack>

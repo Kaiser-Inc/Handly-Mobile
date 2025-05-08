@@ -17,6 +17,7 @@ import {
   ButtonText,
   Alert,
   onChange,
+  HStack,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -179,22 +180,21 @@ export function SignUp() {
                 defaultSource={BackgroundImg}
                 className="w-full h-full absolute rounded-full"
               />
-              <ButtonText className=" text-white">
+              <ButtonText className=" text-white font-bold">
                 {isLoading ? 'Carregando...' : 'Cadastre-se'}
               </ButtonText>
             </Button>
           </FormControl>
-          <Center className=" flex justify-center items-center">
+          <Center className=" flex  items-center ">
             <Text className=" text-gray-300 "> ou </Text>
-            <Text className=" text-gray-400 text-lg">
-              Já tem uma conta?
-              <Link className="">
-                <LinkText className=" text-purple-300 ml-1 mt-0.5 font-bold text-lg">
-                  {' '}
-                  Login{' '}
+            <HStack className=" justify-center items-center flex flex-row ">
+              <Text className=" text-gray-400 text-lg">Já tem uma conta?</Text>
+              <Link>
+                <LinkText className=" text-purple-300 ml-1 font-bold text-lg">
+                  Login
                 </LinkText>
               </Link>
-            </Text>
+            </HStack>
           </Center>
         </Center>
       </VStack>
