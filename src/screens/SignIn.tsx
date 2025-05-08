@@ -15,8 +15,6 @@ import {
   EyeOffIcon,
   Button,
   ButtonText,
-  Alert,
-  onChange,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -24,16 +22,12 @@ import Logo from '@assets/Logo.svg'
 import SignInImg from '@assets/signIn.svg'
 
 import React from 'react'
-
 import { z } from 'zod'
-
-import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-
-import { createUser } from '@services/api/users-services'
+import { useForm, Controller } from 'react-hook-form'
+import { createUser, signIn } from '@services/api/users-services'
 
 const signInSchema = z.object({
-  name: z.string(),
   email: z.string().email('Email invalido'),
   password: z
     .string()
@@ -52,14 +46,15 @@ export function SignIn() {
   const {
     control,
     handleSubmit,
-    register,
     reset,
     formState: { errors },
   } = useForm<SignInData>({
     resolver: zodResolver(signInSchema),
   })
+
   const [isLoading, setIsLoading] = React.useState(false)
-  const [showPassword, setShowPassword] = React.useState(false)
+
+  const [showPassword, setShowPassword] = React.useState(true)
   const handleState = () => {
     setShowPassword((showState) => {
       return !showState
@@ -69,7 +64,7 @@ export function SignIn() {
   const handleOnSubmit = async (data: SignInData) => {
     setIsLoading(true)
     try {
-      await createUser(data)
+      await signIn(data)
       reset()
     } catch (err) {
       console.error(err)
@@ -87,31 +82,12 @@ export function SignIn() {
         className="w-full h-full absolute"
       />
       <VStack className="flex flex-1 w-full">
-        <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
-          <SignInImg />
+        <Center className=" flex  w-full h-3/6 items-end justify-end -mb-48 z-10 ml-24">
+          <SignInImg width={600} height={600} />
         </Center>
         <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
           <Logo />
           <FormControl className=" w-full h-fit flex">
-            <VStack className=" w-full px-8 mt-12">
-              <Text className="text-xl font-bold mb-2"> Nome Completo </Text>
-              <Controller
-                control={control}
-                name="name"
-                render={({ field: { onChange, value } }) => (
-                  <Input className="">
-                    <InputField
-                      value={value}
-                      onChangeText={onChange}
-                      className=" border border-purple-300 rounded-lg h-16"
-                    />
-                  </Input>
-                )}
-              />
-              {errors.name && (
-                <Text className="text-danger-300"> {errors.name.message} </Text>
-              )}
-            </VStack>
             <VStack className=" w-full px-8 mt-4">
               <Text className="text-xl font-bold mb-2"> Email </Text>
               <Controller
@@ -180,17 +156,19 @@ export function SignIn() {
                 defaultSource={BackgroundImg}
                 className="w-full h-full absolute rounded-full"
               />
-              <ButtonText className=" text-white"> Cadastre-se </ButtonText>
+              <ButtonText className=" text-white">
+                {isLoading ? 'Carregando...' : 'Entrar'}
+              </ButtonText>
             </Button>
           </FormControl>
           <Center className=" flex justify-center items-center">
             <Text className=" text-gray-300 "> ou </Text>
             <Text className=" text-gray-400 text-lg">
-              Já tem uma conta?
+              Ainda não tem conta?
               <Link className="">
                 <LinkText className=" text-purple-300 ml-1 mt-0.5 font-bold text-lg">
                   {' '}
-                  Login{' '}
+                  Cadastre-se{' '}
                 </LinkText>
               </Link>
             </Text>
