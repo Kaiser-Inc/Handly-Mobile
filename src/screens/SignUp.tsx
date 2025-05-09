@@ -120,6 +120,7 @@ export function SignUp() {
                 render={({ field: { onChange, value } }) => (
                   <Input className="">
                     <InputField
+                      autoCapitalize="none"
                       value={value}
                       onChangeText={onChange}
                       className=" border border-purple-300 rounded-lg h-16"
@@ -142,6 +143,7 @@ export function SignUp() {
                 render={({ field: { onChange, value } }) => (
                   <Input className="">
                     <InputField
+                      autoCapitalize="none"
                       value={value}
                       onChangeText={onChange}
                       type={showPassword ? 'password' : 'text'}
