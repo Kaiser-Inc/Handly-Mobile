@@ -1,20 +1,22 @@
-import { Text, Center, GluestackUIProvider } from '@gluestack-ui/themed'
-import { StatusBar, StyleSheet } from 'react-native'
+import { Box, GluestackUIProvider, StatusBar } from '@gluestack-ui/themed'
 import './src/global.css'
 
 import {
   useFonts,
-  Montserrat_400Regular,
-  Montserrat_700Bold,
-} from '@expo-google-fonts/montserrat'
+  DMSans_400Regular,
+  DMSans_700Bold,
+} from '@expo-google-fonts/dm-sans'
 
+import { Routes } from '@routes/index'
 import { Loading } from '@components/Loading'
-import { SignIn } from '@screens/SignIn'
-import { SignUp } from '@screens/SignUp'
 import React from 'react'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 export default function App() {
-  const [fonstsLoaded] = useFonts({ Montserrat_400Regular, Montserrat_700Bold })
+  const [fonstsLoaded] = useFonts({
+    DMSans_400Regular,
+    DMSans_700Bold,
+  })
   return (
     <GluestackUIProvider>
       <StatusBar
@@ -22,7 +24,7 @@ export default function App() {
         backgroundColor="transparent"
         translucent
       />
-      {fonstsLoaded ? <SignIn /> : <Loading />}
+      {fonstsLoaded ? <Routes /> : <Loading />}
     </GluestackUIProvider>
   )
 }
