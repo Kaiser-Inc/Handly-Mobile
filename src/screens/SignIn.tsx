@@ -6,7 +6,6 @@ import {
   Link,
   LinkText,
   FormControl,
-  Divider,
   Input,
   InputField,
   InputSlot,
@@ -16,6 +15,7 @@ import {
   Button,
   ButtonText,
   HStack,
+  ScrollView,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -75,112 +75,114 @@ export function SignIn() {
   }
 
   return (
-    <VStack className=" flex flex-1 justify-center items-center">
-      <Image
-        source={BackgroundImg}
-        alt="gradiente de indigo a lavanda"
-        defaultSource={BackgroundImg}
-        className="w-full h-full absolute"
-      />
-      <VStack className="flex flex-1 w-full">
-        <Center className=" flex  w-full h-3/6 items-end justify-end ml-10 -mb-20 z-10">
-          <SignInImg height={480} width={480} />
-        </Center>
-
-        <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
-          <Logo />
-
-          <FormControl className=" w-full h-fit flex">
-            <VStack className=" w-full px-8 mt-4">
-              <Text className="text-xl font-bold mb-2"> Email </Text>
-              <Controller
-                control={control}
-                name="email"
-                render={({ field: { onChange, value } }) => (
-                  <Input className="">
-                    <InputField
-                      autoCapitalize="none"
-                      value={value}
-                      onChangeText={onChange}
-                      className=" border border-purple-300 rounded-lg h-16 w-full"
-                    />
-                  </Input>
-                )}
-              />
-              {errors.email && (
-                <Text className="text-danger-300">
-                  {' '}
-                  {errors.email.message}{' '}
-                </Text>
-              )}
-            </VStack>
-            <VStack className=" w-full px-8 mt-4">
-              <Text className="text-xl font-bold mb-2"> Senha </Text>
-              <Controller
-                control={control}
-                name="password"
-                render={({ field: { onChange, value } }) => (
-                  <Input className="">
-                    <InputField
-                      autoCapitalize="none"
-                      value={value}
-                      onChangeText={onChange}
-                      type={showPassword ? 'password' : 'text'}
-                      className="text-base border border-purple-300 rounded-lg h-16"
-                    />
-
-                    <InputSlot
-                      className="ml-auto -mt-12 mr-4 h-16"
-                      onPress={handleState}
-                    >
-                      <InputIcon
-                        as={showPassword ? EyeOffIcon : EyeIcon}
-                        width={28}
-                        height={30}
-                        color="#CEBDF2"
-                      />
-                    </InputSlot>
-                  </Input>
-                )}
-              />
-              {errors.password && (
-                <Text className="text-danger-300">
-                  {' '}
-                  {errors.password.message}{' '}
-                </Text>
-              )}
-            </VStack>
-            <Button
-              onPress={handleSubmit(handleOnSubmit)}
-              isDisabled={isLoading}
-              className=" w-10/12 h-16 rounded-full flex justify-center items-center my-4 mx-auto"
-            >
-              <Image
-                source={BackgroundImg}
-                alt="gradiente de indigo a lavanda"
-                defaultSource={BackgroundImg}
-                className="w-full h-full absolute rounded-full"
-              />
-              <ButtonText className=" text-white font-bold">
-                {isLoading ? 'Carregando...' : 'Entrar'}
-              </ButtonText>
-            </Button>
-          </FormControl>
-          <Center className=" flex items-center ">
-            <Text className=" text-gray-300 "> ou </Text>
-            <HStack className=" justify-center items-center flex flex-row ">
-              <Text className=" text-gray-400 text-lg">
-                Ainda não tem uma conta?
-              </Text>
-              <Link>
-                <LinkText className=" text-purple-300 ml-1 font-bold text-lg">
-                  Cadastre-se
-                </LinkText>
-              </Link>
-            </HStack>
+    <ScrollView>
+      <VStack className=" flex flex-1 justify-center items-center">
+        <Image
+          source={BackgroundImg}
+          alt="gradiente de indigo a lavanda"
+          defaultSource={BackgroundImg}
+          className="w-full h-full absolute"
+        />
+        <VStack className="flex flex-1 w-full">
+          <Center className=" flex  w-full h-3/6 items-end justify-end ml-10 mt-10 -mb-20 z-10">
+            <SignInImg height={400} width={480} />
           </Center>
-        </Center>
+
+          <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
+            <Logo />
+
+            <FormControl className=" w-full h-fit flex">
+              <VStack className=" w-full px-8 mt-4">
+                <Text className="text-xl font-bold mb-2"> Email </Text>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({ field: { onChange, value } }) => (
+                    <Input className="">
+                      <InputField
+                        autoCapitalize="none"
+                        value={value}
+                        onChangeText={onChange}
+                        className=" border border-purple-300 rounded-lg h-16 w-full"
+                      />
+                    </Input>
+                  )}
+                />
+                {errors.email && (
+                  <Text className="text-danger-300">
+                    {' '}
+                    {errors.email.message}{' '}
+                  </Text>
+                )}
+              </VStack>
+              <VStack className=" w-full px-8 mt-4">
+                <Text className="text-xl font-bold mb-2"> Senha </Text>
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({ field: { onChange, value } }) => (
+                    <Input className="">
+                      <InputField
+                        autoCapitalize="none"
+                        value={value}
+                        onChangeText={onChange}
+                        type={showPassword ? 'password' : 'text'}
+                        className="text-base border border-purple-300 rounded-lg h-16"
+                      />
+
+                      <InputSlot
+                        className="ml-auto -mt-12 mr-4 h-16"
+                        onPress={handleState}
+                      >
+                        <InputIcon
+                          as={showPassword ? EyeOffIcon : EyeIcon}
+                          width={28}
+                          height={30}
+                          color="#CEBDF2"
+                        />
+                      </InputSlot>
+                    </Input>
+                  )}
+                />
+                {errors.password && (
+                  <Text className="text-danger-300">
+                    {' '}
+                    {errors.password.message}{' '}
+                  </Text>
+                )}
+              </VStack>
+              <Button
+                onPress={handleSubmit(handleOnSubmit)}
+                isDisabled={isLoading}
+                className=" w-10/12 h-16 rounded-full flex justify-center items-center my-4 mx-auto"
+              >
+                <Image
+                  source={BackgroundImg}
+                  alt="gradiente de indigo a lavanda"
+                  defaultSource={BackgroundImg}
+                  className="w-full h-full absolute rounded-full"
+                />
+                <ButtonText className=" text-white font-bold">
+                  {isLoading ? 'Carregando...' : 'Entrar'}
+                </ButtonText>
+              </Button>
+            </FormControl>
+            <Center className=" flex items-center ">
+              <Text className=" text-gray-300 "> ou </Text>
+              <HStack className=" justify-center items-center flex flex-row ">
+                <Text className=" text-gray-400 text-lg">
+                  Ainda não tem uma conta?
+                </Text>
+                <Link>
+                  <LinkText className=" text-purple-300 ml-1 font-bold text-lg">
+                    Cadastre-se
+                  </LinkText>
+                </Link>
+              </HStack>
+            </Center>
+          </Center>
+        </VStack>
       </VStack>
-    </VStack>
+    </ScrollView>
   )
 }

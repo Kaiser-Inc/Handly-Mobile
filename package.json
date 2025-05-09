@@ -13,12 +13,13 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo-google-fonts/dm-sans": "^0.3.0",
     "@expo-google-fonts/montserrat": "^0.3.0",
     "@expo-google-fonts/roboto": "^0.3.0",
     "@gluestack-ui/themed": "^1.1.73",
     "@hookform/resolvers": "^5.0.1",
     "axios": "^1.8.4",
-    "expo": "~53.0.8",
+    "expo": "~53.0.9",
     "expo-font": "~13.3.1",
     "expo-status-bar": "~2.2.3",
     "nativewind": "^4.1.23",

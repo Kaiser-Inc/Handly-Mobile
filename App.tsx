@@ -4,9 +4,9 @@ import './src/global.css'
 
 import {
   useFonts,
-  Montserrat_400Regular,
-  Montserrat_700Bold,
-} from '@expo-google-fonts/montserrat'
+  DMSans_400Regular,
+  DMSans_700Bold,
+} from '@expo-google-fonts/dm-sans'
 
 import { Loading } from '@components/Loading'
 import { SignIn } from '@screens/SignIn'
@@ -14,7 +14,10 @@ import { SignUp } from '@screens/SignUp'
 import React from 'react'
 
 export default function App() {
-  const [fonstsLoaded] = useFonts({ Montserrat_400Regular, Montserrat_700Bold })
+  const [fonstsLoaded] = useFonts({
+    DMSans_400Regular,
+    DMSans_700Bold,
+  })
   return (
     <GluestackUIProvider>
       <StatusBar
