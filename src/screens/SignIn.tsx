@@ -75,7 +75,10 @@ export function SignIn() {
   }
 
   return (
-    <ScrollView>
+    <ScrollView
+      className=" flex flex-1 flex-grow "
+      showsVerticalScrollIndicator={false}
+    >
       <VStack className=" flex flex-1 justify-center items-center">
         <Image
           source={BackgroundImg}
