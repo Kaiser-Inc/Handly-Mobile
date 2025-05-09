@@ -30,6 +30,8 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { createUser } from '@services/api/users-services'
+import { useNavigation } from '@react-navigation/native'
+import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
 const signUpSchema = z.object({
   name: z.string(),
@@ -48,6 +50,12 @@ const signUpSchema = z.object({
 export type SignUpData = z.infer<typeof signUpSchema>
 
 export function SignUp() {
+  const navigator = useNavigation<AuthNavigatorRoutesProps>()
+
+  function handleSignIn() {
+    navigator.navigate('SignIn')
+  }
+
   const {
     control,
     handleSubmit,
@@ -198,11 +206,11 @@ export function SignUp() {
                 <Text className=" text-gray-400 text-lg">
                   Já tem uma conta?
                 </Text>
-                <Link>
-                  <LinkText className=" text-purple-300 ml-1 font-bold text-lg">
+                <Button className=" px-1" onPress={handleSignIn}>
+                  <ButtonText className="text-purple-300 font-bold text-lg">
                     Login
-                  </LinkText>
-                </Link>
+                  </ButtonText>
+                </Button>
               </HStack>
             </Center>
           </Center>
