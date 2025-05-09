@@ -76,7 +76,7 @@ export function SignIn() {
 
   return (
     <ScrollView
-      className=" flex flex-1 flex-grow "
+      className=" flex flex-1 flex-grow bg-white"
       showsVerticalScrollIndicator={false}
     >
       <VStack className=" flex flex-1 justify-center items-center">
