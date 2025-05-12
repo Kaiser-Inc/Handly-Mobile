@@ -32,9 +32,11 @@ import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
 const signInSchema = z.object({
-  email: z.string().email('Email invalido'),
+  email: z
+    .string({ required_error: 'Campo obrigatório' })
+    .email('Email invalido'),
   password: z
-    .string()
+    .string({ required_error: 'Campo obrigatório' })
     .min(8, 'A senha deve conter pelo menos 8 caracteres')
     .refine((val) => /[a-zA-Z]/.test(val), {
       message: 'A senha deve conter pelo menos uma letra',
@@ -115,7 +117,7 @@ export function SignIn() {
                         autoCapitalize="none"
                         value={value}
                         onChangeText={onChange}
-                        className=" border border-purple-300 rounded-lg h-16 w-full"
+                        className={`text-base border ${errors.password ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-2`}
                       />
                     </Input>
                   )}
@@ -139,7 +141,7 @@ export function SignIn() {
                         value={value}
                         onChangeText={onChange}
                         type={showPassword ? 'password' : 'text'}
-                        className="text-base border border-purple-300 rounded-lg h-16"
+                        className={`text-base border ${errors.password ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16`}
                       />
 
                       <InputSlot
