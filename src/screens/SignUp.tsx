@@ -45,6 +45,7 @@ const signUpSchema = z.object({
     .refine((val) => !/^\d+$/.test(val), {
       message: 'A senha não pode conter apenas números',
     }),
+  role: z.enum(['customer', 'provider']),
 })
 
 export type SignUpData = z.infer<typeof signUpSchema>
@@ -63,7 +64,11 @@ export function SignUp() {
     formState: { errors },
   } = useForm<SignUpData>({
     resolver: zodResolver(signUpSchema),
+    defaultValues: {
+      role: 'customer',
+    },
   })
+
   const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(true)
   const handleState = () => {
