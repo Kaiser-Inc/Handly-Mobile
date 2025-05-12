@@ -120,7 +120,7 @@ export function SignIn() {
                         autoCapitalize="none"
                         value={value}
                         onChangeText={onChange}
-                        className={`text-base border ${errors.password ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
+                        className={`text-base border ${errors.email ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
                       />
                     </Input>
                   )}

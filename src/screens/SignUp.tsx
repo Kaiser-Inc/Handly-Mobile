@@ -34,10 +34,12 @@ import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
 const signUpSchema = z.object({
-  name: z.string(),
-  email: z.string().email('Email invalido'),
+  name: z.string({ required_error: 'Campo Obrigatório' }),
+  email: z
+    .string({ required_error: 'Campo Obrigatório' })
+    .email('Email invalido'),
   password: z
-    .string()
+    .string({ required_error: 'Campo Obrigatório' })
     .min(8, 'A senha deve conter pelo menos 8 caracteres')
     .refine((val) => /[a-zA-Z]/.test(val), {
       message: 'A senha deve conter pelo menos uma letra',
@@ -102,7 +104,7 @@ export function SignUp() {
           className="w-full h-full absolute"
         />
         <VStack className="flex flex-1 w-full">
-          <Center className=" flex w-full h-4/6 items-end justify-end -mb-48 z-10">
+          <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
             <SignUpImg />
           </Center>
           <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
@@ -118,14 +120,13 @@ export function SignUp() {
                       <InputField
                         value={value}
                         onChangeText={onChange}
-                        className=" border border-purple-300 rounded-lg h-16"
+                        className={`text-base border ${errors.name ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
                       />
                     </Input>
                   )}
                 />
                 {errors.name && (
                   <Text className="text-danger-300">
-                    {' '}
                     {errors.name.message}{' '}
                   </Text>
                 )}
@@ -141,14 +142,13 @@ export function SignUp() {
                         autoCapitalize="none"
                         value={value}
                         onChangeText={onChange}
-                        className=" border border-purple-300 rounded-lg h-16"
+                        className={`text-base border ${errors.email ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
                       />
                     </Input>
                   )}
                 />
                 {errors.email && (
                   <Text className="text-danger-300">
-                    {' '}
                     {errors.email.message}{' '}
                   </Text>
                 )}
@@ -165,7 +165,7 @@ export function SignUp() {
                         value={value}
                         onChangeText={onChange}
                         type={showPassword ? 'password' : 'text'}
-                        className="text-base border border-purple-300 rounded-lg h-16"
+                        className={`text-base border ${errors.password ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16`}
                       />
 
                       <InputSlot
@@ -184,7 +184,6 @@ export function SignUp() {
                 />
                 {errors.password && (
                   <Text className="text-danger-300">
-                    {' '}
                     {errors.password.message}{' '}
                   </Text>
                 )}
