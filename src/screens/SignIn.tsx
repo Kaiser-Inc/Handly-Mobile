@@ -16,6 +16,7 @@ import {
   ButtonText,
   HStack,
   ScrollView,
+  KeyboardAvoidingView,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -32,9 +33,11 @@ import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
 const signInSchema = z.object({
-  email: z.string().email('Email invalido'),
+  email: z
+    .string({ required_error: 'Campo obrigatório' })
+    .email('Email invalido'),
   password: z
-    .string()
+    .string({ required_error: 'Campo obrigatório' })
     .min(8, 'A senha deve conter pelo menos 8 caracteres')
     .refine((val) => /[a-zA-Z]/.test(val), {
       message: 'A senha deve conter pelo menos uma letra',
@@ -105,7 +108,9 @@ export function SignIn() {
 
             <FormControl className=" w-full h-fit flex">
               <VStack className=" w-full px-8 mt-4">
-                <Text className="text-xl font-bold mb-2"> Email </Text>
+                <Text className="text-xl font-bold mb-2 text-gray-900">
+                  Email
+                </Text>
                 <Controller
                   control={control}
                   name="email"
@@ -115,20 +120,21 @@ export function SignIn() {
                         autoCapitalize="none"
                         value={value}
                         onChangeText={onChange}
-                        className=" border border-purple-300 rounded-lg h-16 w-full"
+                        className={`text-base border ${errors.email ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
                       />
                     </Input>
                   )}
                 />
                 {errors.email && (
                   <Text className="text-danger-300">
-                    {' '}
-                    {errors.email.message}{' '}
+                    {errors.email.message}
                   </Text>
                 )}
               </VStack>
               <VStack className=" w-full px-8 mt-4">
-                <Text className="text-xl font-bold mb-2"> Senha </Text>
+                <Text className="text-xl font-bold mb-2 text-gray-900">
+                  Senha
+                </Text>
                 <Controller
                   control={control}
                   name="password"
@@ -139,7 +145,7 @@ export function SignIn() {
                         value={value}
                         onChangeText={onChange}
                         type={showPassword ? 'password' : 'text'}
-                        className="text-base border border-purple-300 rounded-lg h-16"
+                        className={`text-base border ${errors.password ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16`}
                       />
 
                       <InputSlot
@@ -158,8 +164,7 @@ export function SignIn() {
                 />
                 {errors.password && (
                   <Text className="text-danger-300">
-                    {' '}
-                    {errors.password.message}{' '}
+                    {errors.password.message}
                   </Text>
                 )}
               </VStack>
