@@ -16,6 +16,7 @@ import {
   ButtonText,
   HStack,
   ScrollView,
+  KeyboardAvoidingView,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -107,7 +108,9 @@ export function SignIn() {
 
             <FormControl className=" w-full h-fit flex">
               <VStack className=" w-full px-8 mt-4">
-                <Text className="text-xl font-bold mb-2"> Email </Text>
+                <Text className="text-xl font-bold mb-2 text-gray-900">
+                  Email
+                </Text>
                 <Controller
                   control={control}
                   name="email"
@@ -117,20 +120,21 @@ export function SignIn() {
                         autoCapitalize="none"
                         value={value}
                         onChangeText={onChange}
-                        className={`text-base border ${errors.password ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-2`}
+                        className={`text-base border ${errors.password ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
                       />
                     </Input>
                   )}
                 />
                 {errors.email && (
                   <Text className="text-danger-300">
-                    {' '}
-                    {errors.email.message}{' '}
+                    {errors.email.message}
                   </Text>
                 )}
               </VStack>
               <VStack className=" w-full px-8 mt-4">
-                <Text className="text-xl font-bold mb-2"> Senha </Text>
+                <Text className="text-xl font-bold mb-2 text-gray-900">
+                  Senha
+                </Text>
                 <Controller
                   control={control}
                   name="password"
@@ -160,8 +164,7 @@ export function SignIn() {
                 />
                 {errors.password && (
                   <Text className="text-danger-300">
-                    {' '}
-                    {errors.password.message}{' '}
+                    {errors.password.message}
                   </Text>
                 )}
               </VStack>

@@ -18,13 +18,15 @@ export default function App() {
     DMSans_700Bold,
   })
   return (
-    <GluestackUIProvider>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="transparent"
-        translucent
-      />
-      {fonstsLoaded ? <Routes /> : <Loading />}
-    </GluestackUIProvider>
+    <SafeAreaProvider>
+      <GluestackUIProvider>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="transparent"
+          translucent
+        />
+        {fonstsLoaded ? <Routes /> : <Loading />}
+      </GluestackUIProvider>
+    </SafeAreaProvider>
   )
 }
