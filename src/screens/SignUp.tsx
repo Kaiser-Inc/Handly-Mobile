@@ -110,7 +110,7 @@ export function SignUp() {
               <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
                 <SignUpImg />
               </Center>
-              <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-80">
+              <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-96">
                 <Logo />
                 <FormControl className=" w-full h-fit flex mt-8">
                   <FormInput
