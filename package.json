@@ -24,6 +24,7 @@
     "expo": "~53.0.9",
     "expo-font": "~13.3.1",
     "expo-status-bar": "~2.2.3",
+    "lucide-react-native": "^0.510.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
     "react-hook-form": "^7.56.2",

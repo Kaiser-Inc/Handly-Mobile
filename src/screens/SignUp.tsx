@@ -3,19 +3,13 @@ import {
   Image,
   VStack,
   Text,
-  Link,
-  LinkText,
   FormControl,
-  Input,
-  InputField,
-  InputSlot,
-  InputIcon,
-  EyeIcon,
-  EyeOffIcon,
   Button,
   ButtonText,
   HStack,
   ScrollView,
+  SafeAreaView,
+  KeyboardAvoidingView,
 } from '@gluestack-ui/themed'
 
 import BackgroundImg from '@assets/bg.png'
@@ -26,20 +20,23 @@ import React from 'react'
 
 import { z } from 'zod'
 
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { createUser } from '@services/api/users-services'
+import { createUser } from '@services/users-services'
 import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
+import { GradientButton } from '@components/GradientButton'
+import { FormInput } from '@components/FormInput'
+import { Platform } from 'react-native'
 
 const signUpSchema = z.object({
-  name: z.string({ required_error: 'Campo Obrigatório' }),
+  name: z.string({ required_error: 'Campo obrigatório' }),
   email: z
-    .string({ required_error: 'Campo Obrigatório' })
+    .string({ required_error: 'Campo obrigatório' })
     .email('Email invalido'),
   password: z
-    .string({ required_error: 'Campo Obrigatório' })
+    .string({ required_error: 'Campo obrigatório' })
     .min(8, 'A senha deve conter pelo menos 8 caracteres')
     .refine((val) => /[a-zA-Z]/.test(val), {
       message: 'A senha deve conter pelo menos uma letra',
@@ -92,134 +89,79 @@ export function SignUp() {
   }
 
   return (
-    <ScrollView
-      className=" flex flex-1 flex-grow bg-white"
-      showsVerticalScrollIndicator={false}
+    <KeyboardAvoidingView
+      className=" flex-1 "
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      enabled
     >
-      <VStack className=" flex flex-1 justify-center items-center">
-        <Image
-          source={BackgroundImg}
-          alt="gradiente de indigo a lavanda"
-          defaultSource={BackgroundImg}
-          className="w-full h-full absolute"
-        />
-        <VStack className="flex flex-1 w-full">
-          <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
-            <SignUpImg />
-          </Center>
-          <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center ">
-            <Logo />
-            <FormControl className=" w-full h-fit flex">
-              <VStack className=" w-full px-8 mt-12">
-                <Text className="text-xl font-bold mb-2"> Nome Completo </Text>
-                <Controller
-                  control={control}
-                  name="name"
-                  render={({ field: { onChange, value } }) => (
-                    <Input className="">
-                      <InputField
-                        value={value}
-                        onChangeText={onChange}
-                        className={`text-base border ${errors.name ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
-                      />
-                    </Input>
-                  )}
-                />
-                {errors.name && (
-                  <Text className="text-danger-300">
-                    {errors.name.message}{' '}
-                  </Text>
-                )}
-              </VStack>
-              <VStack className=" w-full px-8 mt-4">
-                <Text className="text-xl font-bold mb-2"> Email </Text>
-                <Controller
-                  control={control}
-                  name="email"
-                  render={({ field: { onChange, value } }) => (
-                    <Input className="">
-                      <InputField
-                        autoCapitalize="none"
-                        value={value}
-                        onChangeText={onChange}
-                        className={`text-base border ${errors.email ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
-                      />
-                    </Input>
-                  )}
-                />
-                {errors.email && (
-                  <Text className="text-danger-300">
-                    {errors.email.message}{' '}
-                  </Text>
-                )}
-              </VStack>
-              <VStack className=" w-full px-8 mt-4">
-                <Text className="text-xl font-bold mb-2"> Senha </Text>
-                <Controller
-                  control={control}
-                  name="password"
-                  render={({ field: { onChange, value } }) => (
-                    <Input className="">
-                      <InputField
-                        autoCapitalize="none"
-                        value={value}
-                        onChangeText={onChange}
-                        type={showPassword ? 'password' : 'text'}
-                        className={`text-base border ${errors.password ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16`}
-                      />
+      <SafeAreaView className="flex-1 bg-white">
+        <ScrollView
+          className=" flex flex-1 flex-grow bg-white"
+          showsVerticalScrollIndicator={false}
+        >
+          <Image
+            source={BackgroundImg}
+            alt="gradiente de indigo a lavanda"
+            defaultSource={BackgroundImg}
+            className="w-full h-full absolute"
+          />
+          <VStack className=" flex flex-1 justify-center items-center bg ">
+            <VStack className="flex flex-1 w-full">
+              <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
+                <SignUpImg />
+              </Center>
+              <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-96">
+                <Logo />
+                <FormControl className=" w-full h-fit flex mt-8">
+                  <FormInput
+                    control={control}
+                    name="name"
+                    label="Nome Completo"
+                    error={errors.name?.message}
+                  />
+                  <FormInput
+                    control={control}
+                    name="email"
+                    label="Email"
+                    error={errors.email?.message}
+                  />
+                  <FormInput
+                    control={control}
+                    name="password"
+                    label="Senha"
+                    isPassword
+                    showPassword={showPassword}
+                    onTogglePassword={() => {
+                      setShowPassword(!showPassword)
+                    }}
+                    error={errors.password?.message}
+                  />
 
-                      <InputSlot
-                        className="ml-auto -mt-12 mr-4 h-16"
-                        onPress={handleState}
-                      >
-                        <InputIcon
-                          as={showPassword ? EyeOffIcon : EyeIcon}
-                          width={28}
-                          height={30}
-                          color="#CEBDF2"
-                        />
-                      </InputSlot>
-                    </Input>
-                  )}
-                />
-                {errors.password && (
-                  <Text className="text-danger-300">
-                    {errors.password.message}{' '}
-                  </Text>
-                )}
-              </VStack>
-              <Button
-                onPress={handleSubmit(handleOnSubmit)}
-                isDisabled={isLoading}
-                className=" w-10/12 h-16 rounded-full flex justify-center items-center my-4 mx-auto"
-              >
-                <Image
-                  source={BackgroundImg}
-                  alt="gradiente de indigo a lavanda"
-                  defaultSource={BackgroundImg}
-                  className="w-full h-full absolute rounded-full"
-                />
-                <ButtonText className=" text-white font-bold">
-                  {isLoading ? 'Carregando...' : 'Cadastre-se'}
-                </ButtonText>
-              </Button>
-            </FormControl>
-            <Center className=" flex  items-center ">
-              <Text className=" text-gray-300 "> ou </Text>
-              <HStack className=" justify-center items-center flex flex-row ">
-                <Text className=" text-gray-400 text-lg">
-                  Já tem uma conta?
-                </Text>
-                <Button className=" px-1" onPress={handleSignIn}>
-                  <ButtonText className="text-purple-300 font-bold text-lg">
-                    Login
-                  </ButtonText>
-                </Button>
-              </HStack>
-            </Center>
-          </Center>
-        </VStack>
-      </VStack>
-    </ScrollView>
+                  <GradientButton
+                    onPress={handleSubmit(handleOnSubmit)}
+                    isLoading={isLoading}
+                    text="Cadastre-se"
+                  />
+                </FormControl>
+
+                <Center className=" flex  items-center ">
+                  <Text className=" text-gray-300 "> ou </Text>
+                  <HStack className=" justify-center items-center flex flex-row ">
+                    <Text className=" text-gray-400 text-lg">
+                      Já tem uma conta?
+                    </Text>
+                    <Button className=" px-1" onPress={handleSignIn}>
+                      <ButtonText className="text-purple-300 font-bold text-lg">
+                        Login
+                      </ButtonText>
+                    </Button>
+                  </HStack>
+                </Center>
+              </Center>
+            </VStack>
+          </VStack>
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   )
 }
