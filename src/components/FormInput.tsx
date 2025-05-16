@@ -12,7 +12,7 @@ import {
   type FieldValues,
   type Path,
 } from 'react-hook-form'
-import { EyeIcon, EyeOffIcon } from '@gluestack-ui/themed'
+import { EyeIcon, EyeOffIcon } from 'lucide-react-native'
 
 interface FormInputProps<T extends FieldValues> {
   control: Control<T>
@@ -50,14 +50,12 @@ export function FormInput<T extends FieldValues>({
             />
             {isPassword && (
               <InputSlot
-                className="ml-auto -mt-12 mr-4 h-16"
+                className=" absolute right-4 top-1/4 h-16"
                 onPress={onTogglePassword}
               >
                 <InputIcon
                   as={showPassword ? EyeOffIcon : EyeIcon}
-                  width={28}
-                  height={30}
-                  color="#CEBDF2"
+                  color="#CD8EFA"
                 />
               </InputSlot>
             )}
