@@ -1,6 +1,6 @@
 import type { SignInData } from '@screens/SignIn'
 import type { SignUpData } from '@screens/SignUp'
-import { api } from './api'
+import { api } from './api/api'
 
 export async function createUser(data: SignUpData) {
   const response = await api.post('/users', data)
