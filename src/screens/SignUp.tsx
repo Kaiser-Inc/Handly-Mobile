@@ -14,7 +14,7 @@ import {
 
 import Logo from '@assets/Logo.svg'
 import BackgroundImg from '@assets/bg.png'
-import SignUpImg from '@assets/signUpNew.svg'
+import SignUpImg from '@assets/signUp.svg'
 
 import React from 'react'
 

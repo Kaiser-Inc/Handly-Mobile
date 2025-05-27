@@ -15,6 +15,7 @@ import {
 import Logo from '@assets/Logo.svg'
 import BackgroundImg from '@assets/bg.png'
 import SignInImg from '@assets/signIn.svg'
+import SignInFooterImg from '@assets/signIn2.svg'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signIn } from '@services/users-services'
@@ -28,24 +29,7 @@ import { FormInput } from '@components/FormInput'
 import { GradientButton } from '@components/GradientButton'
 import { Platform } from 'react-native'
 
-import { z } from 'zod'
-
-const signInSchema = z.object({
-  email: z
-    .string({ required_error: 'Campo obrigatório' })
-    .email('Email invalido'),
-  password: z
-    .string({ required_error: 'Campo obrigatório' })
-    .min(8, 'A senha deve conter pelo menos 8 caracteres')
-    .refine((val) => /[a-zA-Z]/.test(val), {
-      message: 'A senha deve conter pelo menos uma letra',
-    })
-    .refine((val) => !/^\d+$/.test(val), {
-      message: 'A senha não pode conter apenas números',
-    }),
-})
-
-export type SignInData = z.infer<typeof signInSchema>
+import {type SignInData, signInSchema } from "../@types/signInSchema"
 
 export function SignIn() {
   const navigator = useNavigation<AuthNavigatorRoutesProps>()
@@ -66,11 +50,6 @@ export function SignIn() {
   const [isLoading, setIsLoading] = React.useState(false)
 
   const [showPassword, setShowPassword] = React.useState(true)
-  const handleState = () => {
-    setShowPassword((showState) => {
-      return !showState
-    })
-  }
 
   const handleOnSubmit = async (data: SignInData) => {
     setIsLoading(true)
@@ -103,8 +82,8 @@ export function SignIn() {
               className="w-full h-full absolute"
             />
             <VStack className="flex flex-1 w-full">
-              <Center className=" flex w-full h-1/2 items-end justify-end ml-10 mt-10 -mb-20 z-10">
-                <SignInImg height={400} width={480} />
+              <Center className=" flex h-fit py-8 items-center">
+                <SignInImg />
               </Center>
 
               <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-72">
@@ -147,6 +126,9 @@ export function SignIn() {
                     </Button>
                   </HStack>
                 </Center>
+                  <Center className=" absolute bottom-0 ">
+                    <SignInFooterImg />
+                  </Center>
               </Center>
             </VStack>
           </VStack>
