@@ -60,14 +60,21 @@ export function SignUp() {
 
   const handleDocumentChange = (text: string) => {
     const formatted = fortmatDocument(text)
-    setValue('cpf_cnpj', formatted)
+    setValue('cpf_cnpj', formatted, {
+      shouldValidate: true
+    })
   }
 
   const handleOnSubmit = async (data: SignUpData) => {
     setIsLoading(true)
     try {
-      await createUser(data)
+      const dataToSend = {
+        ...data,
+        cpf_cnpj: data.cpf_cnpj.replace(/\D/g, '')
+      }
+      await createUser(dataToSend)
       reset()
+      handleSignIn()
     } catch (err) {
       console.error(err)
     } finally {

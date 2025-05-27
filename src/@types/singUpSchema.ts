@@ -96,16 +96,22 @@ export const signUpSchema = z.object({
       message: 'A senha não pode conter apenas números',
     }),
   role: z.enum(['customer', 'provider']),
-  cpf_cnpj: z.string({ required_error: 'Campo obrigatório' }).refine((val) => {
-    const cleanValue = val.replace(/\D/g, '')
-    if (cleanValue.length === 11) {
-      return validateCPF(cleanValue)
-    }
-    if (cleanValue.length === 14) {
-      return validateCNPJ(cleanValue)
-    }
-    return false
-  }, 'CPF ou CNPJ inválido'),
+  cpf_cnpj: z
+    .string({ required_error: 'Campo obrigatório' })
+    .refine((val) => {
+      const cleanValue = val.replace(/\D/g, '')
+      return cleanValue.length === 11 || cleanValue.length === 14
+    }, 'CPF ou CNPJ deve ter 11 ou 14 dígitos')
+    .refine((val) => {
+      const cleanValue = val.replace(/\D/g, '')
+      if (cleanValue.length === 11) {
+        return validateCPF(cleanValue)
+      }
+      if (cleanValue.length === 14) {
+        return validateCNPJ(cleanValue)
+      }
+      return false
+    }, 'CPF ou CNPJ inválido'),
 })
 
 export type SignUpData = z.infer<typeof signUpSchema>
