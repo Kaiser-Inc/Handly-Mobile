@@ -1,6 +1,6 @@
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native'
-import { AuthRoutes } from './auth.routes'
 import { Box } from '@gluestack-ui/themed'
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native'
+import { AuthRoutes } from './auth.routes'
 
 export function Routes() {
   const theme = DefaultTheme

@@ -1,5 +1,5 @@
-import { Button, ButtonText, Image } from '@gluestack-ui/themed'
 import BackgroundImage from '@assets/bg.png'
+import { Button, ButtonText, Image } from '@gluestack-ui/themed'
 
 interface GradientButtonProps {
   onPress: () => void
