@@ -5,11 +5,10 @@ import { type Control, Controller, type FieldValues, type Path } from "react-hoo
 interface RoleSelectorProps<T extends FieldValues>{
     control: Control<T>
     name: Path<T>
-    label: string
     error?: string
 }
 
-export function RoleSelector<T extends FieldValues>({ control, label, name, error }: RoleSelectorProps<T>) {
+export function RoleSelector<T extends FieldValues>({ control, name, error }: RoleSelectorProps<T>) {
     const roles = [
         {label: "Sou cliente", value: 'customer'},
         {label: "Sou prestador", value: 'provider'}
@@ -17,26 +16,31 @@ export function RoleSelector<T extends FieldValues>({ control, label, name, erro
     
     return (
         <VStack className=" w-full px-8 mt-2">
-            <Text className=" text-xl font-bold mb-2">
-                {label}
-            </Text>
             <Controller
                 control={control}
                 name={name}
                 render={({field: {onChange, value}}) => (
-                    <HStack className=" bg-purple-100 p-1 rounded-full">
+                    <HStack className=" flex flex-row bg-gray-200 p-1 rounded-full">
                         { roles.map((role) => (
                             <Pressable
                                 key={role.value}
-                                onPress={() => onChange(role.value)}
-                                className={clsx('font-medium',
-                                    value === role.value ? 'text-gray-900' : 'text-gray-500'
+                                onPress={() => {
+                                    onChange(role.value)  
+                                }}
+                                className={clsx('px-4 py-1 rounded-full w-1/2 items-center',
+                                    value === role.value 
+                                    ? 'text-gray-900 bg-white' 
+                                    : 'text-gray-200'
                                 )}
                             >
-                                <Text>
+                                <Text className={clsx('font-medium', 
+                                        value === role.value 
+                                            ? 'text-gray-900' 
+                                            : 'text-gray-400'
+                                    )}
+                                >
                                     {role.label}
                                 </Text>
-                                
                             </Pressable>
                         ))}
                     </HStack>

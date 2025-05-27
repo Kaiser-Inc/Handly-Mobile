@@ -1,33 +1,34 @@
 import {
-  Center,
-  Image,
-  VStack,
-  Text,
-  FormControl,
   Button,
   ButtonText,
+  Center,
+  FormControl,
   HStack,
-  ScrollView,
-  SafeAreaView,
+  Image,
   KeyboardAvoidingView,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  VStack,
 } from '@gluestack-ui/themed'
 
-import BackgroundImg from '@assets/bg.png'
 import Logo from '@assets/Logo.svg'
-import SignUpImg from '@assets/signUp.svg'
+import BackgroundImg from '@assets/bg.png'
+import SignUpImg from '@assets/signUpNew.svg'
 
 import React from 'react'
 
 import { z } from 'zod'
 
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
-import { createUser } from '@services/users-services'
+import { FormInput } from '@components/FormInput'
+import { GradientButton } from '@components/GradientButton'
+import { RoleSelector } from '@components/RoleSelector'
 import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
-import { GradientButton } from '@components/GradientButton'
-import { FormInput } from '@components/FormInput'
+import { createUser } from '@services/users-services'
 import { Platform } from 'react-native'
 
 const signUpSchema = z.object({
@@ -107,12 +108,18 @@ export function SignUp() {
           />
           <VStack className=" flex flex-1 justify-center items-center bg ">
             <VStack className="flex flex-1 w-full">
-              <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
+              <Center className=" flex h-fit py-8 items-center">
                 <SignUpImg />
               </Center>
               <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-96">
                 <Logo />
                 <FormControl className=" w-full h-fit flex mt-8">
+                  <RoleSelector 
+                    control={control}
+                    name='role'
+                    error={errors.role?.message}
+                  />
+
                   <FormInput
                     control={control}
                     name="name"
