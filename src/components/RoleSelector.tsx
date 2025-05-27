@@ -1,6 +1,9 @@
-import { HStack, Pressable, Text, VStack } from "@gluestack-ui/themed";
+import BackgroundImage from '@assets/bg.png'
+import { HStack, Image, Pressable, Text, VStack } from "@gluestack-ui/themed";
 import clsx from "clsx"
+import { useRef } from "react";
 import { type Control, Controller, type FieldValues, type Path } from "react-hook-form";
+import {Animated, Dimensions} from "react-native";
 
 interface RoleSelectorProps<T extends FieldValues>{
     control: Control<T>
@@ -13,6 +16,19 @@ export function RoleSelector<T extends FieldValues>({ control, name, error }: Ro
         {label: "Sou cliente", value: 'customer'},
         {label: "Sou prestador", value: 'provider'}
     ]
+
+    const slideAnim = useRef(new Animated.Value(0)).current
+    const {width} = Dimensions.get('window')
+    const buttonWidth = (width - 64) / 2;
+
+    const animateSlide = (toValue: number) => {
+        Animated.spring(slideAnim, {
+            toValue,
+            useNativeDriver: true,
+            tension: 50,
+            friction: 7,
+        }).start();
+    };
     
     return (
         <VStack className=" w-full px-8 mt-2">
@@ -20,23 +36,44 @@ export function RoleSelector<T extends FieldValues>({ control, name, error }: Ro
                 control={control}
                 name={name}
                 render={({field: {onChange, value}}) => (
-                    <HStack className=" flex flex-row bg-gray-200 p-1 rounded-full">
-                        { roles.map((role) => (
+                    <HStack className=" flex flex-row bg-gray-100 p-1 rounded-full">
+                        <Animated.View 
+                            style={{
+                                position: 'absolute',
+                                width: buttonWidth,
+                                height: '95%',
+                                top: '15%',
+                                left: '1%',
+                                backgroundColor: 'white',
+                                borderRadius: 9999,
+                                transform: [{
+                                    translateX: slideAnim
+                                }]
+                            }}
+                        >
+                            <Image
+                                source={BackgroundImage}
+                                alt="gradiente de indigo a lavanda"
+                                defaultSource={BackgroundImage}
+                                className="w-full h-full absolute rounded-full"
+                            />
+                        </Animated.View>
+                        { roles.map((role, index) => (
                             <Pressable
                                 key={role.value}
                                 onPress={() => {
-                                    onChange(role.value)  
+                                    onChange(role.value)
+                                    animateSlide(index * buttonWidth)  
                                 }}
                                 className={clsx('px-4 py-1 rounded-full w-1/2 items-center',
-                                    value === role.value 
-                                    ? 'text-gray-900 bg-white' 
-                                    : 'text-gray-200'
+                                    'z-10'
                                 )}
+                                
                             >
                                 <Text className={clsx('font-medium', 
                                         value === role.value 
-                                            ? 'text-gray-900' 
-                                            : 'text-gray-400'
+                                            ? 'text-white' 
+                                            : 'text-gray-300'
                                     )}
                                 >
                                     {role.label}
