@@ -1,31 +1,31 @@
 import {
-  Center,
-  Image,
-  VStack,
-  Text,
   Button,
   ButtonText,
-  HStack,
-  ScrollView,
-  KeyboardAvoidingView,
+  Center,
   FormControl,
+  HStack,
+  Image,
+  KeyboardAvoidingView,
   SafeAreaView,
+  ScrollView,
+  Text,
+  VStack,
 } from '@gluestack-ui/themed'
 
-import BackgroundImg from '@assets/bg.png'
 import Logo from '@assets/Logo.svg'
+import BackgroundImg from '@assets/bg.png'
 import SignInImg from '@assets/signIn.svg'
 
-import React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
 import { signIn } from '@services/users-services'
+import React from 'react'
+import { useForm } from 'react-hook-form'
 
 import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
-import { GradientButton } from '@components/GradientButton'
 import { FormInput } from '@components/FormInput'
+import { GradientButton } from '@components/GradientButton'
 import { Platform } from 'react-native'
 
 import { z } from 'zod'

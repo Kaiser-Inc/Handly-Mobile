@@ -18,8 +18,6 @@ import SignUpImg from '@assets/signUpNew.svg'
 
 import React from 'react'
 
-import { z } from 'zod'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
@@ -31,24 +29,11 @@ import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 import { createUser } from '@services/users-services'
 import { Platform } from 'react-native'
 
-const signUpSchema = z.object({
-  name: z.string({ required_error: 'Campo obrigatório' }),
-  email: z
-    .string({ required_error: 'Campo obrigatório' })
-    .email('Email invalido'),
-  password: z
-    .string({ required_error: 'Campo obrigatório' })
-    .min(8, 'A senha deve conter pelo menos 8 caracteres')
-    .refine((val) => /[a-zA-Z]/.test(val), {
-      message: 'A senha deve conter pelo menos uma letra',
-    })
-    .refine((val) => !/^\d+$/.test(val), {
-      message: 'A senha não pode conter apenas números',
-    }),
-  role: z.enum(['customer', 'provider']),
-})
-
-export type SignUpData = z.infer<typeof signUpSchema>
+import {
+  type SignUpData,
+  fortmatDocument,
+  signUpSchema,
+} from '../@types/singUpSchema'
 
 export function SignUp() {
   const navigator = useNavigation<AuthNavigatorRoutesProps>()
@@ -62,6 +47,7 @@ export function SignUp() {
     handleSubmit,
     reset,
     formState: { errors },
+    setValue,
   } = useForm<SignUpData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -71,10 +57,10 @@ export function SignUp() {
 
   const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(true)
-  const handleState = () => {
-    setShowPassword((showState) => {
-      return !showState
-    })
+
+  const handleDocumentChange = (text: string) => {
+    const formatted = fortmatDocument(text)
+    setValue('cpf_cnpj', formatted)
   }
 
   const handleOnSubmit = async (data: SignUpData) => {
@@ -114,9 +100,9 @@ export function SignUp() {
               <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-96">
                 <Logo />
                 <FormControl className=" w-full h-fit flex mt-8">
-                  <RoleSelector 
+                  <RoleSelector
                     control={control}
-                    name='role'
+                    name="role"
                     error={errors.role?.message}
                   />
 
@@ -132,6 +118,17 @@ export function SignUp() {
                     label="Email"
                     error={errors.email?.message}
                   />
+
+                  <FormInput
+                    control={control}
+                    name="cpf_cnpj"
+                    label="CPF/CNPJ"
+                    error={errors.cpf_cnpj?.message}
+                    keyboardType="numeric"
+                    onChangeText={handleDocumentChange}
+                    maxLength={18}
+                  />
+
                   <FormInput
                     control={control}
                     name="password"

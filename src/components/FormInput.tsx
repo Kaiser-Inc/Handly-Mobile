@@ -1,18 +1,18 @@
 import {
   Input,
   InputField,
-  InputSlot,
   InputIcon,
+  InputSlot,
   Text,
   VStack,
 } from '@gluestack-ui/themed'
+import { EyeIcon, EyeOffIcon } from 'lucide-react-native'
 import {
   type Control,
   Controller,
   type FieldValues,
   type Path,
 } from 'react-hook-form'
-import { EyeIcon, EyeOffIcon } from 'lucide-react-native'
 
 interface FormInputProps<T extends FieldValues> {
   control: Control<T>
@@ -22,6 +22,9 @@ interface FormInputProps<T extends FieldValues> {
   isPassword?: boolean
   showPassword?: boolean
   onTogglePassword?: () => void
+  keyboardType?: 'default' | 'numeric' | 'email-address'
+  onChangeText?: (text: string) => void
+  maxLength?: number
 }
 
 export function FormInput<T extends FieldValues>({
@@ -32,6 +35,9 @@ export function FormInput<T extends FieldValues>({
   isPassword,
   showPassword,
   onTogglePassword,
+  keyboardType,
+  maxLength,
+  onChangeText,
 }: FormInputProps<T>) {
   return (
     <VStack className=" w-full px-8 mt-2">
@@ -44,8 +50,10 @@ export function FormInput<T extends FieldValues>({
             <InputField
               autoCapitalize="none"
               value={value}
-              onChangeText={onChange}
+              onChangeText={onChangeText || onChange}
               type={isPassword && showPassword ? 'password' : 'text'}
+              keyboardType={keyboardType}
+              maxLength={maxLength}
               className={`text-base border ${error ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
             />
             {isPassword && (
