@@ -13,6 +13,8 @@ import { Routes } from '@routes/index'
 import React from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
+import { AuthContextPovider } from '@contexts/AuthContext'
+
 export default function App() {
   const [fonstsLoaded] = useFonts({
     DMSans_400Regular,
@@ -26,7 +28,9 @@ export default function App() {
           backgroundColor="transparent"
           translucent
         />
-        {fonstsLoaded ? <Routes /> : <Loading />}
+        <AuthContextPovider>
+          {fonstsLoaded ? <Routes /> : <Loading />}
+        </AuthContextPovider>
       </GluestackUIProvider>
     </SafeAreaProvider>
   )
