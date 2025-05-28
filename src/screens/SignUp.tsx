@@ -24,6 +24,7 @@ import { useForm } from 'react-hook-form'
 import { FormInput } from '@components/FormInput'
 import { GradientButton } from '@components/GradientButton'
 import { RoleSelector } from '@components/RoleSelector'
+import { ToastMessage } from '@components/ToastMessage'
 import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 import { createUser } from '@services/users-services'
@@ -58,6 +59,9 @@ export function SignUp() {
   
   const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(true)
+  const [toastVisible, setToastVisible] = React.useState(false)
+  const [toastMessage, setToastMessage] = React.useState('')
+  const [toastType, setToastType] = React.useState<'success' | 'error' | 'info'>('error')
 
   const handleDocumentChange = (text: string) => {
     const formatted = fortmatDocument(text)
@@ -78,7 +82,13 @@ export function SignUp() {
       handleSignIn()
     } catch (err) {
       const isAppError = err instanceof AppError
-      const title = isAppError ? err.message : 'Algo deu errado, por favor tente novamente'
+     // const message = isAppError ? err.message : 'Algo deu errado, por favor tente novamente'
+      const message = "mensagem de erro de teste"
+      console.log(message)
+
+      setToastMessage(message)
+      setToastType('error')
+      setToastVisible(true)
 
     } finally {
       setIsLoading(false)
@@ -91,6 +101,12 @@ export function SignUp() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled
     >
+      <ToastMessage 
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
       <SafeAreaView className="flex-1 bg-white">
         <ScrollView
           className=" flex flex-1 flex-grow bg-white"
