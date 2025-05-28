@@ -29,6 +29,7 @@ import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 import { createUser } from '@services/users-services'
 import { Platform } from 'react-native'
 
+import { AppError } from '@utils/AppError'
 import {
   type SignUpData,
   fortmatDocument,
@@ -54,7 +55,7 @@ export function SignUp() {
       role: 'customer',
     },
   })
-
+  
   const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(true)
 
@@ -76,7 +77,9 @@ export function SignUp() {
       reset()
       handleSignIn()
     } catch (err) {
-      console.error(err)
+      const isAppError = err instanceof AppError
+      const title = isAppError ? err.message : 'Algo deu errado, por favor tente novamente'
+
     } finally {
       setIsLoading(false)
     }
@@ -123,6 +126,7 @@ export function SignUp() {
                     control={control}
                     name="email"
                     label="Email"
+                    keyboardType='email-address'
                     error={errors.email?.message}
                   />
 

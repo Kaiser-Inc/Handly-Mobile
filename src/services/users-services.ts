@@ -1,5 +1,5 @@
-import type { SignInData } from '@screens/SignIn'
-import type { SignUpData } from '@screens/SignUp'
+import type { SignInData } from '../@types/signInSchema'
+import type { SignUpData } from '../@types/singUpSchema'
 import { api } from './api/api'
 
 export async function createUser(data: SignUpData) {

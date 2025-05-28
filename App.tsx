@@ -1,4 +1,5 @@
-import { Box, GluestackUIProvider, StatusBar } from '@gluestack-ui/themed'
+import { GluestackUIProvider, StatusBar } from '@gluestack-ui/themed'
+
 import './src/global.css'
 
 import {
