@@ -18,7 +18,6 @@ import SignInImg from '@assets/signIn.svg'
 import SignInFooterImg from '@assets/signIn2.svg'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { signIn } from '@services/users-services'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -31,7 +30,10 @@ import { Platform } from 'react-native'
 
 import {type SignInData, signInSchema } from "../@types/signInSchema"
 
+import { useAuth } from '@hooks/useAuth'
+
 export function SignIn() {
+  const { authenticate, token } = useAuth()
   const navigator = useNavigation<AuthNavigatorRoutesProps>()
 
   function handleSignUp() {
@@ -51,10 +53,10 @@ export function SignIn() {
 
   const [showPassword, setShowPassword] = React.useState(true)
 
-  const handleOnSubmit = async (data: SignInData) => {
+  const handleOnSubmit = async (signInData: SignInData) => {
     setIsLoading(true)
     try {
-      await signIn(data)
+      await authenticate(signInData)
       reset()
     } catch (err) {
       console.error(err)
@@ -62,6 +64,12 @@ export function SignIn() {
       setIsLoading(false)
     }
   }
+
+  React.useEffect(() => {
+    if (token) {
+      console.log('Usuário autenticado:', token)
+    }
+  }, [token])
 
   return (
     <KeyboardAvoidingView

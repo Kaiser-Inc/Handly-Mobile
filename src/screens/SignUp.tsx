@@ -70,12 +70,12 @@ export function SignUp() {
     })
   }
 
-  const handleOnSubmit = async (data: SignUpData) => {
+  const handleOnSubmit = async (signUpData: SignUpData) => {
     setIsLoading(true)
     try {
       const dataToSend = {
-        ...data,
-        cpf_cnpj: data.cpf_cnpj.replace(/\D/g, '')
+        ...signUpData,
+        cpf_cnpj: signUpData.cpf_cnpj.replace(/\D/g, '')
       }
       await createUser(dataToSend)
       reset()

@@ -1,8 +1,11 @@
 import type { UserDTO } from "@dtos/userDTO";
+import { signIn } from "@services/users-services";
 import { type ReactNode, createContext, useState } from "react";
+import type { SignInData } from "../@types/signInSchema";
 
 export type AuthContextDataProps = {
-    user: UserDTO
+    token: string
+    authenticate: (signInData: SignInData) => Promise<void>
 }
 
 interface AuthContextPoviderProps {
@@ -12,16 +15,21 @@ interface AuthContextPoviderProps {
 export const AuthContext = createContext<AuthContextDataProps>({} as AuthContextDataProps)
 
 export function AuthContextPovider({ children }: AuthContextPoviderProps) {
-    const [user, setUser] = useState<UserDTO>({
-            cpf_cnpj: '0413021101',
-            email: 'email@email.com',
-            name: 'kaiser',
-            role: 'provider' as const,
-            profile_pic: 'kaiser.png'
-    })
+    const [token, setToken] = useState<string>('')
+
+    async function authenticate(signInData: SignInData) {
+        try {
+            const user = await signIn(signInData)
+            if(user.access_token) {
+                setToken(user.access_token)
+            }
+        } catch (error) {
+            throw new Error(`Erro: ${error}`);
+        }
+    }
 
     return(
-        <AuthContext.Provider value={{ user }}>
+        <AuthContext.Provider value={{ token , authenticate }}>
             {children}
         </AuthContext.Provider>
     )
