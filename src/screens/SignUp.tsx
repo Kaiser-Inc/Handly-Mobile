@@ -80,11 +80,9 @@ export function SignUp() {
       await createUser(dataToSend)
       reset()
       handleSignIn()
-    } catch (err) {
-      const isAppError = err instanceof AppError
-     // const message = isAppError ? err.message : 'Algo deu errado, por favor tente novamente'
-      const message = "mensagem de erro de teste"
-      console.log(message)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const message = isAppError ? error.message : 'Algo deu errado, por favor tente novamente'
 
       setToastMessage(message)
       setToastType('error')
