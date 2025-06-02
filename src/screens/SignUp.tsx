@@ -78,8 +78,16 @@ export function SignUp() {
         cpf_cnpj: signUpData.cpf_cnpj.replace(/\D/g, '')
       }
       await createUser(dataToSend)
+
+      setToastMessage('Cadstro feito com sucesso!')
+      setToastType('success')
+      setToastVisible(true)
+
       reset()
-      handleSignIn()
+      setTimeout(() => {
+        handleSignIn()
+      }, 2000)
+
     } catch (error) {
       const isAppError = error instanceof AppError
       const message = isAppError ? error.message : 'Algo deu errado, por favor tente novamente'
