@@ -5,3 +5,7 @@ export type UserDTO = {
     role: 'customer' | 'provider'
     profile_pic: string
 }
+
+export type TokenDTO = {
+    access_token: string
+}

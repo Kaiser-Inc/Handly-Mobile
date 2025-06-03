@@ -1,6 +1,8 @@
 import { signIn } from "@services/users-services";
-import { type ReactNode, createContext, useState } from "react";
+import { type ReactNode, createContext, useCallback, useEffect, useState } from "react";
 import type { SignInData } from "../@types/signInSchema";
+
+import { storageUserGet, storageUserSave } from '@storage/storageUser'
 
 export type AuthContextDataProps = {
     token: string
@@ -20,11 +22,24 @@ export function AuthContextPovider({ children }: AuthContextPoviderProps) {
         const user = await signIn(signInData)
         if(user.access_token) {
             setToken(user.access_token)
+            storageUserSave(user.access_token)
         }
     }
 
+    const loadUserData = useCallback(async () => {
+        const userLogged = await storageUserGet()
+        
+        if(userLogged) {
+            setToken(userLogged)
+        }
+    }, [])
+
+    useEffect(() => {
+        loadUserData()
+    }, [loadUserData])
+
     return(
-        <AuthContext.Provider value={{ token , authenticate }}>
+        <AuthContext.Provider value={{ token, authenticate }}>
             {children}
         </AuthContext.Provider>
     )
