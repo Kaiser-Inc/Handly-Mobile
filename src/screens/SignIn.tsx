@@ -18,7 +18,6 @@ import SignInImg from '@assets/signIn.svg'
 import SignInFooterImg from '@assets/signIn2.svg'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { signIn } from '@services/users-services'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -27,11 +26,17 @@ import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
 import { FormInput } from '@components/FormInput'
 import { GradientButton } from '@components/GradientButton'
+import { ToastMessage } from '@components/ToastMessage'
+
 import { Platform } from 'react-native'
 
-import {type SignInData, signInSchema } from "../@types/signInSchema"
+import { type SignInData, signInSchema } from '../@types/signInSchema'
+
+import { useAuth } from '@hooks/useAuth'
+import { AppError } from '@utils/AppError'
 
 export function SignIn() {
+  const { authenticate, token } = useAuth()
   const navigator = useNavigation<AuthNavigatorRoutesProps>()
 
   function handleSignUp() {
@@ -48,20 +53,37 @@ export function SignIn() {
   })
 
   const [isLoading, setIsLoading] = React.useState(false)
-
   const [showPassword, setShowPassword] = React.useState(true)
+  const [toastVisible, setToastVisible] = React.useState(false)
+  const [toastMessage, setToastMessage] = React.useState('')
+  const [toastType, setToastType] = React.useState<
+    'success' | 'error' | 'info'
+  >('error')
 
-  const handleOnSubmit = async (data: SignInData) => {
+  const handleOnSubmit = async (signInData: SignInData) => {
     setIsLoading(true)
     try {
-      await signIn(data)
+      await authenticate(signInData)
       reset()
-    } catch (err) {
-      console.error(err)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const message = isAppError
+        ? error.message
+        : 'Algo deu errado, por favor tente novamente'
+
+      setToastMessage(message)
+      setToastType('error')
+      setToastVisible(true)
     } finally {
       setIsLoading(false)
     }
   }
+
+  React.useEffect(() => {
+    if (token) {
+      console.log('Usuário autenticado:', token)
+    }
+  }, [token])
 
   return (
     <KeyboardAvoidingView
@@ -69,6 +91,12 @@ export function SignIn() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled
     >
+      <ToastMessage
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
       <SafeAreaView className="flex-1 bg-white">
         <ScrollView
           className=" flex flex-1 flex-grow bg-white"
@@ -126,9 +154,9 @@ export function SignIn() {
                     </Button>
                   </HStack>
                 </Center>
-                  <Center className=" absolute bottom-0 ">
-                    <SignInFooterImg />
-                  </Center>
+                <Center className=" absolute bottom-0 ">
+                  <SignInFooterImg />
+                </Center>
               </Center>
             </VStack>
           </VStack>
