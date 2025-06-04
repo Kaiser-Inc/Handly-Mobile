@@ -10,10 +10,10 @@ import type { SignInData } from '../@types/signInSchema'
 
 import { api } from '@services/api/api'
 import {
-  storageUserGet,
-  storageUserRemove,
-  storageUserSave,
-} from '@storage/storageUser'
+  storageTokenGet,
+  storageTokenRemove,
+  storageTokenSave
+} from '@storage/storageToken'
 
 export type AuthContextDataProps = {
   token: string
@@ -40,7 +40,7 @@ export function AuthContextPovider({ children }: AuthContextPoviderProps) {
       // biome-ignore lint: <explanation>
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
-      await storageUserSave(token)
+      await storageTokenSave(token)
       setToken(token)
     } finally {
       setIsLoadingUserStorageData(false)
@@ -58,7 +58,7 @@ export function AuthContextPovider({ children }: AuthContextPoviderProps) {
     try {
       setIsLoadingUserStorageData(true)
       setToken('')
-      await storageUserRemove()
+      await storageTokenRemove()
     } finally {
       setIsLoadingUserStorageData(false)
     }
@@ -66,7 +66,7 @@ export function AuthContextPovider({ children }: AuthContextPoviderProps) {
 
   const loadUserData = useCallback(async () => {
     try {
-      const userLogged = await storageUserGet()
+      const userLogged = await storageTokenGet()
 
       if (userLogged) {
         setToken(userLogged)
