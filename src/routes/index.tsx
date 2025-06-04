@@ -7,20 +7,19 @@ import { AppRoutes } from './app.routes'
 import { AuthRoutes } from './auth.routes'
 
 export function Routes() {
-
   const { token, isLoadingUserStorageData } = useAuth()
-  
+
   const theme = DefaultTheme
   theme.colors.background = 'white'
 
-  if(isLoadingUserStorageData) {
+  if (isLoadingUserStorageData) {
     return <Loading />
   }
 
   return (
     <Box className=" flex-1 bg-white">
       <NavigationContainer theme={theme}>
-        { token === '' ? <AuthRoutes /> : <AppRoutes />}
+        {token === '' ? <AuthRoutes /> : <AppRoutes />}
       </NavigationContainer>
     </Box>
   )

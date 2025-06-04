@@ -56,13 +56,7 @@
   },
   "private": true,
   "compilerOptions": {
-    "types": [
-      "jest"
-    ]
+    "types": ["jest"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "jest-setup.ts"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "jest-setup.ts"]
 }

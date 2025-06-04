@@ -30,7 +30,7 @@ import { ToastMessage } from '@components/ToastMessage'
 
 import { Platform } from 'react-native'
 
-import {type SignInData, signInSchema } from "../@types/signInSchema"
+import { type SignInData, signInSchema } from '../@types/signInSchema'
 
 import { useAuth } from '@hooks/useAuth'
 import { AppError } from '@utils/AppError'
@@ -56,7 +56,9 @@ export function SignIn() {
   const [showPassword, setShowPassword] = React.useState(true)
   const [toastVisible, setToastVisible] = React.useState(false)
   const [toastMessage, setToastMessage] = React.useState('')
-  const [toastType, setToastType] = React.useState<'success' | 'error' | 'info'>('error')
+  const [toastType, setToastType] = React.useState<
+    'success' | 'error' | 'info'
+  >('error')
 
   const handleOnSubmit = async (signInData: SignInData) => {
     setIsLoading(true)
@@ -65,12 +67,13 @@ export function SignIn() {
       reset()
     } catch (error) {
       const isAppError = error instanceof AppError
-      const message = isAppError ? error.message : "Algo deu errado, por favor tente novamente"
+      const message = isAppError
+        ? error.message
+        : 'Algo deu errado, por favor tente novamente'
 
       setToastMessage(message)
       setToastType('error')
       setToastVisible(true)
-      
     } finally {
       setIsLoading(false)
     }
@@ -88,7 +91,7 @@ export function SignIn() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled
     >
-      <ToastMessage 
+      <ToastMessage
         visible={toastVisible}
         message={toastMessage}
         type={toastType}
@@ -151,9 +154,9 @@ export function SignIn() {
                     </Button>
                   </HStack>
                 </Center>
-                  <Center className=" absolute bottom-0 ">
-                    <SignInFooterImg />
-                  </Center>
+                <Center className=" absolute bottom-0 ">
+                  <SignInFooterImg />
+                </Center>
               </Center>
             </VStack>
           </VStack>

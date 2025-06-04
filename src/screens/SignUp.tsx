@@ -56,17 +56,19 @@ export function SignUp() {
       role: 'customer',
     },
   })
-  
+
   const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(true)
   const [toastVisible, setToastVisible] = React.useState(false)
   const [toastMessage, setToastMessage] = React.useState('')
-  const [toastType, setToastType] = React.useState<'success' | 'error' | 'info'>('error')
+  const [toastType, setToastType] = React.useState<
+    'success' | 'error' | 'info'
+  >('error')
 
   const handleDocumentChange = (text: string) => {
     const formatted = fortmatDocument(text)
     setValue('cpf_cnpj', formatted, {
-      shouldValidate: true
+      shouldValidate: true,
     })
   }
 
@@ -75,7 +77,7 @@ export function SignUp() {
     try {
       const dataToSend = {
         ...signUpData,
-        cpf_cnpj: signUpData.cpf_cnpj.replace(/\D/g, '')
+        cpf_cnpj: signUpData.cpf_cnpj.replace(/\D/g, ''),
       }
       await createUser(dataToSend)
 
@@ -87,15 +89,15 @@ export function SignUp() {
       setTimeout(() => {
         handleSignIn()
       }, 2000)
-
     } catch (error) {
       const isAppError = error instanceof AppError
-      const message = isAppError ? error.message : 'Algo deu errado, por favor tente novamente'
+      const message = isAppError
+        ? error.message
+        : 'Algo deu errado, por favor tente novamente'
 
       setToastMessage(message)
       setToastType('error')
       setToastVisible(true)
-
     } finally {
       setIsLoading(false)
     }
@@ -107,7 +109,7 @@ export function SignUp() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled
     >
-      <ToastMessage 
+      <ToastMessage
         visible={toastVisible}
         message={toastMessage}
         type={toastType}
@@ -148,7 +150,7 @@ export function SignUp() {
                     control={control}
                     name="email"
                     label="Email"
-                    keyboardType='email-address'
+                    keyboardType="email-address"
                     error={errors.email?.message}
                   />
 

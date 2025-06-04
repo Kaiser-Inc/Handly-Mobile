@@ -83,15 +83,15 @@ const validateCNPJ = (cnpj: string) => {
 
 export const signUpSchema = z.object({
   name: z
-  .string({ required_error: 'Campo obrigatório' })
-  .min(2, 'O nome deve ter no mínimo 2 caracteres')
-  .max(60, 'O nome deve ter no maximo 60 caracteres')
-  .refine((val) => !/[!@#$%/?;]/.test(val), {
-    message: 'O nome não deve conter caracteres especiais',
-  })
-  .refine((val) => !/\d/.test(val), {
-    message: 'O nome não deve conter números',
-  }),
+    .string({ required_error: 'Campo obrigatório' })
+    .min(2, 'O nome deve ter no mínimo 2 caracteres')
+    .max(60, 'O nome deve ter no maximo 60 caracteres')
+    .refine((val) => !/[!@#$%/?;]/.test(val), {
+      message: 'O nome não deve conter caracteres especiais',
+    })
+    .refine((val) => !/\d/.test(val), {
+      message: 'O nome não deve conter números',
+    }),
   email: z
     .string({ required_error: 'Campo obrigatório' })
     .max(100, 'O email deve ter no máximo 100 caracteres')
