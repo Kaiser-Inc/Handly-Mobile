@@ -1,53 +1,42 @@
 import {
-  Center,
-  Image,
-  VStack,
-  Text,
   Button,
   ButtonText,
-  HStack,
-  ScrollView,
-  KeyboardAvoidingView,
+  Center,
   FormControl,
+  HStack,
+  Image,
+  KeyboardAvoidingView,
   SafeAreaView,
+  ScrollView,
+  Text,
+  VStack,
 } from '@gluestack-ui/themed'
 
-import BackgroundImg from '@assets/bg.png'
 import Logo from '@assets/Logo.svg'
+import BackgroundImg from '@assets/bg.png'
 import SignInImg from '@assets/signIn.svg'
+import SignInFooterImg from '@assets/signIn2.svg'
 
-import React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import React from 'react'
 import { useForm } from 'react-hook-form'
-import { signIn } from '@services/users-services'
 
 import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
 
-import { GradientButton } from '@components/GradientButton'
 import { FormInput } from '@components/FormInput'
+import { GradientButton } from '@components/GradientButton'
+import { ToastMessage } from '@components/ToastMessage'
+
 import { Platform } from 'react-native'
 
-import { z } from 'zod'
+import { type SignInData, signInSchema } from '../@types/signInSchema'
 
-const signInSchema = z.object({
-  email: z
-    .string({ required_error: 'Campo obrigatório' })
-    .email('Email invalido'),
-  password: z
-    .string({ required_error: 'Campo obrigatório' })
-    .min(8, 'A senha deve conter pelo menos 8 caracteres')
-    .refine((val) => /[a-zA-Z]/.test(val), {
-      message: 'A senha deve conter pelo menos uma letra',
-    })
-    .refine((val) => !/^\d+$/.test(val), {
-      message: 'A senha não pode conter apenas números',
-    }),
-})
-
-export type SignInData = z.infer<typeof signInSchema>
+import { useAuth } from '@hooks/useAuth'
+import { AppError } from '@utils/AppError'
 
 export function SignIn() {
+  const { authenticate, token } = useAuth()
   const navigator = useNavigation<AuthNavigatorRoutesProps>()
 
   function handleSignUp() {
@@ -64,25 +53,37 @@ export function SignIn() {
   })
 
   const [isLoading, setIsLoading] = React.useState(false)
-
   const [showPassword, setShowPassword] = React.useState(true)
-  const handleState = () => {
-    setShowPassword((showState) => {
-      return !showState
-    })
-  }
+  const [toastVisible, setToastVisible] = React.useState(false)
+  const [toastMessage, setToastMessage] = React.useState('')
+  const [toastType, setToastType] = React.useState<
+    'success' | 'error' | 'info'
+  >('error')
 
-  const handleOnSubmit = async (data: SignInData) => {
+  const handleOnSubmit = async (signInData: SignInData) => {
     setIsLoading(true)
     try {
-      await signIn(data)
+      await authenticate(signInData)
       reset()
-    } catch (err) {
-      console.error(err)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const message = isAppError
+        ? error.message
+        : 'Algo deu errado, por favor tente novamente'
+
+      setToastMessage(message)
+      setToastType('error')
+      setToastVisible(true)
     } finally {
       setIsLoading(false)
     }
   }
+
+  React.useEffect(() => {
+    if (token) {
+      console.log('Usuário autenticado:', token)
+    }
+  }, [token])
 
   return (
     <KeyboardAvoidingView
@@ -90,6 +91,12 @@ export function SignIn() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled
     >
+      <ToastMessage
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
       <SafeAreaView className="flex-1 bg-white">
         <ScrollView
           className=" flex flex-1 flex-grow bg-white"
@@ -103,8 +110,8 @@ export function SignIn() {
               className="w-full h-full absolute"
             />
             <VStack className="flex flex-1 w-full">
-              <Center className=" flex w-full h-1/2 items-end justify-end ml-10 mt-10 -mb-20 z-10">
-                <SignInImg height={400} width={480} />
+              <Center className=" flex h-fit py-8 items-center">
+                <SignInImg />
               </Center>
 
               <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-72">
@@ -146,6 +153,9 @@ export function SignIn() {
                       </ButtonText>
                     </Button>
                   </HStack>
+                </Center>
+                <Center className=" absolute bottom-0 ">
+                  <SignInFooterImg />
                 </Center>
               </Center>
             </VStack>

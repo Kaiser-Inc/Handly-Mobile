@@ -1,53 +1,41 @@
 import {
-  Center,
-  Image,
-  VStack,
-  Text,
-  FormControl,
   Button,
   ButtonText,
+  Center,
+  FormControl,
   HStack,
-  ScrollView,
-  SafeAreaView,
+  Image,
   KeyboardAvoidingView,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  VStack,
 } from '@gluestack-ui/themed'
 
-import BackgroundImg from '@assets/bg.png'
 import Logo from '@assets/Logo.svg'
+import BackgroundImg from '@assets/bg.png'
 import SignUpImg from '@assets/signUp.svg'
 
 import React from 'react'
 
-import { z } from 'zod'
-
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
-import { createUser } from '@services/users-services'
+import { FormInput } from '@components/FormInput'
+import { GradientButton } from '@components/GradientButton'
+import { RoleSelector } from '@components/RoleSelector'
+import { ToastMessage } from '@components/ToastMessage'
 import { useNavigation } from '@react-navigation/native'
 import type { AuthNavigatorRoutesProps } from '@routes/auth.routes'
-import { GradientButton } from '@components/GradientButton'
-import { FormInput } from '@components/FormInput'
+import { createUser } from '@services/users-services'
 import { Platform } from 'react-native'
 
-const signUpSchema = z.object({
-  name: z.string({ required_error: 'Campo obrigatório' }),
-  email: z
-    .string({ required_error: 'Campo obrigatório' })
-    .email('Email invalido'),
-  password: z
-    .string({ required_error: 'Campo obrigatório' })
-    .min(8, 'A senha deve conter pelo menos 8 caracteres')
-    .refine((val) => /[a-zA-Z]/.test(val), {
-      message: 'A senha deve conter pelo menos uma letra',
-    })
-    .refine((val) => !/^\d+$/.test(val), {
-      message: 'A senha não pode conter apenas números',
-    }),
-  role: z.enum(['customer', 'provider']),
-})
-
-export type SignUpData = z.infer<typeof signUpSchema>
+import { AppError } from '@utils/AppError'
+import {
+  type SignUpData,
+  fortmatDocument,
+  signUpSchema,
+} from '../@types/singUpSchema'
 
 export function SignUp() {
   const navigator = useNavigation<AuthNavigatorRoutesProps>()
@@ -61,6 +49,7 @@ export function SignUp() {
     handleSubmit,
     reset,
     formState: { errors },
+    setValue,
   } = useForm<SignUpData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -70,19 +59,45 @@ export function SignUp() {
 
   const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(true)
-  const handleState = () => {
-    setShowPassword((showState) => {
-      return !showState
+  const [toastVisible, setToastVisible] = React.useState(false)
+  const [toastMessage, setToastMessage] = React.useState('')
+  const [toastType, setToastType] = React.useState<
+    'success' | 'error' | 'info'
+  >('error')
+
+  const handleDocumentChange = (text: string) => {
+    const formatted = fortmatDocument(text)
+    setValue('cpf_cnpj', formatted, {
+      shouldValidate: true,
     })
   }
 
-  const handleOnSubmit = async (data: SignUpData) => {
+  const handleOnSubmit = async (signUpData: SignUpData) => {
     setIsLoading(true)
     try {
-      await createUser(data)
+      const dataToSend = {
+        ...signUpData,
+        cpf_cnpj: signUpData.cpf_cnpj.replace(/\D/g, ''),
+      }
+      await createUser(dataToSend)
+
+      setToastMessage('Cadstro feito com sucesso!')
+      setToastType('success')
+      setToastVisible(true)
+
       reset()
-    } catch (err) {
-      console.error(err)
+      setTimeout(() => {
+        handleSignIn()
+      }, 2000)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const message = isAppError
+        ? error.message
+        : 'Algo deu errado, por favor tente novamente'
+
+      setToastMessage(message)
+      setToastType('error')
+      setToastVisible(true)
     } finally {
       setIsLoading(false)
     }
@@ -94,6 +109,12 @@ export function SignUp() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       enabled
     >
+      <ToastMessage
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
       <SafeAreaView className="flex-1 bg-white">
         <ScrollView
           className=" flex flex-1 flex-grow bg-white"
@@ -107,12 +128,18 @@ export function SignUp() {
           />
           <VStack className=" flex flex-1 justify-center items-center bg ">
             <VStack className="flex flex-1 w-full">
-              <Center className=" flex w-full h-3/6 items-end justify-end -mb-48 z-10">
+              <Center className=" flex h-fit py-8 items-center">
                 <SignUpImg />
               </Center>
               <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-96">
                 <Logo />
                 <FormControl className=" w-full h-fit flex mt-8">
+                  <RoleSelector
+                    control={control}
+                    name="role"
+                    error={errors.role?.message}
+                  />
+
                   <FormInput
                     control={control}
                     name="name"
@@ -123,8 +150,20 @@ export function SignUp() {
                     control={control}
                     name="email"
                     label="Email"
+                    keyboardType="email-address"
                     error={errors.email?.message}
                   />
+
+                  <FormInput
+                    control={control}
+                    name="cpf_cnpj"
+                    label="CPF/CNPJ"
+                    error={errors.cpf_cnpj?.message}
+                    keyboardType="numeric"
+                    onChangeText={handleDocumentChange}
+                    maxLength={18}
+                  />
+
                   <FormInput
                     control={control}
                     name="password"
