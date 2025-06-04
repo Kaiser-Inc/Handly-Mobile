@@ -1,3 +1,3 @@
-const USER_STORAGE = '@handly:user'
+const ACCESS_TOKEN_STORAGE = '@handly:token'
 
-export { USER_STORAGE }
+export { ACCESS_TOKEN_STORAGE }
