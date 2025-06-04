@@ -3,8 +3,12 @@ import { Platform } from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context"
 
 import BackgroundImg from '@assets/bg.png'
+import { GradientButton } from "@components/GradientButton"
+import { useAuth } from "@hooks/useAuth"
+
 
 export function Feed() {
+    const { signOut } = useAuth()
     return(
     <KeyboardAvoidingView
       className=" flex-1 "
@@ -26,6 +30,7 @@ export function Feed() {
             <VStack className="flex flex-1 w-full">
             <Text className="text-white text-2xl font-bold my-24 ml-6">Feed</Text>
               <Center className=" bg-white flex flex-col flex-1 rounded-tr-3xl rounded-tl-3xl pt-12 items-center pb-72">
+                <GradientButton text="Sair" onPress={signOut}/>
               </Center>
             </VStack>
           </VStack>
