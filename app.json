@@ -25,6 +25,10 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": ["expo-font"]
+    "plugins": ["expo-font"],
+    "statusBar": {
+      "translucent": true,
+      "backgroundColor": "trasnparent"
+    }
   }
 }

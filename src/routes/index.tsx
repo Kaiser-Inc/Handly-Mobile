@@ -17,7 +17,7 @@ export function Routes() {
   }
 
   return (
-    <Box className=" flex-1 bg-white">
+    <Box className=" flex-1 bg-white pt-0" >
       <NavigationContainer theme={theme}>
         {token === '' ? <AuthRoutes /> : <AppRoutes />}
       </NavigationContainer>
