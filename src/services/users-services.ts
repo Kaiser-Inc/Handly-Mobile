@@ -11,3 +11,8 @@ export async function signIn(signInData: SignInData) {
   const response = await api.post('/auth/login', signInData)
   return response.data
 }
+
+export async function getProfile() {
+  const response = await api.get('/protected/profile')
+  return response.data
+}
