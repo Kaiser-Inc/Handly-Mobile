@@ -1,7 +1,5 @@
-import { Text } from "@gluestack-ui/themed";
+import { Text } from '@gluestack-ui/themed'
 
 export function Categories() {
-    return(
-        <Text>CATEGORIAS</Text>
-    )
+  return <Text>CATEGORIAS</Text>
 }

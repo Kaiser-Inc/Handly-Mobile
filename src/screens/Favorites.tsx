@@ -1,7 +1,5 @@
-import { Text } from "@gluestack-ui/themed";
+import { Text } from '@gluestack-ui/themed'
 
 export function Favorites() {
-    return(
-        <Text>Favoritos</Text>
-    )
+  return <Text>Favoritos</Text>
 }

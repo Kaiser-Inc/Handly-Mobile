@@ -1,8 +1,4 @@
-import {
-  Image,
-  ScrollView,
-  VStack,
-} from '@gluestack-ui/themed'
+import { Image, ScrollView, VStack } from '@gluestack-ui/themed'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackgroundImg from '@assets/bg.png'
@@ -20,7 +16,7 @@ export function Feed() {
         className="w-full h-full absolute"
       />
       <VStack className="flex">
-        <HomeHeader/>
+        <HomeHeader />
         <SearchBar />
       </VStack>
       <ScrollView

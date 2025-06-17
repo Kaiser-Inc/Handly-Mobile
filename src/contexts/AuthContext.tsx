@@ -12,7 +12,7 @@ import { api } from '@services/api/api'
 import {
   storageTokenGet,
   storageTokenRemove,
-  storageTokenSave
+  storageTokenSave,
 } from '@storage/storageToken'
 
 export type AuthContextDataProps = {
