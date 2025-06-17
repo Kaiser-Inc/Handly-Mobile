@@ -16,8 +16,8 @@ export function SearchBar(){
     })
 
     return (
-        <HStack className=" mx-auto rounded-2xl w-10/12 flex flex-row px-4 py-4 my-4 bg-white items-center">
-                <Search />
+        <HStack className=" mx-auto rounded-2xl w-11/12 flex flex-row px-4 py-4 my-4 bg-white items-center">
+                <Search  size={30} stroke="#9356FC" />
                 <Input className=" flex-1 ">
                     <InputField
                         className=" w-full mx-2"
