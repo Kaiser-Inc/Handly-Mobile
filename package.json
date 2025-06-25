@@ -27,6 +27,7 @@
     "clsx": "^2.1.1",
     "expo": "~53.0.12",
     "expo-font": "~13.3.1",
+    "expo-image-picker": "^16.1.4",
     "expo-status-bar": "~2.2.3",
     "lucide-react-native": "^0.510.0",
     "nativewind": "^4.1.23",

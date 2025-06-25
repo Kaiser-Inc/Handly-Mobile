@@ -7,7 +7,14 @@ import { Categories } from '@screens/Categories'
 import { Favorites } from '@screens/Favorites'
 import { Feed } from '@screens/Feed'
 import { Profile } from '@screens/Profile'
-import { CircleUserRound, Clock, House, LayoutGrid } from 'lucide-react-native'
+import { ServiceForm } from '@screens/ServiceForm'
+import {
+  CircleUserRound,
+  Clock,
+  House,
+  LayoutGrid,
+  Wrench,
+} from 'lucide-react-native'
 import { Platform } from 'react-native'
 
 type AppRoutes = {
@@ -15,6 +22,7 @@ type AppRoutes = {
   Categorias: undefined
   Favoritos: undefined
   Perfil: undefined
+  Serviço: undefined
 }
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>
@@ -56,6 +64,14 @@ export function AppRoutes() {
         component={Profile}
         options={{
           tabBarIcon: ({ color }) => <CircleUserRound color={color} />,
+        }}
+      />
+
+      <Screen
+        name="Serviço"
+        component={ServiceForm}
+        options={{
+          tabBarIcon: ({ color }) => <Wrench color={color} />,
         }}
       />
     </Navigator>
