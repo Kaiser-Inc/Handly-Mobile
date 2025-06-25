@@ -16,7 +16,10 @@ export async function createService(serviceData: serviceData) {
   return response.data
 }
 
-export async function updateService(serviceId: string, serviceUpdatedData: Partial<serviceData>) {
+export async function updateService(
+  serviceId: string,
+  serviceUpdatedData: Partial<serviceData>,
+) {
   const response = await api.post(`/services/${serviceId}`, serviceUpdatedData)
   return response.data
 }
@@ -26,7 +29,10 @@ export async function deleteService(serviceId: string) {
   return response.data
 }
 
-export async function updateServiceImage(serviceId: string, serviceImage: string) {
+export async function updateServiceImage(
+  serviceId: string,
+  serviceImage: string,
+) {
   const response = await api.post(`/services/${serviceId}/image`, serviceImage)
   return response.data
 }

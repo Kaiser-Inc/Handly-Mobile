@@ -20,11 +20,13 @@ interface FormInputProps<T extends FieldValues> {
   label: string
   error?: string
   isPassword?: boolean
+  isTextarea?: boolean
   showPassword?: boolean
   onTogglePassword?: () => void
   keyboardType?: 'default' | 'numeric' | 'email-address'
   onChangeText?: (text: string) => void
   maxLength?: number
+  placeholder?: string
 }
 
 export function FormInput<T extends FieldValues>({
@@ -33,11 +35,13 @@ export function FormInput<T extends FieldValues>({
   label,
   error,
   isPassword,
+  isTextarea,
   showPassword,
   onTogglePassword,
   keyboardType,
   maxLength,
   onChangeText,
+  placeholder,
 }: FormInputProps<T>) {
   return (
     <VStack className=" w-full px-8 mt-2">
@@ -48,13 +52,15 @@ export function FormInput<T extends FieldValues>({
         render={({ field: { onChange, value } }) => (
           <Input>
             <InputField
+              multiline={isTextarea ? isTextarea : false}
               autoCapitalize="none"
               value={value}
               onChangeText={onChangeText || onChange}
               type={isPassword && showPassword ? 'password' : 'text'}
               keyboardType={keyboardType}
               maxLength={maxLength}
-              className={`text-base border ${error ? 'border-danger-300' : 'border-purple-300'} rounded-lg h-16 mb-3`}
+              placeholder={placeholder}
+              className={`text-base border ${error ? 'border-danger-300' : 'border-purple-300'} ${isTextarea ? 'h-32' : 'h-16'} rounded-lg mb-3`}
             />
             {isPassword && (
               <InputSlot

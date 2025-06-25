@@ -8,7 +8,7 @@ export function HomeHeader() {
       <HStack className=" flex flex-row items-center ">
         <House size={30} stroke="#9356FC" />
       </HStack>
-      <HStack className='flex flex-row flex-1'>
+      <HStack className="flex flex-row flex-1">
         <SearchBar />
       </HStack>
       <HStack className=" flex flex-row items-center gap-4">
