@@ -16,3 +16,13 @@ export async function getProfile() {
   const response = await api.get('/protected/profile')
   return response.data
 }
+
+export async function uploadProfilePic(profilePicture: string) {
+  const response = await api.post('/protected/profilepic', profilePicture)
+  return response.data
+}
+
+export async function updateUser(updatedUsername: string) {
+  const response = await api.put('/protected/profile', updatedUsername)
+  return response.data
+}
