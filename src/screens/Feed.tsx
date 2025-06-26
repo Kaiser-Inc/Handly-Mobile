@@ -17,7 +17,6 @@ export function Feed() {
       />
       <VStack className="flex">
         <HomeHeader />
-        <SearchBar />
       </VStack>
       <ScrollView
         className="flex bg-white flex-col rounded-tr-3xl rounded-tl-3xl pt-10"
