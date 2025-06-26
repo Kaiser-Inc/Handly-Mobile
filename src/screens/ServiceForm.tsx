@@ -33,7 +33,7 @@ export function ServiceForm() {
       description: '',
       categories: [],
       image: null,
-    }
+    },
   })
 
   const [isLoading, setIsLoading] = React.useState(false)

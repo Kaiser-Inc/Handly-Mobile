@@ -20,7 +20,11 @@ import { ToastMessage } from '@components/ToastMessage'
 import { UserPhoto } from '@components/UserPhoto'
 import type { UserDTO } from '@dtos/userDTO'
 import { useAuth } from '@hooks/useAuth'
-import { getProfile, updateUser, uploadProfilePic } from '@services/users-services'
+import {
+  getProfile,
+  updateUser,
+  uploadProfilePic,
+} from '@services/users-services'
 import { AppError } from '@utils/AppError'
 
 export function Profile() {
@@ -28,7 +32,9 @@ export function Profile() {
   const [user, setUser] = useState<UserDTO | null>(null)
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
-  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('error')
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
+    'error',
+  )
 
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState('')
@@ -131,20 +137,17 @@ export function Profile() {
 
         <View className="flex-row items-center mt-4">
           {isEditingName ? (
-            <VStack className=' flex flex-col justify-start w-8/12'>
-              <Text className=' font-bold text-xl'>Nome completo</Text>
+            <VStack className=" flex flex-col justify-start w-8/12">
+              <Text className=" font-bold text-xl">Nome completo</Text>
               <Input className=" w-full border-b-2 border-purple-300 flex flex-row justify-between items-center">
                 <InputField
                   value={editedName}
                   onChangeText={setEditedName}
                   placeholder="Digite seu nome"
                 />
-              <TouchableOpacity
-                className="ml-2"
-                onPress={handleUpdateName}
-              >
-                <ThumbsUp size={20} color="#9356FC" />
-              </TouchableOpacity>
+                <TouchableOpacity className="ml-2" onPress={handleUpdateName}>
+                  <ThumbsUp size={20} color="#9356FC" />
+                </TouchableOpacity>
               </Input>
             </VStack>
           ) : (
@@ -159,7 +162,9 @@ export function Profile() {
           )}
         </View>
 
-        <Text className="text-gray-400 mt-2">{user?.email || 'Carregando...'}</Text>
+        <Text className="text-gray-400 mt-2">
+          {user?.email || 'Carregando...'}
+        </Text>
 
         <Center className="mt-auto">
           <GradientButton text="Sair" onPress={signOut} />
