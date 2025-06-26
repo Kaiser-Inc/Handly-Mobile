@@ -40,6 +40,7 @@ export function AppRoutes() {
           borderTopWidth: 0,
           height: Platform.OS === 'android' ? 75 : 90,
           paddingTop: 12,
+          
         },
         animation: 'fade',
       }}
