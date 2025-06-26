@@ -1,4 +1,4 @@
-import { Center, Image, Text, get } from '@gluestack-ui/themed'
+import { Center, Image, Text } from '@gluestack-ui/themed'
 import { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -15,7 +15,6 @@ import React from 'react'
 export function Profile() {
   const { signOut } = useAuth()
   const [user, setUser] = useState<UserDTO | null>(null)
-
   const [toastVisible, setToastVisible] = React.useState(false)
   const [toastMessage, setToastMessage] = React.useState('')
   const [toastType, setToastType] = React.useState<
@@ -67,10 +66,6 @@ export function Profile() {
           }}
           alt="Foto de perfil de usuário"
         />
-        <Text className=" font-bold text-2xl mt-8">
-          {' '}
-          {user?.name || 'Carregando...'}{' '}
-        </Text>
         <Text className=" text-gray-400 mt-4">
           {' '}
           {user?.email || 'Carregando...'}{' '}

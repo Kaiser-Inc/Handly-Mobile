@@ -28,6 +28,12 @@ export function ServiceForm() {
     formState: { errors },
   } = useForm<serviceData>({
     resolver: zodResolver(serviceSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      categories: [],
+      image: null,
+    }
   })
 
   const [isLoading, setIsLoading] = React.useState(false)
@@ -42,6 +48,9 @@ export function ServiceForm() {
     try {
       await createService(serviceData)
       reset()
+      setToastMessage('Cadastro feito com sucesso.')
+      setToastType('success')
+      setToastVisible(true)
     } catch (error) {
       const isAppError = error instanceof AppError
       const message = isAppError
@@ -108,12 +117,6 @@ export function ServiceForm() {
                     name="image"
                     error={errors.image?.message}
                   />
-
-                  {Object.keys(errors).length > 0 && (
-                    <Text style={{ color: 'red' }}>
-                      {JSON.stringify(errors)}
-                    </Text>
-                  )}
 
                   <GradientButton
                     onPress={handleSubmit(handleOnSubmit)}
