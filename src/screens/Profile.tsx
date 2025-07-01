@@ -27,6 +27,7 @@ import {
 } from '@services/users-services'
 import { AppError } from '@utils/AppError'
 import { z } from 'zod'
+import { nameProfileSchema } from '../@types/profileSchema'
 
 export function Profile() {
   const { signOut } = useAuth()
@@ -87,12 +88,19 @@ export function Profile() {
 
   async function handleUpdateName() {
     try {
-      await updateUser({ name: editedName })
+      const validatedName = nameProfileSchema.parse(editedName)
+
+      await updateUser({ name: validatedName })
       await loadUserProfile()
       setIsEditingName(false)
       showToast('Nome atualizado com sucesso!', 'success')
-    } catch {
-      showToast('Erro ao atualizar o nome.', 'error')
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors[0]?.message || 'Erro de validação'
+        showToast(errorMessage, 'error')
+      } else {
+        showToast('Erro ao atualizar o nome.', 'error')
+      }
     }
   }
 
