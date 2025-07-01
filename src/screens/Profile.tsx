@@ -27,7 +27,7 @@ import {
 } from '@services/users-services'
 import { AppError } from '@utils/AppError'
 import { z } from 'zod'
-import { imagemProfileSchema, nomeProfileSchema } from '../@types/profileSchema'
+import { imagemProfileSchema } from '../@types/profileSchema'
 
 export function Profile() {
   const { signOut } = useAuth()
@@ -79,6 +79,7 @@ export function Profile() {
         if (error instanceof z.ZodError) {
           showToast(error.errors[0].message, 'error')
         } else {
+          console.error(error)
           showToast('Erro ao enviar a imagem!', 'error')
         }
       }
@@ -87,17 +88,12 @@ export function Profile() {
 
   async function handleUpdateName() {
     try {
-      nomeProfileSchema.parse(editedName)
       await updateUser({ name: editedName })
       await loadUserProfile()
       setIsEditingName(false)
       showToast('Nome atualizado com sucesso!', 'success')
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        showToast(error.errors[0].message, 'error')
-      } else {
-        showToast('Erro ao atualizar o nome.', 'error')
-      }
+    } catch {
+      showToast('Erro ao atualizar o nome.', 'error')
     }
   }
 
