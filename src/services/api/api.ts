@@ -1,8 +1,10 @@
 import { AppError } from '@utils/AppError'
 import axios from 'axios'
 
+export const apiUrl = 'https://7884-45-176-66-66.ngrok-free.app'
+
 export const api = axios.create({
-  baseURL: 'https://7884-45-176-66-66.ngrok-free.app',
+  baseURL: apiUrl,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

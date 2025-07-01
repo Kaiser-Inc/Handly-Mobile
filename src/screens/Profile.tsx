@@ -27,7 +27,6 @@ import {
 } from '@services/users-services'
 import { AppError } from '@utils/AppError'
 import { z } from 'zod'
-import { imagemProfileSchema } from '../@types/profileSchema'
 
 export function Profile() {
   const { signOut } = useAuth()
@@ -63,25 +62,25 @@ export function Profile() {
       mediaTypes: 'images',
       allowsEditing: true,
       quality: 1,
-      base64: true,
+      base64: false,
     })
 
     if (!result.canceled && result.assets.length > 0) {
       const image = result.assets[0]
-      const base64 = `data:image/jpeg;base64,${image.base64}`
+
+      const formData = new FormData()
+      formData.append('file', {
+        uri: image.uri,
+        name: 'profile.jpg',
+        type: 'image/jpeg',
+      } as unknown as Blob)
 
       try {
-        imagemProfileSchema.parse(base64)
-        await uploadProfilePic({ profile_pic: base64 })
+        await uploadProfilePic(formData)
         await loadUserProfile()
         showToast('Foto atualizada com sucesso!', 'success')
       } catch (error) {
-        if (error instanceof z.ZodError) {
-          showToast(error.errors[0].message, 'error')
-        } else {
-          console.error(error)
-          showToast('Erro ao enviar a imagem!', 'error')
-        }
+        showToast('Erro ao enviar imagem', 'error')
       }
     }
   }
