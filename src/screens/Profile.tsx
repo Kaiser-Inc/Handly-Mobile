@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { Camera, Check, Pencil, ThumbsUp } from 'lucide-react-native'
+import { Camera, Pencil, ThumbsUp } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
 import { GradientButton } from '@components/GradientButton'
@@ -123,7 +123,10 @@ export function Profile() {
           <UserPhoto
             className="w-32 h-32 rounded-full border-4 border-white bg-gray-400"
             source={{
-              uri: user?.profile_pic || 'https://unavatar.io/substack/bankless',
+              uri:
+                typeof user?.profile_pic === 'string'
+                  ? user.profile_pic
+                  : 'https://unavatar.io/substack/bankless',
             }}
             alt="Foto de perfil de usuário"
           />
