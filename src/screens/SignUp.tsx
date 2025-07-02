@@ -81,7 +81,7 @@ export function SignUp() {
       }
       await createUser(dataToSend)
 
-      setToastMessage('Cadstro feito com sucesso!')
+      setToastMessage('Cadastro feito com sucesso!')
       setToastType('success')
       setToastVisible(true)
 

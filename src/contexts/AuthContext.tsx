@@ -34,23 +34,11 @@ export function AuthContextPovider({ children }: AuthContextPoviderProps) {
   const [token, setToken] = useState<string>('')
   const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true)
 
-  async function storageToken(token: string) {
-    try {
-      setIsLoadingUserStorageData(true)
-      // biome-ignore lint: <explanation>
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`
-
-      await storageTokenSave(token)
-      setToken(token)
-    } finally {
-      setIsLoadingUserStorageData(false)
-    }
-  }
-
   async function authenticate(signInData: SignInData) {
     const user = await signIn(signInData)
     if (user.access_token) {
-      storageToken(user.access_token)
+      await storageTokenSave(user.access_token)
+      setToken(user.access_token)
     }
   }
 
@@ -79,6 +67,14 @@ export function AuthContextPovider({ children }: AuthContextPoviderProps) {
   useEffect(() => {
     loadUserData()
   }, [loadUserData])
+
+  useEffect(() => {
+    if (token) {
+      api.defaults.headers.common.Authorization = `Bearer ${token}`
+    } else {
+      api.defaults.headers.common.Authorization = undefined
+    }
+  }, [token])
 
   return (
     <AuthContext.Provider
