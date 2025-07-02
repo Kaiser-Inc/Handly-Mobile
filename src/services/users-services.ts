@@ -1,6 +1,7 @@
+import { storageTokenGet } from '@storage/storageToken'
 import type { SignInData } from '../@types/signInSchema'
 import type { SignUpData } from '../@types/singUpSchema'
-import { api } from './api/api'
+import { api, apiUrl } from './api/api'
 
 export async function createUser(signUpData: SignUpData) {
   const response = await api.post('/users', signUpData)
@@ -21,11 +22,23 @@ interface imageUploadData {
   profile_pic: string
 }
 
-export async function uploadProfilePic(profilePicture: imageUploadData) {
-  const response = await api.post('/protected/profilepic', profilePicture)
-  return response.data
-}
+export async function uploadProfilePic(formData: FormData) {
+  const token = await storageTokenGet()
+  const response = await fetch(`${apiUrl}/protected/profilepic`, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
 
+  if (!response.ok) {
+    const errorData = await response.text()
+    throw new Error(`Erro no upload: ${response.status} - ${errorData}`)
+  }
+
+  return await response.json()
+}
 interface updatedUsernameData {
   name: string
 }

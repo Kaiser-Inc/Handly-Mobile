@@ -26,6 +26,8 @@ import {
   uploadProfilePic,
 } from '@services/users-services'
 import { AppError } from '@utils/AppError'
+import { z } from 'zod'
+import { nameProfileSchema } from '../@types/profileSchema'
 
 export function Profile() {
   const { signOut } = useAuth()
@@ -61,31 +63,44 @@ export function Profile() {
       mediaTypes: 'images',
       allowsEditing: true,
       quality: 1,
-      base64: true,
+      base64: false,
     })
 
     if (!result.canceled && result.assets.length > 0) {
       const image = result.assets[0]
-      const base64 = `data:image/jpeg;base64,${image.base64}`
+
+      const formData = new FormData()
+      formData.append('file', {
+        uri: image.uri,
+        name: 'profile.jpg',
+        type: 'image/jpeg',
+      } as unknown as Blob)
 
       try {
-        await uploadProfilePic({ profile_pic: base64 })
+        await uploadProfilePic(formData)
         await loadUserProfile()
         showToast('Foto atualizada com sucesso!', 'success')
-      } catch {
-        showToast('Erro ao enviar a imagem!', 'error')
+      } catch (error) {
+        showToast('Erro ao enviar imagem', 'error')
       }
     }
   }
 
   async function handleUpdateName() {
     try {
-      await updateUser({ name: editedName })
+      const validatedName = nameProfileSchema.parse(editedName)
+
+      await updateUser({ name: validatedName })
       await loadUserProfile()
       setIsEditingName(false)
       showToast('Nome atualizado com sucesso!', 'success')
-    } catch {
-      showToast('Erro ao atualizar o nome.', 'error')
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorMessage = error.errors[0]?.message || 'Erro de validação'
+        showToast(errorMessage, 'error')
+      } else {
+        showToast('Erro ao atualizar o nome.', 'error')
+      }
     }
   }
 

@@ -9,7 +9,7 @@ export const serviceSchema = z.object({
     .string({ required_error: 'Campo obrigatório' })
     .min(10, 'A descrição deve ter no mínimo 10 caracteres.')
     .max(300, 'A descrição deve ter no máximo 300 caracteres'),
-  image: z.instanceof(File).nullable().optional(),
+  image: z.string().nullable().optional(),
   name: z
     .string({ required_error: 'Campo obrigatório' })
     .min(2, 'O título deve ter no mínimo 2 caracteres')
