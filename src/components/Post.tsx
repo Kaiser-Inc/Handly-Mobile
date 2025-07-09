@@ -14,7 +14,6 @@ interface PostProps {
 }
 
 export function Post({ categories, image, name }: PostProps) {
-  console.log(image)
   return (
     <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6">
       <VStack className=" flex flex-row w-11/12 mx-auto">

@@ -41,3 +41,14 @@ export async function getFeed() {
   const response = await api.get('/feed')
   return response.data
 }
+
+export async function getCategories(filter: string[]) {
+  if (!filter || filter.length === 0) {
+    const response = await api.get('/categories')
+    return response.data
+  }
+
+  const filterString = filter.join(',')
+  const response = await api.get(`/categories?filer=${filterString}`)
+  return response.data
+}
