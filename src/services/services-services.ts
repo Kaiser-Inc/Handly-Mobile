@@ -36,3 +36,8 @@ export async function updateServiceImage(
   const response = await api.post(`/services/${serviceId}/image`, serviceImage)
   return response.data
 }
+
+export async function getFeed() {
+  const response = await api.get('/feed')
+  return response.data
+}

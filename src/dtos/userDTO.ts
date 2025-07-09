@@ -3,7 +3,7 @@ export type UserDTO = {
   name: string
   email: string
   role: 'customer' | 'provider'
-  profile_pic: typeof File | null
+  profile_pic: string | null
 }
 
 export type TokenDTO = {
