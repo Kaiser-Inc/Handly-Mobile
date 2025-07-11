@@ -5,15 +5,18 @@ interface GradientButtonProps {
   onPress: () => void
   isLoading?: boolean
   text: string
+  testID?: string;
 }
 
 export function GradientButton({
   onPress,
   text,
   isLoading,
+  testID
 }: GradientButtonProps) {
   return (
     <Button
+      testID={testID}
       onPress={onPress}
       isDisabled={isLoading}
       className="w-10/12 h-16 rounded-full flex justify-center items-center my-4 mx-auto"
