@@ -144,12 +144,14 @@ export function SignUp() {
                     control={control}
                     name="name"
                     label="Nome Completo"
+                    testID="nameInput"
                     error={errors.name?.message}
                   />
                   <FormInput
                     control={control}
                     name="email"
                     label="Email"
+                    testID="emailInput"
                     keyboardType="email-address"
                     error={errors.email?.message}
                   />
@@ -158,6 +160,7 @@ export function SignUp() {
                     control={control}
                     name="cpf_cnpj"
                     label="CPF/CNPJ"
+                    testID="cpf_cnpjInput"
                     error={errors.cpf_cnpj?.message}
                     keyboardType="numeric"
                     onChangeText={handleDocumentChange}
@@ -168,6 +171,7 @@ export function SignUp() {
                     control={control}
                     name="password"
                     label="Senha"
+                    testID="passwordInput"
                     isPassword
                     showPassword={showPassword}
                     onTogglePassword={() => {
@@ -179,6 +183,7 @@ export function SignUp() {
                   <GradientButton
                     onPress={handleSubmit(handleOnSubmit)}
                     isLoading={isLoading}
+                    testID="signup-Button"
                     text="Cadastre-se"
                   />
                 </FormControl>
