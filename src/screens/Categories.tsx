@@ -1,5 +1,90 @@
-import { Text } from '@gluestack-ui/themed'
+import { Image, ScrollView, Text, VStack, View } from '@gluestack-ui/themed'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+import BackgroundImg from '@assets/bg.png'
+import { HomeHeader } from '@components/HomeHeader'
+
+import { Badge } from '@components/Badge'
+import { GradientButton } from '@components/GradientButton'
+import { ToastMessage } from '@components/ToastMessage'
+import type { ServiceFeedDTO } from '@dtos/serviceDTO'
+import { getCategories } from '@services/services-services'
+import { useEffect, useState } from 'react'
 
 export function Categories() {
-  return <Text>CATEGORIAS</Text>
+  const [selected, setSelected] = useState<string[]>([])
+  const [categories, setCategories] = useState<string[]>([])
+  const [services, setServices] = useState<ServiceFeedDTO[]>([])
+  const [toastVisible, setToastVisible] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
+    'error',
+  )
+
+  useEffect(() => {
+    async function loadCategories() {
+      const data = await getCategories([])
+      setCategories(data.categories)
+      setServices(data.services)
+    }
+    loadCategories()
+  }, [])
+
+  function toggleCategory(category: string) {
+    if (selected.includes(category)) {
+      setSelected(selected.filter((item) => item !== category))
+    } else if (selected.length < 5) {
+      setSelected([...selected, category])
+    }
+  }
+
+  async function handleFilter() {
+    const data = await getCategories(selected)
+    setServices([])
+    setToastMessage(data.message || 'Nenhum serviço encontrado')
+    setToastType('info')
+    setToastVisible(true)
+  }
+
+  return (
+    <SafeAreaView className="flex-1" style={{ backgroundColor: 'transparent' }}>
+      <ToastMessage
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
+      <Image
+        source={BackgroundImg}
+        alt="gradiente de indigo a lavanda"
+        defaultSource={BackgroundImg}
+        className="w-full h-full absolute"
+      />
+      <VStack className="flex">
+        <HomeHeader />
+      </VStack>
+      <ScrollView
+        className=" flex-1 bg-white rounded-tr-3xl rounded-tl-3xl"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text className=" my-8 ml-8 text-lg">Filtre até cinco categorias</Text>
+        <View className=" flex flex-row w-full flex-wrap items-start px-4 mb-12">
+          {categories.map((category: string) => (
+            <Badge
+              key={category}
+              value={category}
+              selected={selected.includes(category)}
+              onPress={() => toggleCategory(category)}
+            />
+          ))}
+        </View>
+        <GradientButton text="Filtrar Categorias" onPress={handleFilter} />
+        <View>
+          {services.map((service) => (
+            <Text key={service.service_name}>{service.service_name}</Text>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  )
 }
