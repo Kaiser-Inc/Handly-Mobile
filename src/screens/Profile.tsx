@@ -22,6 +22,7 @@ import { UserPhoto } from '@components/UserPhoto'
 import type { ServiceDTO } from '@dtos/serviceDTO'
 import type { UserDTO } from '@dtos/userDTO'
 import { useAuth } from '@hooks/useAuth'
+import { useScreenRefresh } from '@hooks/useScreenRefresh'
 import { useNavigation } from '@react-navigation/native'
 import type { AppNavigatorRoutesProps } from '@routes/app.routes'
 import { apiUrl } from '@services/api/api'
@@ -122,9 +123,7 @@ export function Profile() {
     navigation.navigate('Serviço', { serviceId })
   }
 
-  useEffect(() => {
-    loadUserProfile()
-  }, [loadUserProfile])
+  useScreenRefresh(loadUserProfile)
 
   useEffect(() => {
     async function fetchAndSetServices() {

@@ -7,20 +7,20 @@ import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
+import { useScreenRefresh } from '@hooks/useScreenRefresh'
 import { getFeed } from '@services/services-services'
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export function Feed() {
   const [services, setServices] = useState([])
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    async function loadServices() {
-      const data = await getFeed()
-      setServices(data)
-    }
-    loadServices()
+  const loadServices = useCallback(async () => {
+    const data = await getFeed()
+    setServices(data)
   }, [])
+
+  useScreenRefresh(loadServices)
 
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>

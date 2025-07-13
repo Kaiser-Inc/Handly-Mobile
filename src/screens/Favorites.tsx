@@ -7,20 +7,22 @@ import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
+import { useFocusEffect } from '@react-navigation/native'
 import { getFeed } from '@services/services-services'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export function Favorites() {
   const [services, setServices] = useState([])
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    async function loadServices() {
-      const data = await getFeed()
-      setServices(data)
-    }
-    loadServices()
+  const loadServices = useCallback(async () => {
+    const data = await getFeed()
+    setServices(data)
   }, [])
+
+  useEffect(() => {
+    loadServices()
+  }, [loadServices])
 
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>

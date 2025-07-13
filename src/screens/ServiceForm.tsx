@@ -14,6 +14,7 @@ import {
 } from '@gluestack-ui/themed'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import type { AppNavigatorRoutesProps } from '@routes/app.routes'
 import {
   createService,
   getService,
@@ -31,7 +32,7 @@ type RouteParams = {
 
 export function ServiceForm() {
   const route = useRoute()
-  const navigation = useNavigation()
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
   const { serviceId } = (route.params as RouteParams) || {}
   const [isEditing, setIsEditing] = React.useState(false)
 
@@ -109,7 +110,7 @@ export function ServiceForm() {
       setToastVisible(true)
 
       setTimeout(() => {
-        navigation.goBack()
+        navigation.navigate('Perfil')
       }, 1500)
     } catch (error) {
       const isAppError = error instanceof AppError
