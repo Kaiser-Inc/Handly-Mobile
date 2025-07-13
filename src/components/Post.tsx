@@ -1,25 +1,38 @@
 import { HStack, Image, Text, VStack } from '@gluestack-ui/themed'
+import { apiUrl } from '@services/api/api'
 import {
   FolderMinus,
   Heart,
   MessageCircleMore,
   Send,
 } from 'lucide-react-native'
+import DefaultService from '../assets/defaut-service.svg'
 import { UserPhoto } from './UserPhoto'
 
 interface PostProps {
   name: string
   categories: string[]
-  image?: string
+  profileImage?: string
+  serviceImage?: string
 }
 
-export function Post({ categories, image, name }: PostProps) {
+export function Post({
+  categories,
+  profileImage,
+  serviceImage,
+  name,
+}: PostProps) {
   return (
     <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6">
       <VStack className=" flex flex-row w-11/12 mx-auto">
         <UserPhoto
           className=" w-14 h-14 rounded-2xl mr-4 "
-          source={'https://github.com/pHenrymelo.png'}
+          source={{
+            uri:
+              typeof profileImage === 'string'
+                ? `${apiUrl}/uploads/profile_pics/${profileImage}`
+                : 'https://unavatar.io/substack/bankless',
+          }}
           alt="Foto de perfil de usuário"
         />
         <HStack className=" flex flex-col my-auto">
@@ -30,11 +43,17 @@ export function Post({ categories, image, name }: PostProps) {
         </HStack>
       </VStack>
       <VStack className=" flex flex-col mx-auto my-4 relative">
-        <Image
-          source={{ uri: image }}
-          alt="Imagem de serviço"
-          className=" rounded-2xl"
-        />
+        {serviceImage ? (
+          <Image
+            source={{
+              uri: `${apiUrl}/uploads/services/${serviceImage}`,
+            }}
+            alt="Imagem de serviço"
+            className=" rounded-2xl"
+          />
+        ) : (
+          <DefaultService width={120} height={120} />
+        )}
       </VStack>
 
       <VStack className=" flex flex-row w-10/12 mx-auto mt-4 gap-4">

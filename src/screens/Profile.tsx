@@ -20,6 +20,7 @@ import { ToastMessage } from '@components/ToastMessage'
 import { UserPhoto } from '@components/UserPhoto'
 import type { UserDTO } from '@dtos/userDTO'
 import { useAuth } from '@hooks/useAuth'
+import { apiUrl } from '@services/api/api'
 import {
   getProfile,
   updateUser,
@@ -114,6 +115,8 @@ export function Profile() {
     loadUserProfile()
   }, [loadUserProfile])
 
+  console.log(user?.profile_pic)
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ToastMessage
@@ -140,7 +143,7 @@ export function Profile() {
             source={{
               uri:
                 typeof user?.profile_pic === 'string'
-                  ? user.profile_pic
+                  ? `${apiUrl}/uploads/profile_pics/${user.profile_pic}`
                   : 'https://unavatar.io/substack/bankless',
             }}
             alt="Foto de perfil de usuário"

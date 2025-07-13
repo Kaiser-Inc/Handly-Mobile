@@ -48,7 +48,7 @@ export function Favorites() {
           <Post
             key={service.id}
             name={service.service_name}
-            image={service.image}
+            // serviceImage={service.image}
             categories={service.categories}
           />
         ))}
