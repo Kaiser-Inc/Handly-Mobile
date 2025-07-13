@@ -15,6 +15,7 @@ export function Categories() {
   const [selected, setSelected] = useState<string[]>([])
   const [categories, setCategories] = useState<string[]>([])
   const [services, setServices] = useState<ServiceFeedDTO[]>([])
+  const [filteredServices, setFilteredServices] = useState<ServiceFeedDTO[]>([])
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
@@ -27,6 +28,7 @@ export function Categories() {
       const data = await getCategories([])
       setCategories(data.categories)
       setServices(data.services)
+      setFilteredServices([]) // Limpa os filtrados ao carregar
     }
     loadCategories()
   }, [])
@@ -40,10 +42,16 @@ export function Categories() {
   }
 
   async function handleFilter() {
-    const data = await getCategories(selected)
-    setServices([])
-    setToastMessage(data.message || 'Nenhum serviço encontrado')
-    setToastType('info')
+    const filtrados = services.filter((service) =>
+      service.categories?.some((cat: string) => selected.includes(cat)),
+    )
+    setFilteredServices(filtrados)
+    setToastMessage(
+      filtrados.length > 0
+        ? 'Serviços filtrados com sucesso'
+        : 'Nenhum serviço encontrado',
+    )
+    setToastType(filtrados.length > 0 ? 'success' : 'info')
     setToastVisible(true)
   }
 
@@ -88,7 +96,7 @@ export function Categories() {
         </View>
         <GradientButton text="Filtrar Categorias" onPress={handleFilter} />
         <View>
-          {services.map((service) => (
+          {filteredServices.map((service) => (
             <Text key={service.service_name}>{service.service_name}</Text>
           ))}
         </View>
