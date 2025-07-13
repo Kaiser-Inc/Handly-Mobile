@@ -1,4 +1,5 @@
 import { Image, ScrollView, Text, VStack, View } from '@gluestack-ui/themed'
+import { TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackgroundImg from '@assets/bg.png'
@@ -61,6 +62,10 @@ export function Categories() {
     category.toLowerCase().includes(search.toLowerCase()),
   )
 
+  // Decide quais categorias mostrar nos badges
+  const badgesToShow =
+    filteredServices.length > 0 ? selected : filteredCategories
+
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <ToastMessage
@@ -84,9 +89,19 @@ export function Categories() {
         className=" flex-1 bg-white rounded-tr-3xl rounded-tl-3xl"
         showsVerticalScrollIndicator={false}
       >
-        <Text className=" my-8 ml-8 text-lg">Filtre até cinco categorias</Text>
+        <View className="flex flex-row items-center justify-between my-8 mx-8">
+          <Text className="text-lg">Filtre até cinco categorias</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setSelected([])
+              setFilteredServices([])
+            }}
+          >
+            <Text className="text-purple-900 font-bold">Limpar</Text>
+          </TouchableOpacity>
+        </View>
         <View className=" flex flex-row w-full flex-wrap items-start px-4 mb-12">
-          {filteredCategories.map((category: string) => (
+          {badgesToShow.map((category: string) => (
             <Badge
               key={category}
               value={category}
