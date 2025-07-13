@@ -5,6 +5,7 @@ import BackgroundImg from '@assets/bg.png'
 import { Badge } from '@components/Badge'
 import { GradientButton } from '@components/GradientButton'
 import { HomeHeader } from '@components/HomeHeader'
+import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
@@ -97,7 +98,12 @@ export function Categories() {
         <GradientButton text="Filtrar Categorias" onPress={handleFilter} />
         <View>
           {filteredServices.map((service) => (
-            <Text key={service.service_name}>{service.service_name}</Text>
+            <Post
+              key={service.id}
+              name={service.service_name}
+              image={service.image}
+              categories={service.categories}
+            />
           ))}
         </View>
       </ScrollView>

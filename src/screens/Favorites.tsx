@@ -46,7 +46,7 @@ export function Favorites() {
       >
         {filteredServices.map((service: ServiceFeedDTO) => (
           <Post
-            key={service.service_name}
+            key={service.id}
             name={service.service_name}
             image={service.image}
             categories={service.categories}
