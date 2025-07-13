@@ -7,7 +7,7 @@ import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
-import { fetchServices, getFeed } from '@services/services-services'
+import { getFeed } from '@services/services-services'
 import { useEffect, useState } from 'react'
 
 export function Favorites() {
