@@ -10,6 +10,7 @@ import {
 import * as ImagePicker from 'expo-image-picker'
 import { useCallback, useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
+import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Camera, Pencil, ThumbsUp } from 'lucide-react-native'
@@ -146,94 +147,100 @@ export function Profile() {
         type={toastType}
         onHide={() => setToastVisible(false)}
       />
-      <Center className="w-full h-full items-center">
-        <Text className="font-bold text-xl my-12">Perfil</Text>
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        <Center className="w-full items-center py-8">
+          <Text className="font-bold text-xl mb-8">Perfil</Text>
 
-        <Center className="w-10/12 h-32 shadow-2xl rounded-3xl overflow-hidden bg-white">
-          <Image
-            source={BackgroundImg}
-            alt="gradiente de indigo a lavanda"
-            defaultSource={BackgroundImg}
-            className="w-full h-full"
-          />
-        </Center>
+          <Center className="w-10/12 h-32 shadow-2xl rounded-3xl overflow-hidden bg-white">
+            <Image
+              source={BackgroundImg}
+              alt="gradiente de indigo a lavanda"
+              defaultSource={BackgroundImg}
+              className="w-full h-full"
+            />
+          </Center>
 
-        <View className="relative -mt-20">
-          <UserPhoto
-            className="w-32 h-32 rounded-full border-4 border-white bg-gray-400"
-            source={{
-              uri:
-                typeof user?.profile_pic === 'string'
-                  ? `${apiUrl}/uploads/profile_pics/${user.profile_pic}`
-                  : 'https://unavatar.io/substack/bankless',
-            }}
-            alt="Foto de perfil de usuário"
-          />
-          <TouchableOpacity
-            className="absolute bottom-2 right-2 bg-white rounded-full p-1"
-            onPress={handleSelectImage}
-          >
-            <Camera size={20} color="#4B5563" />
-          </TouchableOpacity>
-        </View>
+          <View className="relative -mt-20">
+            <UserPhoto
+              className="w-32 h-32 rounded-full border-4 border-white bg-gray-400"
+              source={{
+                uri:
+                  typeof user?.profile_pic === 'string'
+                    ? `${apiUrl}/uploads/profile_pics/${user.profile_pic}`
+                    : 'https://unavatar.io/substack/bankless',
+              }}
+              alt="Foto de perfil de usuário"
+            />
+            <TouchableOpacity
+              className="absolute bottom-2 right-2 bg-white rounded-full p-1"
+              onPress={handleSelectImage}
+            >
+              <Camera size={20} color="#4B5563" />
+            </TouchableOpacity>
+          </View>
 
-        <View className="flex-row items-center mt-4">
-          {isEditingName ? (
-            <VStack className=" flex flex-col justify-start w-8/12">
-              <Text className=" font-bold text-xl">Nome completo</Text>
-              <Input className=" w-full border-b-2 border-purple-300 flex flex-row justify-between items-center">
-                <InputField
-                  value={editedName}
-                  onChangeText={setEditedName}
-                  placeholder="Digite seu nome"
-                />
-                <TouchableOpacity className="ml-2" onPress={handleUpdateName}>
-                  <ThumbsUp size={20} color="#9356FC" />
-                </TouchableOpacity>
-              </Input>
-            </VStack>
-          ) : (
-            <>
-              <Text className="text-xl font-medium text-black mr-2">
-                {user?.name || 'Usuário'}
-              </Text>
-              <TouchableOpacity onPress={() => setIsEditingName(true)}>
-                <Pencil size={18} color="#4B5563" />
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
-
-        <Text className="text-gray-400 mt-2">
-          {user?.email || 'Carregando...'}
-        </Text>
-
-        {user?.role === 'provider' && (
-          <View className="w-full flex justify-center items-center mt-8 px-4">
-            <Text className="font-bold text-lg mb-2">Meus Serviços</Text>
-            {services.length === 0 ? (
-              <Text>Nenhum serviço encontrado.</Text>
+          <View className="flex-row items-center mt-4">
+            {isEditingName ? (
+              <VStack className="flex flex-col justify-start w-8/12">
+                <Text className="font-bold text-xl">Nome completo</Text>
+                <Input className="w-full border-b-2 border-purple-300 flex flex-row justify-between items-center">
+                  <InputField
+                    value={editedName}
+                    onChangeText={setEditedName}
+                    placeholder="Digite seu nome"
+                  />
+                  <TouchableOpacity className="ml-2" onPress={handleUpdateName}>
+                    <ThumbsUp size={20} color="#9356FC" />
+                  </TouchableOpacity>
+                </Input>
+              </VStack>
             ) : (
-              services.map((service) => (
-                <Post
-                  key={service.id}
-                  name={service.name}
-                  categories={service.categories}
-                  isProvider={true}
-                  onEdit={() => handleEditService(service.id)}
-                  onDelete={() => {
-                    console.log('deletar serviço')
-                  }}
-                />
-              ))
+              <>
+                <Text className="text-xl font-medium text-black mr-2">
+                  {user?.name || 'Usuário'}
+                </Text>
+                <TouchableOpacity onPress={() => setIsEditingName(true)}>
+                  <Pencil size={18} color="#4B5563" />
+                </TouchableOpacity>
+              </>
             )}
           </View>
-        )}
 
-        <Center className="mt-auto">
-          <GradientButton text="Sair" onPress={signOut} />
+          <Text className="text-gray-400 mt-2">
+            {user?.email || 'Carregando...'}
+          </Text>
+
+          {user?.role === 'provider' && (
+            <View className="w-full flex justify-center items-center mt-8 px-4">
+              <Text className="font-bold text-lg mb-2">Meus Serviços</Text>
+              {services.length === 0 ? (
+                <Text>Nenhum serviço encontrado.</Text>
+              ) : (
+                services.map((service) => (
+                  <Post
+                    key={service.id}
+                    name={service.name}
+                    categories={service.categories}
+                    isProvider={true}
+                    onEdit={() => handleEditService(service.id)}
+                    onDelete={() => {
+                      console.log('deletar serviço')
+                    }}
+                  />
+                ))
+              )}
+            </View>
+          )}
+
+          <View className="mt-8">
+            <GradientButton text="Sair" onPress={signOut} />
+          </View>
         </Center>
-      </Center>
+      </ScrollView>
     </SafeAreaView>
   )
 }
