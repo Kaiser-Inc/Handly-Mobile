@@ -213,6 +213,13 @@ export function Profile() {
                   key={service.id}
                   name={service.name}
                   categories={service.categories}
+                  isProvider={true}
+                  onEdit={() => {
+                    console.log('editar serviço')
+                  }}
+                  onDelete={() => {
+                    console.log('deletar serviço')
+                  }}
                 />
               ))
             )}

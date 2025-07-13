@@ -5,7 +5,10 @@ import {
   Heart,
   MessageCircleMore,
   Send,
+  SquarePen,
+  Trash2,
 } from 'lucide-react-native'
+import { TouchableOpacity } from 'react-native'
 import DefaultService from '../assets/defaut-service.svg'
 import { UserPhoto } from './UserPhoto'
 
@@ -14,6 +17,9 @@ interface PostProps {
   categories: string[]
   profileImage?: string
   serviceImage?: string
+  isProvider?: boolean
+  onEdit?: () => void
+  onDelete?: () => void
 }
 
 export function Post({
@@ -21,6 +27,9 @@ export function Post({
   profileImage,
   serviceImage,
   name,
+  isProvider,
+  onEdit,
+  onDelete,
 }: PostProps) {
   return (
     <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6">
@@ -57,22 +66,35 @@ export function Post({
       </VStack>
 
       <VStack className=" flex flex-row w-10/12 mx-auto mt-4 gap-4">
-        <VStack className=" felx flex-row gap-2 justify-center items-center">
-          <Heart size={24} stroke="#95A1B1" />
-          <Text className=" text-gray-300">413</Text>
-        </VStack>
-        <VStack className=" felx flex-row gap-2 justify-center items-center">
-          <MessageCircleMore size={24} stroke="#95A1B1" />
-          <Text className=" text-gray-300">25</Text>
-        </VStack>
-        <VStack className=" felx flex-row gap-2 justify-center items-center">
-          <FolderMinus size={24} stroke="#95A1B1" />
-          <Text className=" text-gray-300">137</Text>
-        </VStack>
-
-        <HStack className=" ml-auto ">
-          <Send size={24} stroke="#95A1B1" />
-        </HStack>
+        {!isProvider && (
+          <>
+            <VStack className=" felx flex-row gap-2 justify-center items-center">
+              <Heart size={24} stroke="#95A1B1" />
+              <Text className=" text-gray-300">413</Text>
+            </VStack>
+            <VStack className=" felx flex-row gap-2 justify-center items-center">
+              <MessageCircleMore size={24} stroke="#95A1B1" />
+              <Text className=" text-gray-300">25</Text>
+            </VStack>
+            <VStack className=" felx flex-row gap-2 justify-center items-center">
+              <FolderMinus size={24} stroke="#95A1B1" />
+              <Text className=" text-gray-300">137</Text>
+            </VStack>
+            <HStack className=" ml-auto ">
+              <Send size={24} stroke="#95A1B1" />
+            </HStack>
+          </>
+        )}
+        {isProvider && (
+          <HStack className=" mx-auto w-full flex flex-row justify-around">
+            <TouchableOpacity onPress={onEdit}>
+              <SquarePen size={24} stroke="#9356FC" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onDelete}>
+              <Trash2 size={24} stroke="#FF4B4B" />
+            </TouchableOpacity>
+          </HStack>
+        )}
       </VStack>
     </HStack>
   )
