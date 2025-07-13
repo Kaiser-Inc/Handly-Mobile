@@ -1,4 +1,5 @@
-import { Image, ScrollView, VStack } from '@gluestack-ui/themed'
+import { Image, VStack } from '@gluestack-ui/themed'
+import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackgroundImg from '@assets/bg.png'
@@ -41,8 +42,9 @@ export function Feed() {
         </HomeHeader>
       </VStack>
       <ScrollView
-        className="flex bg-white flex-col rounded-tr-3xl rounded-tl-3xl pt-10"
+        className="flex bg-white flex-col rounded-tr-3xl rounded-tl-3xl pt-10 "
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
         {filteredServices.map((service: ServiceFeedDTO) => (
           <Post

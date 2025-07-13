@@ -30,7 +30,7 @@ export function Categories() {
       const data = await getCategories([])
       setCategories(data.categories)
       setServices(data.services)
-      setFilteredServices([]) // Limpa os filtrados ao carregar
+      setFilteredServices([])
     }
     loadCategories()
   }, [])
@@ -57,12 +57,10 @@ export function Categories() {
     setToastVisible(true)
   }
 
-  // Filtra as categorias pelo texto da barra de pesquisa
   const filteredCategories = categories.filter((category) =>
     category.toLowerCase().includes(search.toLowerCase()),
   )
 
-  // Decide quais categorias mostrar nos badges
   const badgesToShow =
     filteredServices.length > 0 ? selected : filteredCategories
 

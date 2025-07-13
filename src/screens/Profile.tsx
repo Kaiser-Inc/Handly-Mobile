@@ -124,7 +124,7 @@ export function Profile() {
       if (user?.role === 'provider') {
         const allServices: ServiceDTO[] = await fetchServices()
         const filtered = allServices.filter(
-          (service) => service.provider_key === '12345678909',
+          (service) => service.provider_key === user.cpf_cnpj,
         )
         setServices(filtered)
       }
