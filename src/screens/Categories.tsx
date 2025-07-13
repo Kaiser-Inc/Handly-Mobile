@@ -2,10 +2,10 @@ import { Image, ScrollView, Text, VStack, View } from '@gluestack-ui/themed'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackgroundImg from '@assets/bg.png'
-import { HomeHeader } from '@components/HomeHeader'
-
 import { Badge } from '@components/Badge'
 import { GradientButton } from '@components/GradientButton'
+import { HomeHeader } from '@components/HomeHeader'
+import { SearchBar } from '@components/SearchBar'
 import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
 import { getCategories } from '@services/services-services'
@@ -20,6 +20,7 @@ export function Categories() {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
     'error',
   )
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     async function loadCategories() {
@@ -46,6 +47,11 @@ export function Categories() {
     setToastVisible(true)
   }
 
+  // Filtra as categorias pelo texto da barra de pesquisa
+  const filteredCategories = categories.filter((category) =>
+    category.toLowerCase().includes(search.toLowerCase()),
+  )
+
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <ToastMessage
@@ -61,7 +67,9 @@ export function Categories() {
         className="w-full h-full absolute"
       />
       <VStack className="flex">
-        <HomeHeader />
+        <HomeHeader>
+          <SearchBar onChange={setSearch} />
+        </HomeHeader>
       </VStack>
       <ScrollView
         className=" flex-1 bg-white rounded-tr-3xl rounded-tl-3xl"
@@ -69,7 +77,7 @@ export function Categories() {
       >
         <Text className=" my-8 ml-8 text-lg">Filtre até cinco categorias</Text>
         <View className=" flex flex-row w-full flex-wrap items-start px-4 mb-12">
-          {categories.map((category: string) => (
+          {filteredCategories.map((category: string) => (
             <Badge
               key={category}
               value={category}
