@@ -30,6 +30,7 @@ import { apiUrl } from '@services/api/api'
 import { fetchServices } from '@services/services-services'
 import {
   getProfile,
+  getProfilePic,
   updateUser,
   uploadProfilePic,
 } from '@services/users-services'
@@ -41,6 +42,7 @@ export function Profile() {
   const { signOut } = useAuth()
   const navigation = useNavigation<AppNavigatorRoutesProps>()
   const [user, setUser] = useState<UserDTO | null>(null)
+  const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null)
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
@@ -56,6 +58,13 @@ export function Profile() {
       const userData = await getProfile()
       setUser(userData)
       setEditedName(userData.name)
+
+      const profilePicData = await getProfilePic()
+      if (profilePicData.profile_pic) {
+        setProfilePicUrl(
+          `${apiUrl}/uploads/profile_pics/${profilePicData.profile_pic}`,
+        )
+      }
     } catch (error) {
       const isAppError = error instanceof AppError
       const message = isAppError
@@ -168,10 +177,7 @@ export function Profile() {
             <UserPhoto
               className="w-32 h-32 rounded-full border-4 border-white bg-gray-400"
               source={{
-                uri:
-                  typeof user?.profile_pic === 'string'
-                    ? `${apiUrl}/uploads/profile_pics/${user.profile_pic}`
-                    : 'https://unavatar.io/substack/bankless',
+                uri: profilePicUrl || 'https://unavatar.io/substack/bankless',
               }}
               alt="Foto de perfil de usuário"
             />
