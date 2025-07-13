@@ -22,6 +22,8 @@ import { UserPhoto } from '@components/UserPhoto'
 import type { ServiceDTO } from '@dtos/serviceDTO'
 import type { UserDTO } from '@dtos/userDTO'
 import { useAuth } from '@hooks/useAuth'
+import { useNavigation } from '@react-navigation/native'
+import type { AppNavigatorRoutesProps } from '@routes/app.routes'
 import { apiUrl } from '@services/api/api'
 import { fetchServices } from '@services/services-services'
 import {
@@ -35,6 +37,7 @@ import { nameProfileSchema } from '../@types/profileSchema'
 
 export function Profile() {
   const { signOut } = useAuth()
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
   const [user, setUser] = useState<UserDTO | null>(null)
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -113,6 +116,10 @@ export function Profile() {
     setToastMessage(message)
     setToastType(type)
     setToastVisible(true)
+  }
+
+  async function handleEditService(serviceId: string) {
+    navigation.navigate('Serviço', { serviceId })
   }
 
   useEffect(() => {
@@ -214,9 +221,7 @@ export function Profile() {
                   name={service.name}
                   categories={service.categories}
                   isProvider={true}
-                  onEdit={() => {
-                    console.log('editar serviço')
-                  }}
+                  onEdit={() => handleEditService(service.id)}
                   onDelete={() => {
                     console.log('deletar serviço')
                   }}
