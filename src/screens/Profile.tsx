@@ -16,11 +16,14 @@ import { Camera, Pencil, ThumbsUp } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
 import { GradientButton } from '@components/GradientButton'
+import { Post } from '@components/Post'
 import { ToastMessage } from '@components/ToastMessage'
 import { UserPhoto } from '@components/UserPhoto'
+import type { ServiceDTO } from '@dtos/serviceDTO'
 import type { UserDTO } from '@dtos/userDTO'
 import { useAuth } from '@hooks/useAuth'
 import { apiUrl } from '@services/api/api'
+import { fetchServices } from '@services/services-services'
 import {
   getProfile,
   updateUser,
@@ -41,6 +44,7 @@ export function Profile() {
 
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState('')
+  const [services, setServices] = useState<ServiceDTO[]>([])
 
   const loadUserProfile = useCallback(async () => {
     try {
@@ -115,7 +119,18 @@ export function Profile() {
     loadUserProfile()
   }, [loadUserProfile])
 
-  console.log(user?.profile_pic)
+  useEffect(() => {
+    async function fetchAndSetServices() {
+      if (user?.role === 'provider') {
+        const allServices: ServiceDTO[] = await fetchServices()
+        const filtered = allServices.filter(
+          (service) => service.provider_key === '12345678909',
+        )
+        setServices(filtered)
+      }
+    }
+    fetchAndSetServices()
+  }, [user])
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -186,6 +201,23 @@ export function Profile() {
         <Text className="text-gray-400 mt-2">
           {user?.email || 'Carregando...'}
         </Text>
+
+        {user?.role === 'provider' && (
+          <View className="w-full flex justify-center items-center mt-8 px-4">
+            <Text className="font-bold text-lg mb-2">Meus Serviços</Text>
+            {services.length === 0 ? (
+              <Text>Nenhum serviço encontrado.</Text>
+            ) : (
+              services.map((service) => (
+                <Post
+                  key={service.id}
+                  name={service.name}
+                  categories={service.categories}
+                />
+              ))
+            )}
+          </View>
+        )}
 
         <Center className="mt-auto">
           <GradientButton text="Sair" onPress={signOut} />
