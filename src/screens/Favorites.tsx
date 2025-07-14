@@ -54,6 +54,7 @@ export function Favorites() {
             name={service.service_name}
             categories={service.categories}
             profileImage={service.profile_pic}
+            serviceImage={service.image}
           />
         ))}
       </ScrollView>

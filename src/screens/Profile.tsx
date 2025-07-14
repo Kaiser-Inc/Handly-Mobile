@@ -257,7 +257,7 @@ export function Profile() {
                     name={service.name}
                     categories={service.categories}
                     serviceImage={service.image}
-                    profileImage={profilePicUrl}
+                    profileImage={user.profile_pic}
                     isProvider={true}
                     onEdit={() => handleEditService(service.id)}
                     onDelete={() => {
