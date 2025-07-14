@@ -22,7 +22,7 @@ type AppRoutes = {
   Categorias: undefined
   Favoritos: undefined
   Perfil: undefined
-  Serviço: undefined
+  Serviço: { serviceId?: string } | undefined
 }
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<AppRoutes>

@@ -1,0 +1,35 @@
+appId: com.kaiser.handly
+env: 
+  NAME: "       "
+  EMAIL: nomesocomespacos@email.com
+  CPF_CNPJ: 93079586026
+  PASSWORD: SenhaForte123!
+---
+- openLink: exp://127.0.0.1:8081
+
+- tapOn: 
+    id: signUp-Redirect-Button
+
+- tapOn: 
+    id: nameInput
+- inputText: ${NAME}
+
+- tapOn: 
+    id: emailInput
+- inputText: ${EMAIL}
+
+- tapOn: 
+    id: CPF_CNPJInput
+- inputText: ${CPF_CNPJ}
+
+- tapOn: 
+    id: passwordInput
+- inputText: ${PASSWORD}
+
+- doubleTapOn: 
+    id: signup-Button
+
+
+
+- assertVisible: 'Preencha todos os campos obrigatórios.'
+

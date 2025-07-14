@@ -27,6 +27,7 @@ interface FormInputProps<T extends FieldValues> {
   onChangeText?: (text: string) => void
   maxLength?: number
   placeholder?: string
+  testID?: string;
 }
 
 export function FormInput<T extends FieldValues>({
@@ -42,6 +43,7 @@ export function FormInput<T extends FieldValues>({
   maxLength,
   onChangeText,
   placeholder,
+  testID
 }: FormInputProps<T>) {
   return (
     <VStack className=" w-full px-8 mt-2">
@@ -52,6 +54,7 @@ export function FormInput<T extends FieldValues>({
         render={({ field: { onChange, value } }) => (
           <Input>
             <InputField
+              testID={testID}
               multiline={isTextarea ? isTextarea : false}
               autoCapitalize="none"
               value={value}

@@ -1,0 +1,17 @@
+appId: com.kaiser.handly
+env: 
+  EMAIL: nel@email.com
+  PASSWORD: SenhaForte123
+---
+- openLink: exp://127.0.0.1:8081
+
+- tapOn: 
+    id: emailInput
+- inputText: ${EMAIL}
+
+- tapOn: 
+    id: passwordInput
+- inputText: ${PASSWORD}
+
+- tapOn:
+    id: login-Button

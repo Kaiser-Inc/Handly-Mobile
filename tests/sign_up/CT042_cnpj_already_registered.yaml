@@ -1,0 +1,34 @@
+appId: com.kaiser.handly
+env: 
+  NAME: Antilus
+  EMAIL: cnpjjaregistrado@email.com
+  CPF_CNPJ: 62470375000172
+  PASSWORD: SenhaForte123!
+---
+- openLink: exp://127.0.0.1:8081
+
+- tapOn: 
+    id: signUp-Redirect-Button
+
+- tapOn: 
+    id: nameInput
+- inputText: ${NAME}
+
+- tapOn: 
+    id: emailInput
+- inputText: ${EMAIL}
+
+- tapOn: 
+    id: CPF_CNPJInput
+- inputText: ${CPF_CNPJ}
+
+- tapOn: 
+    id: passwordInput
+- inputText: ${PASSWORD}
+
+- doubleTapOn: 
+    id: signup-Button
+
+
+- assertVisible: 'CNPJ já está cadastrado no sistema.'
+

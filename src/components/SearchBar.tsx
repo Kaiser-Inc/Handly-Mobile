@@ -1,23 +1,18 @@
-import { HStack, Input, InputField, Text } from '@gluestack-ui/themed'
-import { Search } from 'lucide-react-native'
-import { useForm } from 'react-hook-form'
-import { FormInput } from './FormInput'
+import { HStack, Input, InputField } from '@gluestack-ui/themed'
 
-interface SearchFormData {
-  query: string
+interface SearchBarProps {
+  onChange: (value: string) => void
 }
 
-export function SearchBar() {
-  const { control } = useForm<SearchFormData>({
-    defaultValues: {
-      query: '',
-    },
-  })
-
+export function SearchBar({ onChange }: SearchBarProps) {
   return (
-    <HStack className=" mx-auto rounded-2xl w-11/12 flex flex-row px-4 my-6 bg-white items-center border border-purple-900">
-      <Input className=" flex-1 ">
-        <InputField className=" w-full mx-2" placeholder="Pesquisar..." />
+    <HStack className="mx-auto rounded-2xl w-11/12 flex flex-row px-4 my-6 bg-white items-center border border-purple-900">
+      <Input className="flex-1">
+        <InputField
+          className="w-full mx-2"
+          placeholder="Pesquisar..."
+          onChangeText={onChange}
+        />
       </Input>
     </HStack>
   )
