@@ -40,7 +40,9 @@ export function Post({
         <UserPhoto
           className=" w-14 h-14 rounded-2xl mr-4 "
           source={{
-            uri: profileImage || 'https://unavatar.io/substack/bankless',
+            uri: profileImage
+              ? `${apiUrl}/uploads/profile_pics/${profileImage}`
+              : 'https://unavatar.io/substack/bankless',
           }}
           alt="Foto de perfil de usuário"
         />
