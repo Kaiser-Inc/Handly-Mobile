@@ -12,6 +12,8 @@ export type ServiceDTO = {
 export type ServiceFeedDTO = {
   id: string
   categories: string[]
+  provider_name: string
+  profile_pic: string
   image: string
   service_name: string
   description: string

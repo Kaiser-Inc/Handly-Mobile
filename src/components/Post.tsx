@@ -16,7 +16,7 @@ import { UserPhoto } from './UserPhoto'
 interface PostProps {
   name: string
   categories: string[]
-  profileImage?: string
+  profileImage: string | null
   serviceImage?: string
   isProvider?: boolean
   onEdit?: () => void
@@ -40,10 +40,7 @@ export function Post({
         <UserPhoto
           className=" w-14 h-14 rounded-2xl mr-4 "
           source={{
-            uri:
-              typeof profileImage === 'string'
-                ? `${apiUrl}/uploads/profile_pics/${profileImage}`
-                : 'https://unavatar.io/substack/bankless',
+            uri: profileImage || 'https://unavatar.io/substack/bankless',
           }}
           alt="Foto de perfil de usuário"
         />
