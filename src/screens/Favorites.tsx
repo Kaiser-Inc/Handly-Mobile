@@ -1,4 +1,5 @@
-import { Image, ScrollView, VStack } from '@gluestack-ui/themed'
+import { Image, VStack } from '@gluestack-ui/themed'
+import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackgroundImg from '@assets/bg.png'
@@ -6,20 +7,22 @@ import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
-import { fetchServices, getFeed } from '@services/services-services'
-import { useEffect, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
+import { getFeed } from '@services/services-services'
+import { useCallback, useEffect, useState } from 'react'
 
 export function Favorites() {
   const [services, setServices] = useState([])
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    async function loadServices() {
-      const data = await getFeed()
-      setServices(data)
-    }
-    loadServices()
+  const loadServices = useCallback(async () => {
+    const data = await getFeed()
+    setServices(data)
   }, [])
+
+  useEffect(() => {
+    loadServices()
+  }, [loadServices])
 
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>
@@ -43,6 +46,7 @@ export function Favorites() {
       <ScrollView
         className="flex bg-white flex-col rounded-tr-3xl rounded-tl-3xl pt-10"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
         {filteredServices.map((service: ServiceFeedDTO) => (
           <Post

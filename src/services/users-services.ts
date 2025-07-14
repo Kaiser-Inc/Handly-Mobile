@@ -18,6 +18,11 @@ export async function getProfile() {
   return response.data
 }
 
+export async function getProfilePic() {
+  const response = await api.get('/protected/profilepic')
+  return response.data
+}
+
 interface imageUploadData {
   profile_pic: string
 }

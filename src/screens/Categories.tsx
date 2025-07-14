@@ -10,8 +10,9 @@ import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
+import { useFocusEffect } from '@react-navigation/native'
 import { getCategories } from '@services/services-services'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 export function Categories() {
   const [selected, setSelected] = useState<string[]>([])
@@ -25,15 +26,16 @@ export function Categories() {
   )
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    async function loadCategories() {
-      const data = await getCategories([])
-      setCategories(data.categories)
-      setServices(data.services)
-      setFilteredServices([]) // Limpa os filtrados ao carregar
-    }
-    loadCategories()
+  const loadCategories = useCallback(async () => {
+    const data = await getCategories([])
+    setCategories(data.categories)
+    setServices(data.services)
+    setFilteredServices([])
   }, [])
+
+  useEffect(() => {
+    loadCategories()
+  }, [loadCategories])
 
   function toggleCategory(category: string) {
     if (selected.includes(category)) {
@@ -57,12 +59,10 @@ export function Categories() {
     setToastVisible(true)
   }
 
-  // Filtra as categorias pelo texto da barra de pesquisa
   const filteredCategories = categories.filter((category) =>
     category.toLowerCase().includes(search.toLowerCase()),
   )
 
-  // Decide quais categorias mostrar nos badges
   const badgesToShow =
     filteredServices.length > 0 ? selected : filteredCategories
 

@@ -20,7 +20,7 @@ export async function updateService(
   serviceId: string,
   serviceUpdatedData: Partial<serviceData>,
 ) {
-  const response = await api.post(`/services/${serviceId}`, serviceUpdatedData)
+  const response = await api.put(`/services/${serviceId}`, serviceUpdatedData)
   return response.data
 }
 
