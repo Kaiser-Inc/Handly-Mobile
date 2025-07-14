@@ -60,21 +60,18 @@ export function Profile() {
       setEditedName(userData.name)
 
       const profilePicData = await getProfilePic()
-      if (profilePicData.profile_pic) {
+      if (profilePicData?.profile_pic) {
         setProfilePicUrl(
           `${apiUrl}/uploads/profile_pics/${profilePicData.profile_pic}`,
         )
+      } else if (userData.profile_pic) {
+        setProfilePicUrl(
+          `${apiUrl}/uploads/profile_pics/${userData.profile_pic}`,
+        )
+      } else {
+        setProfilePicUrl(null)
       }
-    } catch (error) {
-      const isAppError = error instanceof AppError
-      const message = isAppError
-        ? error.message
-        : 'Algo deu errado, por favor tente novamente'
-
-      setToastMessage(message)
-      setToastType('error')
-      setToastVisible(true)
-    }
+    } catch (error) {}
   }, [])
 
   async function handleSelectImage() {
