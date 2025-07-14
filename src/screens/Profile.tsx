@@ -27,7 +27,7 @@ import { useScreenRefresh } from '@hooks/useScreenRefresh'
 import { useNavigation } from '@react-navigation/native'
 import type { AppNavigatorRoutesProps } from '@routes/app.routes'
 import { apiUrl } from '@services/api/api'
-import { fetchServices } from '@services/services-services'
+import { fetchServices, uploadServiceImage } from '@services/services-services'
 import {
   getProfile,
   getProfilePic,
@@ -130,6 +130,34 @@ export function Profile() {
     navigation.navigate('Serviço', { serviceId })
   }
 
+  async function handleUploadServiceImage(serviceId: string) {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      allowsEditing: true,
+      quality: 1,
+      base64: false,
+    })
+
+    if (!result.canceled && result.assets.length > 0) {
+      const image = result.assets[0]
+
+      const formData = new FormData()
+      formData.append('file', {
+        uri: image.uri,
+        name: 'service.jpg',
+        type: 'image/jpeg',
+      } as unknown as Blob)
+
+      try {
+        await uploadServiceImage(serviceId, formData)
+        await loadUserProfile()
+        showToast('Imagem do serviço atualizada com sucesso!', 'success')
+      } catch (error) {
+        showToast('Erro ao enviar imagem do serviço', 'error')
+      }
+    }
+  }
+
   useScreenRefresh(loadUserProfile)
 
   useEffect(() => {
@@ -228,11 +256,13 @@ export function Profile() {
                     key={service.id}
                     name={service.name}
                     categories={service.categories}
+                    serviceImage={service.image}
                     isProvider={true}
                     onEdit={() => handleEditService(service.id)}
                     onDelete={() => {
                       console.log('deletar serviço')
                     }}
+                    onUploadImage={() => handleUploadServiceImage(service.id)}
                   />
                 ))
               )}

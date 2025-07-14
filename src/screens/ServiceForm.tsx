@@ -1,7 +1,6 @@
 import { FormInput } from '@components/FormInput'
 import { FormSelector } from '@components/FormSelector'
 import { GradientButton } from '@components/GradientButton'
-import { ImagePickerInput } from '@components/ImagePickerInput'
 import { ToastMessage } from '@components/ToastMessage'
 import {
   Center,
@@ -172,13 +171,6 @@ export function ServiceForm() {
                     label="Categorias"
                     name="categories"
                     error={errors.categories?.message}
-                  />
-
-                  <ImagePickerInput
-                    control={control}
-                    label="Imagem"
-                    name="image"
-                    error={errors.image?.message}
                   />
 
                   <GradientButton

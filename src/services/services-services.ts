@@ -1,5 +1,6 @@
+import { storageTokenGet } from '@storage/storageToken'
 import type { serviceData } from '../@types/serviceSchema'
-import { api } from './api/api'
+import { api, apiUrl } from './api/api'
 
 export async function fetchServices() {
   const response = await api.get('/services')
@@ -35,6 +36,27 @@ export async function updateServiceImage(
 ) {
   const response = await api.post(`/services/${serviceId}/image`, serviceImage)
   return response.data
+}
+
+export async function uploadServiceImage(
+  serviceId: string,
+  formData: FormData,
+) {
+  const token = await storageTokenGet()
+  const response = await fetch(`${apiUrl}/services/${serviceId}/image`, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+
+  if (!response.ok) {
+    const errorData = await response.text()
+    throw new Error(`Erro no upload: ${response.status} - ${errorData}`)
+  }
+
+  return await response.json()
 }
 
 export async function getFeed() {

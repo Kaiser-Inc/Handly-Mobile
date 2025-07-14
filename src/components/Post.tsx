@@ -1,6 +1,7 @@
 import { HStack, Image, Text, VStack } from '@gluestack-ui/themed'
 import { apiUrl } from '@services/api/api'
 import {
+  Camera,
   FolderMinus,
   Heart,
   MessageCircleMore,
@@ -20,6 +21,7 @@ interface PostProps {
   isProvider?: boolean
   onEdit?: () => void
   onDelete?: () => void
+  onUploadImage?: () => void
 }
 
 export function Post({
@@ -30,6 +32,7 @@ export function Post({
   isProvider,
   onEdit,
   onDelete,
+  onUploadImage,
 }: PostProps) {
   return (
     <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6">
@@ -89,6 +92,9 @@ export function Post({
           <HStack className=" mx-auto w-full flex flex-row justify-around">
             <TouchableOpacity onPress={onEdit}>
               <SquarePen size={24} stroke="#9356FC" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onUploadImage}>
+              <Camera size={24} stroke="#4B5563" />
             </TouchableOpacity>
             <TouchableOpacity onPress={onDelete}>
               <Trash2 size={24} stroke="#FF4B4B" />
