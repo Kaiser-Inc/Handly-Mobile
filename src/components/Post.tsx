@@ -1,6 +1,7 @@
 import { HStack, Image, Text, VStack } from '@gluestack-ui/themed'
 import { apiUrl } from '@services/api/api'
 import {
+  Camera,
   FolderMinus,
   Heart,
   MessageCircleMore,
@@ -15,11 +16,12 @@ import { UserPhoto } from './UserPhoto'
 interface PostProps {
   name: string
   categories: string[]
-  profileImage?: string
-  serviceImage?: string
+  profileImage: string | null
+  serviceImage: string | null
   isProvider?: boolean
   onEdit?: () => void
   onDelete?: () => void
+  onUploadImage?: () => void
 }
 
 export function Post({
@@ -30,17 +32,18 @@ export function Post({
   isProvider,
   onEdit,
   onDelete,
+  onUploadImage,
 }: PostProps) {
+  console.log(serviceImage)
   return (
     <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6">
       <VStack className=" flex flex-row w-11/12 mx-auto">
         <UserPhoto
           className=" w-14 h-14 rounded-2xl mr-4 "
           source={{
-            uri:
-              typeof profileImage === 'string'
-                ? `${apiUrl}/uploads/profile_pics/${profileImage}`
-                : 'https://unavatar.io/substack/bankless',
+            uri: profileImage
+              ? `${apiUrl}/uploads/profile_pics/${profileImage}`
+              : 'https://unavatar.io/substack/bankless',
           }}
           alt="Foto de perfil de usuário"
         />
@@ -54,11 +57,15 @@ export function Post({
       <VStack className=" flex flex-col mx-auto my-4 relative">
         {serviceImage ? (
           <Image
+            width={300}
+            height={200}
+            className=" rounded-lg "
             source={{
-              uri: `${apiUrl}/uploads/services/${serviceImage}`,
+              uri: serviceImage
+                ? `${apiUrl}/uploads/services/${serviceImage}`
+                : undefined,
             }}
             alt="Imagem de serviço"
-            className=" rounded-2xl"
           />
         ) : (
           <DefaultService width={120} height={120} />
@@ -89,6 +96,9 @@ export function Post({
           <HStack className=" mx-auto w-full flex flex-row justify-around">
             <TouchableOpacity onPress={onEdit}>
               <SquarePen size={24} stroke="#9356FC" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onUploadImage}>
+              <Camera size={24} stroke="#4B5563" />
             </TouchableOpacity>
             <TouchableOpacity onPress={onDelete}>
               <Trash2 size={24} stroke="#FF4B4B" />

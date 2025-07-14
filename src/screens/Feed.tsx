@@ -50,8 +50,9 @@ export function Feed() {
           <Post
             key={service.id}
             name={service.service_name}
-            // serviceImage={service.image}
             categories={service.categories}
+            profileImage={service.profile_pic}
+            serviceImage={service.image}
           />
         ))}
       </ScrollView>
