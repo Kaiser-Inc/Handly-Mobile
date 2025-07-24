@@ -49,7 +49,7 @@ export function Feed() {
         {filteredServices.map((service: ServiceFeedDTO) => (
           <Post
             key={service.id}
-            name={service.service_name}
+            name={service.provider_name}
             categories={service.categories}
             profileImage={service.profile_pic}
             serviceImage={service.image}

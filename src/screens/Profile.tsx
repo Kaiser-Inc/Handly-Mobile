@@ -34,7 +34,6 @@ import {
   updateUser,
   uploadProfilePic,
 } from '@services/users-services'
-import { AppError } from '@utils/AppError'
 import { z } from 'zod'
 import { nameProfileSchema } from '../@types/profileSchema'
 
@@ -214,9 +213,9 @@ export function Profile() {
             </TouchableOpacity>
           </View>
 
-          <View className="flex-row items-center mt-4">
+          <View className=" mx-auto flex w-8/12 flex-row justify-center items-center mt-4">
             {isEditingName ? (
-              <VStack className="flex flex-col justify-start w-8/12">
+              <VStack className="flex flex-col justify-start w-full">
                 <Text className="font-bold text-xl">Nome completo</Text>
                 <Input className="w-full border-b-2 border-purple-300 flex flex-row justify-between items-center">
                   <InputField
@@ -247,14 +246,14 @@ export function Profile() {
 
           {user?.role === 'provider' && (
             <View className="w-full flex justify-center items-center mt-8 px-4">
-              <Text className="font-bold text-lg mb-2">Meus Serviços</Text>
+              <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
               {services.length === 0 ? (
                 <Text>Nenhum serviço encontrado.</Text>
               ) : (
                 services.map((service) => (
                   <Post
                     key={service.id}
-                    name={service.name}
+                    name={user.name}
                     categories={service.categories}
                     serviceImage={service.image}
                     profileImage={user.profile_pic}
