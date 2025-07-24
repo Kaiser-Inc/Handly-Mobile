@@ -25,7 +25,8 @@ export function Feed() {
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>
       service.service_name.toLowerCase().includes(search.toLowerCase()) ||
-      service.description?.toLowerCase().includes(search.toLowerCase()),
+      service.description?.toLowerCase().includes(search.toLowerCase()) ||
+      service.provider_name.toLowerCase().includes(search.toLowerCase()),
   )
 
   return (
