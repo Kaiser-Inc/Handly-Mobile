@@ -47,6 +47,12 @@ export function Favorites() {
     loadFavorites()
   }, [loadFavorites])
 
+  function handleUnfavorite(serviceId: string) {
+    setServices((prevServices) =>
+      prevServices.filter((service) => service.id !== serviceId),
+    )
+  }
+
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>
       service.service_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -80,6 +86,7 @@ export function Favorites() {
             categories={service.categories}
             profileImage={service.profile_pic}
             serviceImage={service.image}
+            onUnfavorite={handleUnfavorite}
           />
         ))}
       </ScrollView>

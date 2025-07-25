@@ -27,6 +27,7 @@ interface PostProps {
   onEdit?: () => void
   onDelete?: () => void
   onUploadImage?: () => void
+  onUnfavorite?: (serviceId: string) => void
 }
 
 export function Post({
@@ -40,16 +41,22 @@ export function Post({
   onUploadImage,
   serviceId,
   isInitiallyFavorited,
+  onUnfavorite,
 }: PostProps) {
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
 
   async function handleFavorite() {
+    const originalState = isFavorited
+    setIsFavorited(!originalState)
+
     try {
       await favoriteService(serviceId)
-      setIsFavorited((prev) => !prev)
+      if (originalState && onUnfavorite) {
+        onUnfavorite(serviceId)
+      }
     } catch (error) {
       console.error('Erro ao favoritar/desfavoritar serviço:', error)
-      setIsFavorited((prev) => !prev)
+      setIsFavorited(originalState)
     }
   }
 

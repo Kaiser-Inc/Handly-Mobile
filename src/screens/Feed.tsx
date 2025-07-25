@@ -9,8 +9,9 @@ import { SearchBar } from '@components/SearchBar'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
+import { useFocusEffect } from '@react-navigation/native'
 import { fetchFavorites, getFeed } from '@services/services-services'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export function Feed() {
   const { isLoadingUserStorageData, token } = useAuth()
@@ -39,11 +40,11 @@ export function Feed() {
     }
   }, [isLoadingUserStorageData, token])
 
-  useScreenRefresh(loadData)
-
-  useEffect(() => {
-    loadData()
-  }, [loadData])
+  useFocusEffect(
+    useCallback(() => {
+      loadData()
+    }, [loadData]),
+  )
 
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>
