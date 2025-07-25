@@ -302,7 +302,9 @@ export function Profile() {
                 services.map((service) => (
                   <Post
                     key={service.id}
+                    serviceId={service.id}
                     name={user.name}
+                    isInitiallyFavorited={false}
                     categories={service.categories}
                     serviceImage={service.image}
                     profileImage={user.profile_pic}

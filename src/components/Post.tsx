@@ -13,11 +13,16 @@ import { TouchableOpacity } from 'react-native'
 import DefaultService from '../assets/defaut-service.svg'
 import { UserPhoto } from './UserPhoto'
 
+import { favoriteService, fetchFavorites } from '@services/services-services'
+import { useEffect, useState } from 'react'
+
 interface PostProps {
+  serviceId: string
   name: string
   categories: string[]
   profileImage: string | null
   serviceImage: string | null
+  isInitiallyFavorited: boolean
   isProvider?: boolean
   onEdit?: () => void
   onDelete?: () => void
@@ -33,7 +38,25 @@ export function Post({
   onEdit,
   onDelete,
   onUploadImage,
+  serviceId,
+  isInitiallyFavorited,
 }: PostProps) {
+  const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
+
+  async function handleFavorite() {
+    try {
+      await favoriteService(serviceId)
+      setIsFavorited((prev) => !prev)
+    } catch (error) {
+      console.error('Erro ao favoritar/desfavoritar serviço:', error)
+      setIsFavorited((prev) => !prev)
+    }
+  }
+
+  useEffect(() => {
+    setIsFavorited(isInitiallyFavorited)
+  }, [isInitiallyFavorited])
+
   return (
     <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6 bg-white">
       <VStack className=" flex flex-row w-11/12 mx-auto">
@@ -76,17 +99,17 @@ export function Post({
       <VStack className=" flex flex-row w-10/12 mx-auto mt-4 gap-4">
         {!isProvider && (
           <>
-            <VStack className=" felx flex-row gap-2 justify-center items-center">
-              <Heart size={24} stroke="#95A1B1" />
-              <Text className=" text-gray-300">413</Text>
-            </VStack>
+            <TouchableOpacity onPress={handleFavorite}>
+              <VStack className=" felx flex-row gap-2 justify-center items-center">
+                <Heart
+                  size={24}
+                  fill={isFavorited ? '#F05D6C' : 'none'}
+                  stroke={isFavorited ? '#F05D6C' : '#95A1B1'}
+                />
+              </VStack>
+            </TouchableOpacity>
             <VStack className=" felx flex-row gap-2 justify-center items-center">
               <MessageCircleMore size={24} stroke="#95A1B1" />
-              <Text className=" text-gray-300">25</Text>
-            </VStack>
-            <VStack className=" felx flex-row gap-2 justify-center items-center">
-              <FolderMinus size={24} stroke="#95A1B1" />
-              <Text className=" text-gray-300">137</Text>
             </VStack>
             <HStack className=" ml-auto ">
               <Send size={24} stroke="#95A1B1" />

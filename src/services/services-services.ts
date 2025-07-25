@@ -74,3 +74,17 @@ export async function getCategories(filter: string[]) {
   const response = await api.get(`/categories?filer=${filterString}`)
   return response.data
 }
+
+export async function favoriteService(serviceId: string) {
+  const response = await api.post('/protected/favorites', {
+    target_id: serviceId,
+    target_type: 'service',
+  })
+
+  return response.data
+}
+
+export async function fetchFavorites() {
+  const response = await api.get('/protected/services')
+  return response.data
+}
