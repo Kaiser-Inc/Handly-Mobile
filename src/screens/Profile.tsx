@@ -25,6 +25,7 @@ import {
 
 import BackgroundImg from '@assets/bg.png'
 import { Post } from '@components/Post'
+import { SignOutModal } from '@components/SignOutModal'
 import { ToastMessage } from '@components/ToastMessage'
 import { UserPhoto } from '@components/UserPhoto'
 import type { ServiceDTO } from '@dtos/serviceDTO'
@@ -64,6 +65,7 @@ export function Profile() {
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState('')
   const [services, setServices] = useState<ServiceDTO[]>([])
+  const [isSignOutModalVisible, setIsSignOutModalVisible] = useState(false)
 
   const loadUserProfile = useCallback(async () => {
     try {
@@ -180,9 +182,13 @@ export function Profile() {
     }
   }
 
-  async function handleSignOut() {
-    showToast('SAINDOOOO!', 'success')
+  function openSignOutModal() {
+    setIsSignOutModalVisible(true)
+  }
+
+  function handleConfirmSignOut() {
     signOut()
+    setIsSignOutModalVisible(false)
   }
 
   useScreenRefresh(loadUserProfile)
@@ -297,7 +303,7 @@ export function Profile() {
 
           <View className=" flex flex-col w-10/12 mx-auto mt-8">
             <Button
-              onPress={handleSignOut}
+              onPress={openSignOutModal}
               className=" flex flex-row bg-gray-100 w-10/12 rounded-2xl mx-auto py-6"
             >
               <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
@@ -313,6 +319,11 @@ export function Profile() {
           </View>
         </Center>
       </ScrollView>
+      <SignOutModal
+        visible={isSignOutModalVisible}
+        onClose={() => setIsSignOutModalVisible(false)}
+        onConfirm={handleConfirmSignOut}
+      />
     </SafeAreaView>
   )
 }
