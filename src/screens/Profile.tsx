@@ -27,7 +27,11 @@ import { useScreenRefresh } from '@hooks/useScreenRefresh'
 import { useNavigation } from '@react-navigation/native'
 import type { AppNavigatorRoutesProps } from '@routes/app.routes'
 import { apiUrl } from '@services/api/api'
-import { fetchServices, uploadServiceImage } from '@services/services-services'
+import {
+  deleteService,
+  fetchServices,
+  uploadServiceImage,
+} from '@services/services-services'
 import {
   getProfile,
   getProfilePic,
@@ -127,6 +131,16 @@ export function Profile() {
 
   async function handleEditService(serviceId: string) {
     navigation.navigate('Serviço', { serviceId })
+  }
+
+  async function handleDeleteService(serviceId: string) {
+    try {
+      await deleteService(serviceId)
+      setServices((prev) => prev.filter((service) => service.id !== serviceId))
+      showToast('Serviço deletado com sucesso!', 'success')
+    } catch (error) {
+      showToast('Erro ao deletar serviço.', 'error')
+    }
   }
 
   async function handleUploadServiceImage(serviceId: string) {
@@ -259,9 +273,7 @@ export function Profile() {
                     profileImage={user.profile_pic}
                     isProvider={true}
                     onEdit={() => handleEditService(service.id)}
-                    onDelete={() => {
-                      console.log('deletar serviço')
-                    }}
+                    onDelete={() => handleDeleteService(service.id)}
                     onUploadImage={() => handleUploadServiceImage(service.id)}
                   />
                 ))
