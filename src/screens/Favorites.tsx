@@ -7,7 +7,6 @@ import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
-import { useFocusEffect } from '@react-navigation/native'
 import { getFeed } from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
