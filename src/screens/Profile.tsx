@@ -24,6 +24,7 @@ import {
 } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
+import { DeleteServiceModal } from '@components/DeleteServiceModal'
 import { Post } from '@components/Post'
 import { SignOutModal } from '@components/SignOutModal'
 import { ToastMessage } from '@components/ToastMessage'
@@ -66,6 +67,10 @@ export function Profile() {
   const [editedName, setEditedName] = useState('')
   const [services, setServices] = useState<ServiceDTO[]>([])
   const [isSignOutModalVisible, setIsSignOutModalVisible] = useState(false)
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
+    null,
+  )
 
   const loadUserProfile = useCallback(async () => {
     try {
@@ -145,12 +150,24 @@ export function Profile() {
   }
 
   async function handleDeleteService(serviceId: string) {
+    setSelectedServiceId(serviceId)
+    setIsDeleteModalVisible(true)
+  }
+
+  async function handleConfirmDelete() {
+    if (!selectedServiceId) return
+
     try {
-      await deleteService(serviceId)
-      setServices((prev) => prev.filter((service) => service.id !== serviceId))
+      await deleteService(selectedServiceId)
+      setServices((prev) =>
+        prev.filter((service) => service.id !== selectedServiceId),
+      )
       showToast('Serviço deletado com sucesso!', 'success')
     } catch (error) {
       showToast('Erro ao deletar serviço.', 'error')
+    } finally {
+      setIsDeleteModalVisible(false)
+      setSelectedServiceId(null)
     }
   }
 
@@ -304,7 +321,7 @@ export function Profile() {
           <View className=" flex flex-col w-10/12 mx-auto mt-8">
             <Button
               onPress={openSignOutModal}
-              className=" flex flex-row bg-gray-100 w-10/12 rounded-2xl mx-auto py-6"
+              className=" flex flex-row bg-steam-100 w-10/12 rounded-2xl mx-auto py-6"
             >
               <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
                 <AngryEmoji width={30} height={30} />
@@ -323,6 +340,11 @@ export function Profile() {
         visible={isSignOutModalVisible}
         onClose={() => setIsSignOutModalVisible(false)}
         onConfirm={handleConfirmSignOut}
+      />
+      <DeleteServiceModal
+        visible={isDeleteModalVisible}
+        onClose={() => setIsDeleteModalVisible(false)}
+        onConfirm={handleConfirmDelete}
       />
     </SafeAreaView>
   )

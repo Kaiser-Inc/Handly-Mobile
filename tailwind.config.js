@@ -18,6 +18,8 @@ module.exports = {
       'danger-300': '#F05D6C',
       'green-500': '#14AE5C',
 
+      'steam-100': '#F6F8FA',
+
       'gray-100': '#DAE4F2',
       'gray-200': '#C8D0DA',
       'gray-300': '#95A1B1',
