@@ -10,14 +10,18 @@ import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
-import { getCategories } from '@services/services-services'
+import { useAuth } from '@hooks/useAuth'
+import { useScreenRefresh } from '@hooks/useScreenRefresh'
+import { fetchFavorites, getCategories } from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
 export function Categories() {
+  const { token } = useAuth()
   const [selected, setSelected] = useState<string[]>([])
   const [categories, setCategories] = useState<string[]>([])
   const [services, setServices] = useState<ServiceFeedDTO[]>([])
   const [filteredServices, setFilteredServices] = useState<ServiceFeedDTO[]>([])
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
@@ -25,16 +29,34 @@ export function Categories() {
   )
   const [search, setSearch] = useState('')
 
-  const loadCategories = useCallback(async () => {
-    const data = await getCategories([])
-    setCategories(data.categories)
-    setServices(data.services)
-    setFilteredServices([])
-  }, [])
+  const loadData = useCallback(async () => {
+    if (!token) {
+      return
+    }
+    try {
+      const [categoriesData, favoritesData] = await Promise.all([
+        getCategories([]),
+        fetchFavorites(),
+      ])
+
+      const favIds = new Set(
+        (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
+      )
+
+      setCategories(categoriesData.categories)
+      setServices(categoriesData.services)
+      setFavoriteIds(favIds)
+      setFilteredServices([])
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error)
+    }
+  }, [token])
+
+  useScreenRefresh(loadData)
 
   useEffect(() => {
-    loadCategories()
-  }, [loadCategories])
+    loadData()
+  }, [loadData])
 
   function toggleCategory(category: string) {
     if (selected.includes(category)) {
@@ -45,9 +67,19 @@ export function Categories() {
   }
 
   async function handleFilter() {
-    const filtrados = services.filter((service) =>
-      service.categories?.some((cat: string) => selected.includes(cat)),
-    )
+    const filtrados = services
+      .filter((service) =>
+        service.categories?.some((cat: string) => selected.includes(cat)),
+      )
+      .sort((a, b) => {
+        const aIsFav = favoriteIds.has(a.id)
+        const bIsFav = favoriteIds.has(b.id)
+        if (aIsFav === bIsFav) {
+          return 0
+        }
+        return aIsFav ? -1 : 1
+      })
+
     setFilteredServices(filtrados)
     setToastMessage(
       filtrados.length > 0
@@ -115,7 +147,7 @@ export function Categories() {
             <Post
               key={service.id}
               serviceId={service.id}
-              isInitiallyFavorited={false}
+              isInitiallyFavorited={favoriteIds.has(service.id)}
               name={service.provider_name}
               categories={service.categories}
               profileImage={service.profile_pic}
