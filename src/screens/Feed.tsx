@@ -7,20 +7,44 @@ import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
+import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { getFeed } from '@services/services-services'
+import { useFocusEffect } from '@react-navigation/native'
+import { fetchFavorites, getFeed } from '@services/services-services'
 import { useCallback, useState } from 'react'
 
 export function Feed() {
-  const [services, setServices] = useState([])
+  const { isLoadingUserStorageData, token } = useAuth()
+  const [services, setServices] = useState<ServiceFeedDTO[]>([])
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
 
-  const loadServices = useCallback(async () => {
-    const data = await getFeed()
-    setServices(data)
-  }, [])
+  const loadData = useCallback(async () => {
+    if (isLoadingUserStorageData || !token) {
+      return
+    }
+    try {
+      const [servicesData, favoritesData] = await Promise.all([
+        getFeed(),
+        fetchFavorites(),
+      ])
 
-  useScreenRefresh(loadServices)
+      const favIds = new Set(
+        (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
+      )
+
+      setServices(servicesData as ServiceFeedDTO[])
+      setFavoriteIds(favIds)
+    } catch (error) {
+      console.error('Erro ao carregar dados do feed:', error)
+    }
+  }, [isLoadingUserStorageData, token])
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData()
+    }, [loadData]),
+  )
 
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>
@@ -50,6 +74,8 @@ export function Feed() {
         {filteredServices.map((service: ServiceFeedDTO) => (
           <Post
             key={service.id}
+            serviceId={service.id}
+            isInitiallyFavorited={favoriteIds.has(service.id)}
             name={service.provider_name}
             categories={service.categories}
             profileImage={service.profile_pic}
