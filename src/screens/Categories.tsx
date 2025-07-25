@@ -10,7 +10,6 @@ import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
-import { useFocusEffect } from '@react-navigation/native'
 import { getCategories } from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -115,7 +114,7 @@ export function Categories() {
           {filteredServices.map((service) => (
             <Post
               key={service.id}
-              name={service.service_name}
+              name={service.provider_name}
               categories={service.categories}
               profileImage={service.profile_pic}
               serviceImage={service.image}

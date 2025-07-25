@@ -1,6 +1,6 @@
 import { Text } from '@gluestack-ui/themed'
 import React from 'react'
-import { Animated, View } from 'react-native'
+import { Animated } from 'react-native'
 
 interface ToastMessageProps {
   message: string

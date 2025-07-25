@@ -25,7 +25,8 @@ export function Feed() {
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>
       service.service_name.toLowerCase().includes(search.toLowerCase()) ||
-      service.description?.toLowerCase().includes(search.toLowerCase()),
+      service.description?.toLowerCase().includes(search.toLowerCase()) ||
+      service.provider_name.toLowerCase().includes(search.toLowerCase()),
   )
 
   return (
@@ -49,7 +50,7 @@ export function Feed() {
         {filteredServices.map((service: ServiceFeedDTO) => (
           <Post
             key={service.id}
-            name={service.service_name}
+            name={service.provider_name}
             categories={service.categories}
             profileImage={service.profile_pic}
             serviceImage={service.image}

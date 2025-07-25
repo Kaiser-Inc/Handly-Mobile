@@ -7,7 +7,6 @@ import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
-import { useFocusEffect } from '@react-navigation/native'
 import { getFeed } from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -51,7 +50,7 @@ export function Favorites() {
         {filteredServices.map((service: ServiceFeedDTO) => (
           <Post
             key={service.id}
-            name={service.service_name}
+            name={service.provider_name}
             categories={service.categories}
             profileImage={service.profile_pic}
             serviceImage={service.image}
