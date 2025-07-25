@@ -85,6 +85,6 @@ export async function favoriteService(serviceId: string) {
 }
 
 export async function fetchFavorites() {
-  const response = await api.get('/protected/services')
+  const response = await api.get('/protected/favorites')
   return response.data
 }

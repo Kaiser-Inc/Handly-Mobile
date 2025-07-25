@@ -29,7 +29,7 @@ export function Feed() {
       ])
 
       const favIds = new Set(
-        (favoritesData as ServiceFeedDTO[]).map((fav) => fav.id),
+        (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
       )
 
       setServices(servicesData as ServiceFeedDTO[])
