@@ -1,4 +1,6 @@
 import {
+  Button,
+  ButtonText,
   Center,
   Image,
   Input,
@@ -13,10 +15,15 @@ import { TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { Camera, Pencil, ThumbsUp } from 'lucide-react-native'
+import {
+  Angry,
+  Camera,
+  ChevronRight,
+  Pencil,
+  ThumbsUp,
+} from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
-import { GradientButton } from '@components/GradientButton'
 import { Post } from '@components/Post'
 import { ToastMessage } from '@components/ToastMessage'
 import { UserPhoto } from '@components/UserPhoto'
@@ -40,6 +47,8 @@ import {
 } from '@services/users-services'
 import { z } from 'zod'
 import { nameProfileSchema } from '../@types/profileSchema'
+
+import AngryEmoji from '@assets/angry.svg'
 
 export function Profile() {
   const { signOut } = useAuth()
@@ -171,6 +180,11 @@ export function Profile() {
     }
   }
 
+  async function handleSignOut() {
+    showToast('SAINDOOOO!', 'success')
+    signOut()
+  }
+
   useScreenRefresh(loadUserProfile)
 
   useEffect(() => {
@@ -281,8 +295,21 @@ export function Profile() {
             </View>
           )}
 
-          <View className="mt-8">
-            <GradientButton text="Sair" onPress={signOut} />
+          <View className=" flex flex-col w-10/12 mx-auto mt-8">
+            <Button
+              onPress={handleSignOut}
+              className=" flex flex-row bg-gray-100 w-10/12 rounded-2xl mx-auto py-6"
+            >
+              <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
+                <AngryEmoji width={30} height={30} />
+              </View>
+              <ButtonText className=" text-gray-600 text-xl p-2">
+                Sair
+              </ButtonText>
+              <View className=" flex flex-rowe p-2 ml-auto mr-8">
+                <ChevronRight stroke="#95A1B1" />
+              </View>
+            </Button>
           </View>
         </Center>
       </ScrollView>
