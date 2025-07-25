@@ -35,7 +35,7 @@ export function Post({
   onUploadImage,
 }: PostProps) {
   return (
-    <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6">
+    <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6 bg-white">
       <VStack className=" flex flex-row w-11/12 mx-auto">
         <UserPhoto
           className=" w-14 h-14 rounded-2xl mr-4 "
@@ -49,7 +49,9 @@ export function Post({
         <HStack className=" flex flex-col my-auto">
           <Text className=" font-bold text-lg ">{name}</Text>
           <Text className=" text-gray-300 font-thin text-sm ">
-            {categories}
+            {categories.join(', ').length > 35
+              ? `${categories.join(', ').substring(0, 32)}...`
+              : categories.join(', ')}
           </Text>
         </HStack>
       </VStack>

@@ -15,13 +15,7 @@ import { TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import {
-  Angry,
-  Camera,
-  ChevronRight,
-  Pencil,
-  ThumbsUp,
-} from 'lucide-react-native'
+import { Camera, ChevronRight, Pencil, ThumbsUp } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
 import { DeleteServiceModal } from '@components/DeleteServiceModal'
@@ -50,6 +44,7 @@ import {
 import { z } from 'zod'
 import { nameProfileSchema } from '../@types/profileSchema'
 
+import Reaching from '@assets/Reaching.svg'
 import AngryEmoji from '@assets/angry.svg'
 
 export function Profile() {
@@ -225,6 +220,9 @@ export function Profile() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <View className="absolute -right-40 inset-0 items-center justify-end">
+        <Reaching />
+      </View>
       <ToastMessage
         visible={toastVisible}
         message={toastMessage}
