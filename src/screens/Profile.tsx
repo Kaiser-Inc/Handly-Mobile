@@ -1,4 +1,6 @@
 import {
+  Button,
+  ButtonText,
   Center,
   Image,
   Input,
@@ -13,11 +15,12 @@ import { TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { Camera, Pencil, ThumbsUp } from 'lucide-react-native'
+import { Camera, ChevronRight, Pencil, ThumbsUp } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
-import { GradientButton } from '@components/GradientButton'
+import { DeleteServiceModal } from '@components/DeleteServiceModal'
 import { Post } from '@components/Post'
+import { SignOutModal } from '@components/SignOutModal'
 import { ToastMessage } from '@components/ToastMessage'
 import { UserPhoto } from '@components/UserPhoto'
 import type { ServiceDTO } from '@dtos/serviceDTO'
@@ -41,6 +44,9 @@ import {
 import { z } from 'zod'
 import { nameProfileSchema } from '../@types/profileSchema'
 
+import Reaching from '@assets/Reaching.svg'
+import AngryEmoji from '@assets/angry.svg'
+
 export function Profile() {
   const { signOut } = useAuth()
   const navigation = useNavigation<AppNavigatorRoutesProps>()
@@ -55,6 +61,11 @@ export function Profile() {
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState('')
   const [services, setServices] = useState<ServiceDTO[]>([])
+  const [isSignOutModalVisible, setIsSignOutModalVisible] = useState(false)
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
+    null,
+  )
 
   const loadUserProfile = useCallback(async () => {
     try {
@@ -134,12 +145,24 @@ export function Profile() {
   }
 
   async function handleDeleteService(serviceId: string) {
+    setSelectedServiceId(serviceId)
+    setIsDeleteModalVisible(true)
+  }
+
+  async function handleConfirmDelete() {
+    if (!selectedServiceId) return
+
     try {
-      await deleteService(serviceId)
-      setServices((prev) => prev.filter((service) => service.id !== serviceId))
+      await deleteService(selectedServiceId)
+      setServices((prev) =>
+        prev.filter((service) => service.id !== selectedServiceId),
+      )
       showToast('Serviço deletado com sucesso!', 'success')
     } catch (error) {
       showToast('Erro ao deletar serviço.', 'error')
+    } finally {
+      setIsDeleteModalVisible(false)
+      setSelectedServiceId(null)
     }
   }
 
@@ -171,6 +194,15 @@ export function Profile() {
     }
   }
 
+  function openSignOutModal() {
+    setIsSignOutModalVisible(true)
+  }
+
+  function handleConfirmSignOut() {
+    signOut()
+    setIsSignOutModalVisible(false)
+  }
+
   useScreenRefresh(loadUserProfile)
 
   useEffect(() => {
@@ -188,6 +220,9 @@ export function Profile() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <View className="absolute -right-40 inset-0 items-center justify-end">
+        <Reaching />
+      </View>
       <ToastMessage
         visible={toastVisible}
         message={toastMessage}
@@ -281,11 +316,34 @@ export function Profile() {
             </View>
           )}
 
-          <View className="mt-8">
-            <GradientButton text="Sair" onPress={signOut} />
+          <View className=" flex flex-col w-10/12 mx-auto mt-8">
+            <Button
+              onPress={openSignOutModal}
+              className=" flex flex-row bg-steam-100 w-10/12 rounded-2xl mx-auto py-6"
+            >
+              <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
+                <AngryEmoji width={30} height={30} />
+              </View>
+              <ButtonText className=" text-gray-600 text-xl p-2">
+                Sair
+              </ButtonText>
+              <View className=" flex flex-rowe p-2 ml-auto mr-8">
+                <ChevronRight stroke="#95A1B1" />
+              </View>
+            </Button>
           </View>
         </Center>
       </ScrollView>
+      <SignOutModal
+        visible={isSignOutModalVisible}
+        onClose={() => setIsSignOutModalVisible(false)}
+        onConfirm={handleConfirmSignOut}
+      />
+      <DeleteServiceModal
+        visible={isDeleteModalVisible}
+        onClose={() => setIsDeleteModalVisible(false)}
+        onConfirm={handleConfirmDelete}
+      />
     </SafeAreaView>
   )
 }
