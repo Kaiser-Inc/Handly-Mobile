@@ -153,6 +153,7 @@ export function ServiceForm() {
                     control={control}
                     name="name"
                     label="Nome"
+                    testID="serviceNameInput"
                     placeholder="Insira o nome do serviço"
                     error={errors.name?.message}
                   />
@@ -160,6 +161,7 @@ export function ServiceForm() {
                     control={control}
                     name="description"
                     label="Descrição"
+                    testID="serviceDescriptionInput"
                     keyboardType="default"
                     isTextarea
                     placeholder="Adicione uma descrição do serviço"
@@ -169,12 +171,14 @@ export function ServiceForm() {
                   <FormSelector
                     control={control}
                     label="Categorias"
+                    testID="serviceCategoriesInput"
                     name="categories"
                     error={errors.categories?.message}
                   />
 
                   <GradientButton
                     onPress={handleSubmit(handleOnSubmit)}
+                    testID='serviceSubmitButton'
                     isLoading={isLoading}
                     text={isEditing ? 'Atualizar serviço' : 'Cadastrar serviço'}
                   />
