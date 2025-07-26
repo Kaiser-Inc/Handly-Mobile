@@ -45,7 +45,7 @@ export function RoleSelector<T extends FieldValues>({
         control={control}
         name={name}
         render={({ field: { onChange, value } }) => (
-          <HStack className=" flex flex-row bg-gray-100 p-1 rounded-full">
+          <HStack className=" flex flex-row bg-steam-100 p-1 rounded-full">
             <Animated.View
               style={{
                 position: 'absolute',
