@@ -8,33 +8,58 @@ import { GradientButton } from '@components/GradientButton'
 import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
+import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
-import { getCategories } from '@services/services-services'
+import { useAuth } from '@hooks/useAuth'
+import { useScreenRefresh } from '@hooks/useScreenRefresh'
+import { fetchFavorites, getCategories } from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
 export function Categories() {
+  const { token } = useAuth()
   const [selected, setSelected] = useState<string[]>([])
   const [categories, setCategories] = useState<string[]>([])
   const [services, setServices] = useState<ServiceFeedDTO[]>([])
   const [filteredServices, setFilteredServices] = useState<ServiceFeedDTO[]>([])
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
     'error',
   )
   const [search, setSearch] = useState('')
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
 
-  const loadCategories = useCallback(async () => {
-    const data = await getCategories([])
-    setCategories(data.categories)
-    setServices(data.services)
-    setFilteredServices([])
-  }, [])
+  const loadData = useCallback(async () => {
+    if (!token) {
+      return
+    }
+    try {
+      const [categoriesData, favoritesData] = await Promise.all([
+        getCategories([]),
+        fetchFavorites(),
+      ])
+
+      const favIds = new Set(
+        (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
+      )
+
+      setCategories(categoriesData.categories)
+      setServices(categoriesData.services)
+      setFavoriteIds(favIds)
+      setFilteredServices([])
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error)
+    }
+  }, [token])
+
+  useScreenRefresh(loadData)
 
   useEffect(() => {
-    loadCategories()
-  }, [loadCategories])
+    loadData()
+  }, [loadData])
 
   function toggleCategory(category: string) {
     if (selected.includes(category)) {
@@ -45,9 +70,19 @@ export function Categories() {
   }
 
   async function handleFilter() {
-    const filtrados = services.filter((service) =>
-      service.categories?.some((cat: string) => selected.includes(cat)),
-    )
+    const filtrados = services
+      .filter((service) =>
+        service.categories?.some((cat: string) => selected.includes(cat)),
+      )
+      .sort((a, b) => {
+        const aIsFav = favoriteIds.has(a.id)
+        const bIsFav = favoriteIds.has(b.id)
+        if (aIsFav === bIsFav) {
+          return 0
+        }
+        return aIsFav ? -1 : 1
+      })
+
     setFilteredServices(filtrados)
     setToastMessage(
       filtrados.length > 0
@@ -56,6 +91,29 @@ export function Categories() {
     )
     setToastType(filtrados.length > 0 ? 'success' : 'info')
     setToastVisible(true)
+  }
+
+  const handlePostPress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsModalVisible(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false)
+    setSelectedServiceId(null)
+    loadData() // Recarrega os dados para refletir as mudanças de favorito
+  }
+
+  const handleFavoriteChange = (serviceId: string, isFavorited: boolean) => {
+    setFavoriteIds((prev) => {
+      const newFavIds = new Set(prev)
+      if (isFavorited) {
+        newFavIds.add(serviceId)
+      } else {
+        newFavIds.delete(serviceId)
+      }
+      return newFavIds
+    })
   }
 
   const filteredCategories = categories.filter((category) =>
@@ -114,14 +172,25 @@ export function Categories() {
           {filteredServices.map((service) => (
             <Post
               key={service.id}
+              serviceId={service.id}
+              isInitiallyFavorited={favoriteIds.has(service.id)}
               name={service.provider_name}
               categories={service.categories}
               profileImage={service.profile_pic}
               serviceImage={service.image}
+              onPress={handlePostPress}
             />
           ))}
         </View>
       </ScrollView>
+
+      <ServiceDetailsModal
+        visible={isModalVisible}
+        serviceId={selectedServiceId}
+        onClose={handleCloseModal}
+        isInitiallyFavorited={favoriteIds.has(selectedServiceId || '')}
+        onFavoriteChange={handleFavoriteChange}
+      />
     </SafeAreaView>
   )
 }
