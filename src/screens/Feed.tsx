@@ -6,9 +6,9 @@ import BackgroundImg from '@assets/bg.png'
 import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
+import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
-import { useScreenRefresh } from '@hooks/useScreenRefresh'
 import { useFocusEffect } from '@react-navigation/native'
 import { fetchFavorites, getFeed } from '@services/services-services'
 import { useCallback, useState } from 'react'
@@ -18,6 +18,8 @@ export function Feed() {
   const [services, setServices] = useState<ServiceFeedDTO[]>([])
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
 
   const loadData = useCallback(async () => {
     if (isLoadingUserStorageData || !token) {
@@ -53,6 +55,16 @@ export function Feed() {
       service.provider_name.toLowerCase().includes(search.toLowerCase()),
   )
 
+  const handlePostPress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsModalVisible(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false)
+    setSelectedServiceId(null)
+  }
+
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <Image
@@ -80,9 +92,16 @@ export function Feed() {
             categories={service.categories}
             profileImage={service.profile_pic}
             serviceImage={service.image}
+            onPress={handlePostPress}
           />
         ))}
       </ScrollView>
+
+      <ServiceDetailsModal
+        visible={isModalVisible}
+        serviceId={selectedServiceId}
+        onClose={handleCloseModal}
+      />
     </SafeAreaView>
   )
 }

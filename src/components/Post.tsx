@@ -2,7 +2,6 @@ import { HStack, Image, Text, VStack } from '@gluestack-ui/themed'
 import { apiUrl } from '@services/api/api'
 import {
   Camera,
-  FolderMinus,
   Heart,
   MessageCircleMore,
   Send,
@@ -13,7 +12,7 @@ import { TouchableOpacity } from 'react-native'
 import DefaultService from '../assets/defaut-service.svg'
 import { UserPhoto } from './UserPhoto'
 
-import { favoriteService, fetchFavorites } from '@services/services-services'
+import { favoriteService } from '@services/services-services'
 import { useEffect, useState } from 'react'
 
 interface PostProps {
@@ -28,6 +27,7 @@ interface PostProps {
   onDelete?: () => void
   onUploadImage?: () => void
   onUnfavorite?: (serviceId: string) => void
+  onPress?: (serviceId: string) => void
 }
 
 export function Post({
@@ -42,6 +42,7 @@ export function Post({
   serviceId,
   isInitiallyFavorited,
   onUnfavorite,
+  onPress,
 }: PostProps) {
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
 
@@ -65,78 +66,83 @@ export function Post({
   }, [isInitiallyFavorited])
 
   return (
-    <HStack className=" w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6 bg-white">
-      <VStack className=" flex flex-row w-11/12 mx-auto">
-        <UserPhoto
-          className=" w-14 h-14 rounded-2xl mr-4 "
-          source={{
-            uri: profileImage
-              ? `${apiUrl}/uploads/profile_pics/${profileImage}`
-              : 'https://unavatar.io/substack/bankless',
-          }}
-          alt="Foto de perfil de usuário"
-        />
-        <HStack className=" flex flex-col my-auto">
-          <Text className=" font-bold text-lg ">{name}</Text>
-          <Text className=" text-gray-300 font-thin text-sm ">
-            {categories.join(', ').length > 35
-              ? `${categories.join(', ').substring(0, 32)}...`
-              : categories.join(', ')}
-          </Text>
-        </HStack>
-      </VStack>
-      <VStack className=" flex flex-col mx-auto my-4 relative">
-        {serviceImage ? (
-          <Image
-            width={300}
-            height={200}
-            className=" rounded-lg "
+    <TouchableOpacity
+      onPress={() => onPress?.(serviceId)}
+      className="w-10/12 flex flex-col border border-gray-100 rounded-2xl mx-auto p-4 mb-6 bg-white"
+    >
+      <HStack className=" flex flex-col w-11/12 mx-auto">
+        <VStack className=" flex flex-row w-11/12 mx-auto">
+          <UserPhoto
+            className=" w-14 h-14 rounded-2xl mr-4 "
             source={{
-              uri: serviceImage
-                ? `${apiUrl}/uploads/services/${serviceImage}`
-                : undefined,
+              uri: profileImage
+                ? `${apiUrl}/uploads/profile_pics/${profileImage}`
+                : 'https://unavatar.io/substack/bankless',
             }}
-            alt="Imagem de serviço"
+            alt="Foto de perfil de usuário"
           />
-        ) : (
-          <DefaultService width={120} height={120} />
-        )}
-      </VStack>
-
-      <VStack className=" flex flex-row w-10/12 mx-auto mt-4 gap-4">
-        {!isProvider && (
-          <>
-            <TouchableOpacity onPress={handleFavorite}>
-              <VStack className=" felx flex-row gap-2 justify-center items-center">
-                <Heart
-                  size={24}
-                  fill={isFavorited ? '#F05D6C' : 'none'}
-                  stroke={isFavorited ? '#F05D6C' : '#95A1B1'}
-                />
-              </VStack>
-            </TouchableOpacity>
-            <VStack className=" felx flex-row gap-2 justify-center items-center">
-              <MessageCircleMore size={24} stroke="#95A1B1" />
-            </VStack>
-            <HStack className=" ml-auto ">
-              <Send size={24} stroke="#95A1B1" />
-            </HStack>
-          </>
-        )}
-        {isProvider && (
-          <HStack className=" mx-auto w-full flex flex-row justify-around">
-            <TouchableOpacity onPress={onEdit}>
-              <SquarePen size={24} stroke="#9356FC" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onUploadImage}>
-              <Camera size={24} stroke="#4B5563" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onDelete}>
-              <Trash2 size={24} stroke="#FF4B4B" />
-            </TouchableOpacity>
+          <HStack className=" flex flex-col my-auto">
+            <Text className=" font-bold text-lg ">{name}</Text>
+            <Text className=" text-gray-300 font-thin text-sm ">
+              {categories.join(', ').length > 35
+                ? `${categories.join(', ').substring(0, 32)}...`
+                : categories.join(', ')}
+            </Text>
           </HStack>
-        )}
-      </VStack>
-    </HStack>
+        </VStack>
+        <VStack className=" flex flex-col mx-auto my-4 relative">
+          {serviceImage ? (
+            <Image
+              width={300}
+              height={200}
+              className=" rounded-lg "
+              source={{
+                uri: serviceImage
+                  ? `${apiUrl}/uploads/services/${serviceImage}`
+                  : undefined,
+              }}
+              alt="Imagem de serviço"
+            />
+          ) : (
+            <DefaultService width={120} height={120} />
+          )}
+        </VStack>
+
+        <VStack className=" flex flex-row w-10/12 mx-auto mt-4 gap-4">
+          {!isProvider && (
+            <>
+              <TouchableOpacity onPress={handleFavorite}>
+                <VStack className=" felx flex-row gap-2 justify-center items-center">
+                  <Heart
+                    size={24}
+                    fill={isFavorited ? '#F05D6C' : 'none'}
+                    stroke={isFavorited ? '#F05D6C' : '#95A1B1'}
+                  />
+                </VStack>
+              </TouchableOpacity>
+              <VStack className=" felx flex-row gap-2 justify-center items-center">
+                <MessageCircleMore size={24} stroke="#95A1B1" />
+              </VStack>
+              <HStack className=" ml-auto ">
+                <Send size={24} stroke="#95A1B1" />
+              </HStack>
+            </>
+          )}
+          {isProvider && (
+            <HStack className=" mx-auto w-full flex flex-row justify-around">
+              <TouchableOpacity onPress={onEdit}>
+                <SquarePen size={24} stroke="#9356FC" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onUploadImage}>
+                <Camera size={24} stroke="#4B5563" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onDelete}>
+                <Trash2 size={24} stroke="#FF4B4B" />
+              </TouchableOpacity>
+            </HStack>
+          )}
+        </VStack>
+      </HStack>
+    </TouchableOpacity>
   )
 }
