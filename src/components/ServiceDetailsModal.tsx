@@ -1,10 +1,10 @@
 import type { ServiceDTO } from '@dtos/serviceDTO'
 import { Image, Text, VStack, View } from '@gluestack-ui/themed'
 import { apiUrl } from '@services/api/api'
-import { getService } from '@services/services-services'
-import { ChevronLeft, Star } from 'lucide-react-native'
+import { favoriteService, getService } from '@services/services-services'
+import { ChevronLeft, Heart, Star } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
-import { Animated, Dimensions, TouchableOpacity } from 'react-native'
+import { Animated, Dimensions, Pressable, TouchableOpacity } from 'react-native'
 import DefaultService from '../assets/defaut-service.svg'
 import { Badge } from './Badge'
 
@@ -12,18 +12,25 @@ interface ServiceDetailsModalProps {
   visible: boolean
   serviceId: string | null
   onClose: () => void
+  isInitiallyFavorited: boolean
 }
 
 export function ServiceDetailsModal({
   visible,
   serviceId,
   onClose,
+  isInitiallyFavorited,
 }: ServiceDetailsModalProps) {
   const slideAnim = React.useRef(
     new Animated.Value(Dimensions.get('window').height),
   ).current
   const [serviceDetails, setServiceDetails] = useState<ServiceDTO | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
+
+  useEffect(() => {
+    setIsFavorited(isInitiallyFavorited)
+  }, [isInitiallyFavorited])
 
   useEffect(() => {
     if (visible) {
@@ -57,6 +64,20 @@ export function ServiceDetailsModal({
       })
     }
   }, [visible, serviceId, slideAnim])
+
+  async function handleFavorite() {
+    if (!serviceId) return
+
+    const originalState = isFavorited
+    setIsFavorited(!originalState)
+
+    try {
+      await favoriteService(serviceId)
+    } catch (error) {
+      console.error('Erro ao favoritar/desfavoritar serviço:', error)
+      setIsFavorited(originalState)
+    }
+  }
 
   if (!visible) {
     return null
@@ -98,6 +119,16 @@ export function ServiceDetailsModal({
               ) : (
                 <DefaultService width={120} height={120} />
               )}
+              <Pressable
+                onPress={handleFavorite}
+                className="absolute bottom-4 right-4 bg-gray-500 p-3 rounded-full"
+              >
+                <Heart
+                  size={24}
+                  fill={isFavorited ? '#F05D6C' : 'none'}
+                  stroke={isFavorited ? '#F05D6C' : '#95A1B1'}
+                />
+              </Pressable>
             </VStack>
             <View className=" flex flex-row w-full flex-wrap items-start">
               {serviceDetails.categories.map((category) => (
@@ -114,6 +145,20 @@ export function ServiceDetailsModal({
               <View className=" flex flex-row items-center gap-2">
                 <Star stroke="#9356FC" />
                 <Text className=" text-800 font-bold text-lg">5.0</Text>
+              </View>
+              <View className=" flex flex-row items-cente w-11/12 justify-center items-center py-4">
+                <View className=" flex flex-col items-center border-r border-purple-900 px-2 py-3 w-1/2">
+                  <Text className="text-800 font-bold text-lg">
+                    perseu@gmail.com
+                  </Text>
+                  <Text>Email</Text>
+                </View>
+                <View className=" flex flex-col items-center border-l border-purple-900 px-2 py-3 w-1/2">
+                  <Text className="text-800 font-bold text-lg">
+                    (137)99999-9999
+                  </Text>
+                  <Text>Contato</Text>
+                </View>
               </View>
             </View>
           </View>

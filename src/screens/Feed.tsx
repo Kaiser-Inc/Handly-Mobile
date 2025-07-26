@@ -101,6 +101,7 @@ export function Feed() {
         visible={isModalVisible}
         serviceId={selectedServiceId}
         onClose={handleCloseModal}
+        isInitiallyFavorited={favoriteIds.has(selectedServiceId || '')}
       />
     </SafeAreaView>
   )
