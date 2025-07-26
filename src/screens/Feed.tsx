@@ -5,28 +5,95 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import BackgroundImg from '@assets/bg.png'
 import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
+import { RateChoiceModal } from '@components/RateChoiceModal'
+import { RateModal } from '@components/RateModal'
 import { SearchBar } from '@components/SearchBar'
+import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
-import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { getFeed } from '@services/services-services'
+import { useAuth } from '@hooks/useAuth'
+import { useFocusEffect } from '@react-navigation/native'
+import { fetchFavorites, getFeed } from '@services/services-services'
 import { useCallback, useState } from 'react'
 
 export function Feed() {
-  const [services, setServices] = useState([])
+  const { isLoadingUserStorageData, token } = useAuth()
+  const [services, setServices] = useState<ServiceFeedDTO[]>([])
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
+    null,
+  )
 
-  const loadServices = useCallback(async () => {
-    const data = await getFeed()
-    setServices(data)
-  }, [])
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
+    useState(false)
+  const [isRateModalVisible, setIsRateModalVisible] = useState(false)
+  const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
 
-  useScreenRefresh(loadServices)
+  const loadData = useCallback(async () => {
+    if (isLoadingUserStorageData || !token) {
+      return
+    }
+    try {
+      const [servicesData, favoritesData] = await Promise.all([
+        getFeed(),
+        fetchFavorites(),
+      ])
+
+      const favIds = new Set(
+        (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
+      )
+
+      setServices(servicesData as ServiceFeedDTO[])
+      setFavoriteIds(favIds)
+    } catch (error) {
+      console.error('Erro ao carregar dados do feed:', error)
+    }
+  }, [isLoadingUserStorageData, token])
+
+  useFocusEffect(
+    useCallback(() => {
+      loadData()
+    }, [loadData]),
+  )
 
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>
       service.service_name.toLowerCase().includes(search.toLowerCase()) ||
-      service.description?.toLowerCase().includes(search.toLowerCase()),
+      service.description?.toLowerCase().includes(search.toLowerCase()) ||
+      service.provider_name.toLowerCase().includes(search.toLowerCase()),
   )
+
+  const handlePostPress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsModalVisible(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false)
+    setSelectedServiceId(null)
+  }
+
+  const handleRatePress = () => {
+    setIsRateChoiceModalVisible(true)
+  }
+
+  const handleRateService = () => {
+    setIsRateChoiceModalVisible(false)
+    setRateType('service')
+    setIsRateModalVisible(true)
+  }
+
+  const handleRateProvider = () => {
+    setIsRateChoiceModalVisible(false)
+    setRateType('provider')
+    setIsRateModalVisible(true)
+  }
+
+  const handleCloseRateModal = () => {
+    setIsRateModalVisible(false)
+    setRateType(null)
+  }
 
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: 'transparent' }}>
@@ -49,13 +116,37 @@ export function Feed() {
         {filteredServices.map((service: ServiceFeedDTO) => (
           <Post
             key={service.id}
-            name={service.service_name}
+            serviceId={service.id}
+            isInitiallyFavorited={favoriteIds.has(service.id)}
+            name={service.provider_name}
             categories={service.categories}
             profileImage={service.profile_pic}
             serviceImage={service.image}
+            onPress={handlePostPress}
+            onRatePress={handleRatePress}
           />
         ))}
       </ScrollView>
+
+      <ServiceDetailsModal
+        visible={isModalVisible}
+        serviceId={selectedServiceId}
+        onClose={handleCloseModal}
+        isInitiallyFavorited={favoriteIds.has(selectedServiceId || '')}
+      />
+
+      <RateChoiceModal
+        visible={isRateChoiceModalVisible}
+        onClose={() => setIsRateChoiceModalVisible(false)}
+        onRateService={handleRateService}
+        onRateProvider={handleRateProvider}
+      />
+
+      <RateModal
+        visible={isRateModalVisible}
+        type={rateType}
+        onClose={handleCloseRateModal}
+      />
     </SafeAreaView>
   )
 }

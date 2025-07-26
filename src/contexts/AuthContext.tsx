@@ -16,7 +16,7 @@ import {
 } from '@storage/storageToken'
 
 export type AuthContextDataProps = {
-  token: string
+  token: string | null
   authenticate: (signInData: SignInData) => Promise<void>
   isLoadingUserStorageData: boolean
   signOut: () => Promise<void>
@@ -31,13 +31,14 @@ export const AuthContext = createContext<AuthContextDataProps>(
 )
 
 export function AuthContextPovider({ children }: AuthContextPoviderProps) {
-  const [token, setToken] = useState<string>('')
+  const [token, setToken] = useState<string | null>(null)
   const [isLoadingUserStorageData, setIsLoadingUserStorageData] = useState(true)
 
   async function authenticate(signInData: SignInData) {
     const user = await signIn(signInData)
     if (user.access_token) {
       await storageTokenSave(user.access_token)
+      api.defaults.headers.common.Authorization = `Bearer ${user.access_token}`
       setToken(user.access_token)
     }
   }
@@ -45,7 +46,7 @@ export function AuthContextPovider({ children }: AuthContextPoviderProps) {
   async function signOut() {
     try {
       setIsLoadingUserStorageData(true)
-      setToken('')
+      setToken(null)
       await storageTokenRemove()
     } finally {
       setIsLoadingUserStorageData(false)
@@ -54,10 +55,11 @@ export function AuthContextPovider({ children }: AuthContextPoviderProps) {
 
   const loadUserData = useCallback(async () => {
     try {
-      const userLogged = await storageTokenGet()
+      const tokenFromStorage = await storageTokenGet()
 
-      if (userLogged) {
-        setToken(userLogged)
+      if (tokenFromStorage) {
+        api.defaults.headers.common.Authorization = `Bearer ${tokenFromStorage}`
+        setToken(tokenFromStorage)
       }
     } finally {
       setIsLoadingUserStorageData(false)

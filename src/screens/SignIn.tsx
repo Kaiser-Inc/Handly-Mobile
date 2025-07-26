@@ -122,8 +122,8 @@ export function SignIn() {
                     control={control}
                     name="email"
                     label="Email"
-                    testID="emailInput" 
-                    error={errors.email?.message}                    
+                    testID="emailInput"
+                    error={errors.email?.message}
                   />
                   <FormInput
                     control={control}
@@ -150,7 +150,11 @@ export function SignIn() {
                     <Text className=" text-gray-400 text-lg">
                       Ainda não tem uma conta?
                     </Text>
-                    <Button className=" px-1" onPress={handleSignUp} testID="signUp-Redirect-Button">
+                    <Button
+                      className=" px-1"
+                      onPress={handleSignUp}
+                      testID="signUp-Redirect-Button"
+                    >
                       <ButtonText className="text-purple-300 font-bold text-lg">
                         Cadastre-se
                       </ButtonText>

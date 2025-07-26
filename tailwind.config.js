@@ -14,8 +14,11 @@ module.exports = {
       'purple-700': '#A36BF2',
       'purple-900': '#9356FC',
 
+      'danger-100': '#FEF1F1',
       'danger-300': '#F05D6C',
       'green-500': '#14AE5C',
+
+      'steam-100': '#F6F8FA',
 
       'gray-100': '#DAE4F2',
       'gray-200': '#C8D0DA',

@@ -1,7 +1,7 @@
 import { Image, Pressable, Text, VStack } from '@gluestack-ui/themed'
 import * as ImagePicker from 'expo-image-picker'
 import { CloudUpload } from 'lucide-react-native'
-import React, { useState } from 'react'
+import React from 'react'
 import {
   type Control,
   Controller,

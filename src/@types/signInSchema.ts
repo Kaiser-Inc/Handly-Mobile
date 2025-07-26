@@ -12,6 +12,9 @@ export const signInSchema = z.object({
     })
     .refine((val) => !/^\d+$/.test(val), {
       message: 'A senha não pode conter apenas números',
+    })
+    .refine((val) => !/^[a-zA-Z]+$/.test(val), {
+      message: 'A senha não pode ser completamente alfabética.',
     }),
 })
 

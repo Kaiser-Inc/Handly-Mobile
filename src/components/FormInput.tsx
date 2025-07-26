@@ -27,7 +27,7 @@ interface FormInputProps<T extends FieldValues> {
   onChangeText?: (text: string) => void
   maxLength?: number
   placeholder?: string
-  testID?: string;
+  testID?: string
 }
 
 export function FormInput<T extends FieldValues>({
@@ -43,7 +43,7 @@ export function FormInput<T extends FieldValues>({
   maxLength,
   onChangeText,
   placeholder,
-  testID
+  testID,
 }: FormInputProps<T>) {
   return (
     <VStack className=" w-full px-8 mt-2">

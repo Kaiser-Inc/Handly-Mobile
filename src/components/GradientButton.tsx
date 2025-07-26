@@ -5,14 +5,14 @@ interface GradientButtonProps {
   onPress: () => void
   isLoading?: boolean
   text: string
-  testID?: string;
+  testID?: string
 }
 
 export function GradientButton({
   onPress,
   text,
   isLoading,
-  testID
+  testID,
 }: GradientButtonProps) {
   return (
     <Button
