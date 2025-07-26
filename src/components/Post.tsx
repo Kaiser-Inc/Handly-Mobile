@@ -14,6 +14,7 @@ import { UserPhoto } from './UserPhoto'
 
 import { favoriteService } from '@services/services-services'
 import { useEffect, useState } from 'react'
+import { RateChoiceModal } from './RateChoiceModal'
 
 interface PostProps {
   serviceId: string
@@ -45,6 +46,7 @@ export function Post({
   onPress,
 }: PostProps) {
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
+  const [isRateModalVisible, setIsRateModalVisible] = useState(false)
 
   async function handleFavorite() {
     const originalState = isFavorited
@@ -120,9 +122,11 @@ export function Post({
                   />
                 </VStack>
               </TouchableOpacity>
-              <VStack className=" felx flex-row gap-2 justify-center items-center">
-                <MessageCircleMore size={24} stroke="#95A1B1" />
-              </VStack>
+              <TouchableOpacity onPress={() => setIsRateModalVisible(true)}>
+                <VStack className=" felx flex-row gap-2 justify-center items-center">
+                  <MessageCircleMore size={24} stroke="#95A1B1" />
+                </VStack>
+              </TouchableOpacity>
               <HStack className=" ml-auto ">
                 <Send size={24} stroke="#95A1B1" />
               </HStack>
@@ -143,6 +147,18 @@ export function Post({
           )}
         </VStack>
       </HStack>
+      <RateChoiceModal
+        visible={isRateModalVisible}
+        onClose={() => setIsRateModalVisible(false)}
+        onRateService={() => {
+          console.log('Avaliar Serviço')
+          setIsRateModalVisible(false)
+        }}
+        onRateProvider={() => {
+          console.log('Avaliar Prestador')
+          setIsRateModalVisible(false)
+        }}
+      />
     </TouchableOpacity>
   )
 }
