@@ -1,15 +1,10 @@
-import {
-  Button,
-  ButtonText,
-  Input,
-  InputField,
-  Text,
-  VStack,
-  View,
-} from '@gluestack-ui/themed'
+import { Text, VStack, View } from '@gluestack-ui/themed'
 import { ChevronLeft, Star } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
 import { Animated, Dimensions, TouchableOpacity } from 'react-native'
+
+import LoveEmoji from '@assets/love.svg'
+import { GradientButton } from './GradientButton'
 
 interface RateModalProps {
   visible: boolean
@@ -27,7 +22,7 @@ export function RateModal({ visible, type, onClose }: RateModalProps) {
   useEffect(() => {
     if (visible) {
       Animated.timing(slideAnim, {
-        toValue: Dimensions.get('window').height * 0.1, // Ajuste para cobrir a maior parte da tela
+        toValue: Dimensions.get('window').height * 0.1,
         duration: 300,
         useNativeDriver: true,
       }).start()
@@ -47,7 +42,7 @@ export function RateModal({ visible, type, onClose }: RateModalProps) {
     setRating(selectedRating)
   }
 
-  const handleSubmit = () => {
+  const handleOnSubmit = () => {
     console.log(
       `Avaliação de ${type}: Estrelas: ${rating}, Comentário: ${comment}`,
     )
@@ -77,36 +72,39 @@ export function RateModal({ visible, type, onClose }: RateModalProps) {
         </View>
 
         <VStack className=" mt-8 items-center flex-1">
+          <View className=" mx-auto bg-steam-100 p-3 rounded-full mb-4">
+            <LoveEmoji width={40} height={40} />
+          </View>
           <Text className="text-2xl font-bold text-gray-800 mb-4">
-            {type === 'service' ? 'Avalie o Serviço' : 'Avalie o Prestador'}
+            {type === 'service'
+              ? 'Avalie este serviço'
+              : 'Avalie este prestador'}
           </Text>
-          <Text className="text-base text-gray-300 mb-2 text-center">
-            Deixe sua avaliação e comentário para ajudar outros usuários.
+          <Text className="text-xl text-gray-800 mb-4 w-11/12">
+            {type === 'service'
+              ? 'O que achou do serviço?'
+              : 'Como foi a sua experiência?'}
           </Text>
 
-          <View className="flex-row my-4">
+          <View className="flex flex-row gap-4 mt-2 mb-8">
             {[1, 2, 3, 4, 5].map((star) => (
               <TouchableOpacity
                 key={star}
                 onPress={() => handleStarPress(star)}
               >
                 <Star
-                  size={32}
-                  fill={star <= rating ? '#FFD700' : 'none'}
-                  stroke={star <= rating ? '#FFD700' : '#95A1B1'}
+                  size={40}
+                  fill={star <= rating ? '#FFB65C' : '#E6E6E6'}
+                  stroke={star <= rating ? '#FFB65C' : '#E6E6E6'}
                 />
               </TouchableOpacity>
             ))}
           </View>
+          <Text className="text-xl text-gray-800 mb-4 w-11/12">
+            Quer deixar um comentário?
+          </Text>
 
-          <Button
-            onPress={handleSubmit}
-            className="flex flex-row bg-purple-500 rounded-md py-3 justify-center w-11/12"
-          >
-            <ButtonText className="text-white font-bold">
-              Enviar Avaliação
-            </ButtonText>
-          </Button>
+          <GradientButton onPress={handleOnSubmit} text="Enviar avaliação" />
         </VStack>
       </Animated.View>
     </View>

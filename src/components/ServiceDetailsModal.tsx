@@ -120,7 +120,7 @@ export function ServiceDetailsModal({
                   alt="Imagem de serviço"
                 />
               ) : (
-                <DefaultService width={120} height={120} />
+                <DefaultService width={400} height={215} />
               )}
               <Pressable
                 onPress={handleFavorite}
