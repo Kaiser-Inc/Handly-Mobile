@@ -28,6 +28,7 @@ interface PostProps {
   onUploadImage?: () => void
   onUnfavorite?: (serviceId: string) => void
   onPress?: (serviceId: string) => void
+  onRatePress?: () => void
 }
 
 export function Post({
@@ -43,6 +44,7 @@ export function Post({
   isInitiallyFavorited,
   onUnfavorite,
   onPress,
+  onRatePress,
 }: PostProps) {
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
 
@@ -120,9 +122,11 @@ export function Post({
                   />
                 </VStack>
               </TouchableOpacity>
-              <VStack className=" felx flex-row gap-2 justify-center items-center">
-                <MessageCircleMore size={24} stroke="#95A1B1" />
-              </VStack>
+              <TouchableOpacity onPress={onRatePress}>
+                <VStack className=" felx flex-row gap-2 justify-center items-center">
+                  <MessageCircleMore size={24} stroke="#95A1B1" />
+                </VStack>
+              </TouchableOpacity>
               <HStack className=" ml-auto ">
                 <Send size={24} stroke="#95A1B1" />
               </HStack>

@@ -37,7 +37,7 @@ export function ServiceDetailsModal({
   useEffect(() => {
     if (visible) {
       Animated.timing(slideAnim, {
-        toValue: Dimensions.get('window').height * 0.1, // 10% do topo
+        toValue: Dimensions.get('window').height * 0.1,
         duration: 300,
         useNativeDriver: true,
       }).start()
@@ -62,7 +62,7 @@ export function ServiceDetailsModal({
         duration: 300,
         useNativeDriver: true,
       }).start(() => {
-        setServiceDetails(null) // Limpa os detalhes ao fechar
+        setServiceDetails(null)
       })
     }
   }, [visible, serviceId, slideAnim])
@@ -120,7 +120,7 @@ export function ServiceDetailsModal({
                   alt="Imagem de serviço"
                 />
               ) : (
-                <DefaultService width={120} height={120} />
+                <DefaultService width={400} height={215} />
               )}
               <Pressable
                 onPress={handleFavorite}
