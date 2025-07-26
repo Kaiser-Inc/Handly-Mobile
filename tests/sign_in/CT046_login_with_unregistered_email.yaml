@@ -3,7 +3,10 @@ env:
   EMAIL: naocadastrado@email.com
   PASSWORD: SenhaForte123
 ---
-- openLink: exp://127.0.0.1:8081
+- launchApp:
+    appId: com.kaiser.handly
+    stopApp: true
+    clearState: true
 
 - tapOn: 
     id: emailInput
@@ -12,6 +15,8 @@ env:
 - tapOn: 
     id: passwordInput
 - inputText: ${PASSWORD}
+
+- hideKeyboard
 
 - doubleTapOn:
     id: login-Button

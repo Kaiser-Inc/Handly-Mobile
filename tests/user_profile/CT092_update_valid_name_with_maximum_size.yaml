@@ -1,0 +1,22 @@
+appId: com.kaiser.handly
+env:
+  NAME: Nomegrandenomegrandenomegrandenomegrandenomegrandenomegrande
+
+---
+- runFlow:
+    file: ../sign_in/CT044_login_with_valid_credentials.yaml
+
+- tapOn:
+    "Perfil"
+
+- tapOn:
+    point: "56%,34%"
+
+
+- inputText: ${NAME}
+
+- tapOn:
+    point: "81%,37%"
+
+- assertVisible:
+    text: "Nome atualizado com sucesso!"

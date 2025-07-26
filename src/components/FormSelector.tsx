@@ -23,6 +23,7 @@ interface FormSelectorProps<T extends FieldValues> {
   name: Path<T>
   label: string
   error?: string
+  testID?: string;
 }
 
 export function FormSelector<T extends FieldValues>({
@@ -30,6 +31,7 @@ export function FormSelector<T extends FieldValues>({
   label,
   name,
   error,
+  testID
 }: FormSelectorProps<T>) {
   const [input, setInput] = useState('')
 
@@ -78,6 +80,7 @@ export function FormSelector<T extends FieldValues>({
 
               <Input>
                 <InputField
+                  testID={testID}
                   className={`text-base   h-16 rounded-lg mb-3 ${
                     isDisabled
                       ? ' border-b border-gray-400'

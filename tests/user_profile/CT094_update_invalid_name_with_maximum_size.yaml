@@ -1,0 +1,23 @@
+appId: com.kaiser.handly
+env:
+  NAME: Nomegrandenomegrandenomegrandenomegrandenomegrandenomegranden
+
+---
+- runFlow:
+    file: ../sign_in/CT044_login_with_valid_credentials.yaml
+
+- tapOn:
+    "Perfil"
+
+- tapOn:
+    point: "64%,34%"
+
+- tapOn: "${NAME}"
+
+- inputText: "Ma"
+
+- tapOn:
+    point: "81%,37%"
+
+- assertVisible:
+    text: "O nome deve ter no maximo 60 caracateres "

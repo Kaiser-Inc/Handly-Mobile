@@ -1,0 +1,12 @@
+appId: com.kaiser.handly
+
+
+---
+- runFlow:
+    file: ../sign_in/CT044_login_with_valid_credentials.yaml
+
+- tapOn:
+    "Perfil"
+
+- assertVisible:
+    text: "Sair"
