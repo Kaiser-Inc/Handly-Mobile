@@ -13,6 +13,7 @@ interface ServiceDetailsModalProps {
   serviceId: string | null
   onClose: () => void
   isInitiallyFavorited: boolean
+  onFavoriteChange?: (serviceId: string, isFavorited: boolean) => void
 }
 
 export function ServiceDetailsModal({
@@ -20,6 +21,7 @@ export function ServiceDetailsModal({
   serviceId,
   onClose,
   isInitiallyFavorited,
+  onFavoriteChange,
 }: ServiceDetailsModalProps) {
   const slideAnim = React.useRef(
     new Animated.Value(Dimensions.get('window').height),
@@ -35,7 +37,7 @@ export function ServiceDetailsModal({
   useEffect(() => {
     if (visible) {
       Animated.timing(slideAnim, {
-        toValue: Dimensions.get('window').height * 0.1,
+        toValue: Dimensions.get('window').height * 0.1, // 10% do topo
         duration: 300,
         useNativeDriver: true,
       }).start()
@@ -60,7 +62,7 @@ export function ServiceDetailsModal({
         duration: 300,
         useNativeDriver: true,
       }).start(() => {
-        setServiceDetails(null)
+        setServiceDetails(null) // Limpa os detalhes ao fechar
       })
     }
   }, [visible, serviceId, slideAnim])
@@ -73,6 +75,7 @@ export function ServiceDetailsModal({
 
     try {
       await favoriteService(serviceId)
+      onFavoriteChange?.(serviceId, !originalState)
     } catch (error) {
       console.error('Erro ao favoritar/desfavoritar serviço:', error)
       setIsFavorited(originalState)

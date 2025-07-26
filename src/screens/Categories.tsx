@@ -8,6 +8,7 @@ import { GradientButton } from '@components/GradientButton'
 import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
+import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
@@ -28,6 +29,8 @@ export function Categories() {
     'error',
   )
   const [search, setSearch] = useState('')
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
 
   const loadData = useCallback(async () => {
     if (!token) {
@@ -88,6 +91,29 @@ export function Categories() {
     )
     setToastType(filtrados.length > 0 ? 'success' : 'info')
     setToastVisible(true)
+  }
+
+  const handlePostPress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsModalVisible(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false)
+    setSelectedServiceId(null)
+    loadData() // Recarrega os dados para refletir as mudanças de favorito
+  }
+
+  const handleFavoriteChange = (serviceId: string, isFavorited: boolean) => {
+    setFavoriteIds((prev) => {
+      const newFavIds = new Set(prev)
+      if (isFavorited) {
+        newFavIds.add(serviceId)
+      } else {
+        newFavIds.delete(serviceId)
+      }
+      return newFavIds
+    })
   }
 
   const filteredCategories = categories.filter((category) =>
@@ -152,10 +178,19 @@ export function Categories() {
               categories={service.categories}
               profileImage={service.profile_pic}
               serviceImage={service.image}
+              onPress={handlePostPress}
             />
           ))}
         </View>
       </ScrollView>
+
+      <ServiceDetailsModal
+        visible={isModalVisible}
+        serviceId={selectedServiceId}
+        onClose={handleCloseModal}
+        isInitiallyFavorited={favoriteIds.has(selectedServiceId || '')}
+        onFavoriteChange={handleFavoriteChange}
+      />
     </SafeAreaView>
   )
 }

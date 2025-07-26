@@ -6,6 +6,7 @@ import BackgroundImg from '@assets/bg.png'
 import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
 import { SearchBar } from '@components/SearchBar'
+import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import type { ServiceFeedDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
@@ -16,6 +17,10 @@ export function Favorites() {
   const { isLoadingUserStorageData, token } = useAuth()
   const [services, setServices] = useState<ServiceFeedDTO[]>([])
   const [search, setSearch] = useState('')
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
+    null,
+  )
 
   const loadFavorites = useCallback(async () => {
     if (isLoadingUserStorageData || !token) {
@@ -53,6 +58,23 @@ export function Favorites() {
     )
   }
 
+  const handlePostPress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsModalVisible(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false)
+    setSelectedServiceId(null)
+    loadFavorites() // Recarrega os favoritos para refletir as mudanças
+  }
+
+  const handleFavoriteChange = (serviceId: string, isFavorited: boolean) => {
+    if (!isFavorited) {
+      handleUnfavorite(serviceId)
+    }
+  }
+
   const filteredServices = services.filter(
     (service: ServiceFeedDTO) =>
       service.service_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -87,9 +109,18 @@ export function Favorites() {
             profileImage={service.profile_pic}
             serviceImage={service.image}
             onUnfavorite={handleUnfavorite}
+            onPress={handlePostPress}
           />
         ))}
       </ScrollView>
+
+      <ServiceDetailsModal
+        visible={isModalVisible}
+        serviceId={selectedServiceId}
+        onClose={handleCloseModal}
+        isInitiallyFavorited={true}
+        onFavoriteChange={handleFavoriteChange}
+      />
     </SafeAreaView>
   )
 }
