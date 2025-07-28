@@ -12,7 +12,7 @@ import {
 import { reportService } from '@services/services-services'
 import { reportUser } from '@services/users-services'
 import { AppError } from '@utils/AppError'
-import { ReportReason } from '../@types/reportReasons'
+import { ReportReason, reasonTranslations } from '../@types/reportReasons'
 import { GradientButton } from './GradientButton'
 import { ToastMessage } from './ToastMessage'
 
@@ -159,14 +159,14 @@ export function ReportModal({
                 <Text
                   className={`text-lg ${selectedReason === reason ? 'text-purple-700 font-bold' : 'text-gray-700'}`}
                 >
-                  {reason.replace(/_/g, ' ').toLowerCase()}
+                  {reasonTranslations[reason]}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
           <Text className="text-xl text-gray-800 mb-4 w-11/12">
-            Descreva o motivo da denúncia (obrigatório):
+            Descreva o motivo da denúncia:
           </Text>
 
           <TextInput

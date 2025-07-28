@@ -5,3 +5,11 @@ export enum ReportReason {
   Spam = 'SPAM',
   Other = 'OTHER',
 }
+
+export const reasonTranslations: { [key in ReportReason]: string } = {
+  [ReportReason.InnapropiateContent]: 'Conteúdo Impróprio',
+  [ReportReason.Fraud]: 'Fraude',
+  [ReportReason.Harassment]: 'Assédio',
+  [ReportReason.Spam]: 'Spam',
+  [ReportReason.Other]: 'Outro',
+}
