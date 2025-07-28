@@ -16,6 +16,7 @@ import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Camera, ChevronRight, Pencil, ThumbsUp } from 'lucide-react-native'
+import { Star } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
 import { DeleteServiceModal } from '@components/DeleteServiceModal'
@@ -38,6 +39,7 @@ import {
 import {
   getProfile,
   getProfilePic,
+  getProviderRatings,
   updateUser,
   uploadProfilePic,
 } from '@services/users-services'
@@ -230,6 +232,17 @@ export function Profile() {
 
   useScreenRefresh(loadUserProfile)
 
+  const loadUserRatings = useCallback(async () => {
+    try {
+      if (user?.role === 'provider' && user.cpf_cnpj) {
+        const userRatings = await getProviderRatings(user.cpf_cnpj)
+        setRatings(userRatings)
+      }
+    } catch (error) {
+      showToast('Erro ao carregar avaliações.', 'error')
+    }
+  }, [user])
+
   useEffect(() => {
     async function fetchAndSetServices() {
       if (user?.role === 'provider') {
@@ -242,6 +255,12 @@ export function Profile() {
     }
     fetchAndSetServices()
   }, [user])
+
+  useEffect(() => {
+    if (showing === 'rates' && user?.role === 'provider') {
+      loadUserRatings()
+    }
+  }, [showing, user, loadUserRatings])
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -413,16 +432,32 @@ export function Profile() {
                   )}
                 </View>
               ) : (
-                <View className=" flex flex-col items-center">
-                  <Text className="font-bold text-lg mb-8">
-                    Minhas avaliações
-                  </Text>
-                  {services.length === 0 ? (
-                    <Text>Nenhuma avaliação encontrada.</Text>
+                <ScrollView
+                  className="mt-8 w-10/12"
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ paddingBottom: 80 }}
+                >
+                  {ratings.length === 0 ? (
+                    <VStack className="flex-1 justify-center items-center">
+                      <Text className="text-lg text-gray-600">
+                        Você ainda não possui avaliações.
+                      </Text>
+                    </VStack>
                   ) : (
-                    <Text>asdasd</Text>
+                    ratings.map((rating) => (
+                      <View
+                        key={rating.id}
+                        className="bg-steam-100 p-3 rounded-lg mb-2"
+                      >
+                        <Text className="font-bold flex flex-row items-center">
+                          Nota: {rating.stars}.0{' '}
+                          <Star size={12} fill="#9356FC" stroke="#9356FC" />
+                        </Text>
+                        <Text>{rating.comment}</Text>
+                      </View>
+                    ))
                   )}
-                </View>
+                </ScrollView>
               )}
             </View>
           ) : (
