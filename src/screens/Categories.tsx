@@ -6,6 +6,7 @@ import BackgroundImg from '@assets/bg.png'
 import { Badge } from '@components/Badge'
 import { GradientButton } from '@components/GradientButton'
 import { HomeHeader } from '@components/HomeHeader'
+import { NotificationModal } from '@components/NotificationModal'
 import { Post } from '@components/Post'
 import { RateChoiceModal } from '@components/RateChoiceModal'
 import { RateModal } from '@components/RateModal'
@@ -24,7 +25,7 @@ export function Categories() {
   const [categories, setCategories] = useState<string[]>([])
   const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [filteredServices, setFilteredServices] = useState<
-    ServiceWithProviderDTO[]
+    ServiceWithProviderDTO
   >([])
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [toastVisible, setToastVisible] = useState(false)
@@ -38,10 +39,19 @@ export function Categories() {
     null,
   )
 
-  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
-    useState(false)
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] = useState(false)
   const [isRateModalVisible, setIsRateModalVisible] = useState(false)
   const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
+
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
+
+  const handleOpenNotificationModal = () => {
+    setIsNotificationModalOpen(true)
+  }
+
+  const handleCloseNotificationModal = () => {
+    setIsNotificationModalOpen(false)
+  }
 
   const loadData = useCallback(async () => {
     if (!token) {
@@ -181,7 +191,7 @@ export function Categories() {
         className="w-full h-full absolute"
       />
       <VStack className="flex">
-        <HomeHeader>
+        <HomeHeader onBellPress={handleOpenNotificationModal}>
           <SearchBar onChange={setSearch} />
         </HomeHeader>
       </VStack>
@@ -248,6 +258,11 @@ export function Categories() {
         type={rateType}
         targetId={getTargetId()}
         onClose={handleCloseRateModal}
+      />
+
+      <NotificationModal
+        isOpen={isNotificationModalOpen}
+        onClose={handleCloseNotificationModal}
       />
     </SafeAreaView>
   )
