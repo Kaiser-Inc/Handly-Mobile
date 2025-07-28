@@ -43,6 +43,7 @@ import {
 } from '@services/users-services'
 import { z } from 'zod'
 import { nameProfileSchema, phoneProfileSchema, profileUpdateSchema } from '../@types/profileSchema'
+import { formatPhoneNumber } from '../utils/formatPhone'
 
 import Reaching from '@assets/Reaching.svg'
 import AngryEmoji from '@assets/angry.svg'
@@ -320,8 +321,8 @@ export function Profile() {
                       <Text className="font-bold text-md">Telefone</Text>
                       <Input className="w-full border-b-2 border-purple-300 flex flex-row justify-between items-center">
                         <InputField
-                          value={editedPhone}
-                          onChangeText={setEditedPhone}
+                          value={formatPhoneNumber(editedPhone)}
+                          onChangeText={(text) => setEditedPhone(text.replace(/\D/g, ''))}
                           placeholder="Digite seu telefone"
                           keyboardType="phone-pad"
                         />
@@ -333,7 +334,7 @@ export function Profile() {
                   ) : (
                     <>
                       <Text className="text-800 font-bold text-md">
-                        {user.phone ? user.phone : '-'}
+                        {formatPhoneNumber(user.phone)}
                       </Text>
                       <Text className=" text-gray-400">Contato</Text>
                       <TouchableOpacity onPress={() => setIsEditingPhone(true)}>
