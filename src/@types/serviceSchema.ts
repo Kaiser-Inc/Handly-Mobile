@@ -21,3 +21,12 @@ export const serviceSchema = z.object({
 })
 
 export type serviceData = z.infer<typeof serviceSchema>
+
+export type ServiceRating = {
+  id: string
+  service_id: string
+  user_id: string
+  stars: number
+  comment: string
+  created_at: string
+}

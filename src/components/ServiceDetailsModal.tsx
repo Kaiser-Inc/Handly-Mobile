@@ -1,11 +1,16 @@
 import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { Image, Text, VStack, View } from '@gluestack-ui/themed'
 import { apiUrl } from '@services/api/api'
-import { favoriteService, getService } from '@services/services-services'
+import {
+  favoriteService,
+  getService,
+  getServiceRatings,
+} from '@services/services-services'
 import { formatPhoneNumber } from '@utils/formatPhone'
 import { ChevronLeft, Heart, Star } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
 import { Animated, Dimensions, Pressable, TouchableOpacity } from 'react-native'
+import type { ServiceRating } from '../@types/serviceSchema'
 import DefaultService from '../assets/defaut-service.svg'
 import { Badge } from './Badge'
 
@@ -31,6 +36,7 @@ export function ServiceDetailsModal({
     useState<ServiceWithProviderDTO | null>(null)
   const [loading, setLoading] = useState(true)
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
+  const [averageRating, setAverageRating] = useState<number | null>(null)
 
   useEffect(() => {
     setIsFavorited(isInitiallyFavorited)
@@ -46,13 +52,26 @@ export function ServiceDetailsModal({
 
       if (serviceId) {
         setLoading(true)
-        getService(serviceId)
-          .then((data) => {
-            setServiceDetails(data)
+        Promise.all([getService(serviceId), getServiceRatings(serviceId)])
+          .then(([serviceData, ratingsData]) => {
+            setServiceDetails(serviceData)
+            let calculatedAverage = null
+            if (ratingsData && ratingsData.length > 0) {
+              const totalStars = ratingsData.reduce(
+                (sum: number, rating: ServiceRating) => sum + rating.stars,
+                0,
+              )
+              calculatedAverage = totalStars / ratingsData.length
+            }
+            setAverageRating(calculatedAverage)
           })
           .catch((error) => {
-            console.error('Erro ao buscar detalhes do serviço:', error)
+            console.error(
+              'Erro ao buscar detalhes ou avaliações do serviço:',
+              error,
+            )
             setServiceDetails(null)
+            setAverageRating(null)
           })
           .finally(() => {
             setLoading(false)
@@ -65,6 +84,7 @@ export function ServiceDetailsModal({
         useNativeDriver: true,
       }).start(() => {
         setServiceDetails(null)
+        setAverageRating(null)
       })
     }
   }, [visible, serviceId, slideAnim])
@@ -149,7 +169,9 @@ export function ServiceDetailsModal({
               </Text>
               <View className=" flex flex-row items-center gap-2">
                 <Star stroke="#9356FC" />
-                <Text className=" text-800 font-bold text-lg">5.0</Text>
+                <Text className=" text-800 font-bold text-lg">
+                  {averageRating !== null ? averageRating.toFixed(1) : 'N/A'}
+                </Text>
               </View>
               <View className=" flex flex-row items-cente w-full justify-center items-center py-4">
                 <View className=" flex flex-col items-center px-3 py-3 w-fit">
