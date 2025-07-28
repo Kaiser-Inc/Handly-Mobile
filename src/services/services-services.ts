@@ -1,4 +1,5 @@
 import { storageTokenGet } from '@storage/storageToken'
+import type { ReportReason } from '../@types/reportReasons'
 import type { serviceData } from '../@types/serviceSchema'
 import { api, apiUrl } from './api/api'
 
@@ -103,5 +104,17 @@ export async function rateService(
 
 export async function getServiceRatings(serviceId: string) {
   const response = await api.get(`services/${serviceId}/ratings`)
+  return response.data
+}
+
+export async function reportService(
+  serviceId: string,
+  reason: ReportReason,
+  description: string,
+) {
+  const response = await api.post(`reports/service/${serviceId}`, {
+    reason,
+    description,
+  })
   return response.data
 }
