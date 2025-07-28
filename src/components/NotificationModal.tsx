@@ -10,17 +10,11 @@ import {
 
 import { useAuth } from '@hooks/useAuth'
 import { getProfile, getProviderRatings } from '@services/users-services'
+import type { Rating } from '../@types/profileSchema'
 
 interface NotificationModalProps {
   isOpen: boolean
   onClose: () => void
-}
-
-interface Rating {
-  id: string
-  stars: number
-  comment: string
-  // Adicione outros campos da avaliação se houver
 }
 
 export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {

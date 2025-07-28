@@ -43,6 +43,7 @@ import {
 } from '@services/users-services'
 import { z } from 'zod'
 import {
+  type Rating,
   nameProfileSchema,
   phoneProfileSchema,
   profileUpdateSchema,
@@ -73,6 +74,9 @@ export function Profile() {
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
     null,
   )
+
+  const [showing, setShowing] = useState('services')
+  const [ratings, setRatings] = useState<Rating[]>([])
 
   const loadUserProfile = useCallback(async () => {
     try {
@@ -361,25 +365,64 @@ export function Profile() {
                   )}
                 </View>
               </View>
-              <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
-              {services.length === 0 ? (
-                <Text>Nenhum serviço encontrado.</Text>
+              <View className="flex flex-row justify-between my-4 w-10/12 gap-2">
+                <Button
+                  onPress={() => setShowing('services')}
+                  className={`flex flex-row w-[47.5%] rounded-md py-3 justify-center ${showing === 'services' ? 'bg-purple-500 text-white ' : 'bg-steam-100 text-gray-800  ´'}  `}
+                >
+                  <ButtonText
+                    className={`font-bold ${showing === 'services' ? ' text-white ' : '  text-gray-400 ´'}  `}
+                  >
+                    Serviço
+                  </ButtonText>
+                </Button>
+                <Button
+                  onPress={() => setShowing('rates')}
+                  className={`flex flex-row w-[47.5%] rounded-md py-3 justify-center ${showing !== 'services' ? 'bg-purple-500 text-white ' : 'bg-steam-100 text-gray-800  ´'}  `}
+                >
+                  <ButtonText
+                    className={`font-bold ${showing !== 'services' ? ' text-white ' : '  text-gray-400 ´'}  `}
+                  >
+                    Avaliações
+                  </ButtonText>
+                </Button>
+              </View>
+              {showing === 'services' ? (
+                <View className=" flex flex-col items-center">
+                  <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
+                  {services.length === 0 ? (
+                    <Text>Nenhum serviço encontrado.</Text>
+                  ) : (
+                    services.map((service) => (
+                      <Post
+                        key={service.id}
+                        serviceId={service.id}
+                        name={user.name}
+                        isInitiallyFavorited={false}
+                        categories={service.categories}
+                        serviceImage={service.image}
+                        profileImage={user.profile_pic}
+                        isProvider={true}
+                        onEdit={() => handleEditService(service.id)}
+                        onDelete={() => handleDeleteService(service.id)}
+                        onUploadImage={() =>
+                          handleUploadServiceImage(service.id)
+                        }
+                      />
+                    ))
+                  )}
+                </View>
               ) : (
-                services.map((service) => (
-                  <Post
-                    key={service.id}
-                    serviceId={service.id}
-                    name={user.name}
-                    isInitiallyFavorited={false}
-                    categories={service.categories}
-                    serviceImage={service.image}
-                    profileImage={user.profile_pic}
-                    isProvider={true}
-                    onEdit={() => handleEditService(service.id)}
-                    onDelete={() => handleDeleteService(service.id)}
-                    onUploadImage={() => handleUploadServiceImage(service.id)}
-                  />
-                ))
+                <View className=" flex flex-col items-center">
+                  <Text className="font-bold text-lg mb-8">
+                    Minhas avaliações
+                  </Text>
+                  {services.length === 0 ? (
+                    <Text>Nenhuma avaliação encontrada.</Text>
+                  ) : (
+                    <Text>asdasd</Text>
+                  )}
+                </View>
               )}
             </View>
           ) : (

@@ -29,3 +29,9 @@ export const profileUpdateSchema = z.object({
 export const imageProfileSchema = z.string().startsWith('data:image/', {
   message: 'A imagem deve estar em base64 e iniciar com "data:image/".',
 })
+
+export interface Rating {
+  id: string
+  stars: number
+  comment: string
+}
