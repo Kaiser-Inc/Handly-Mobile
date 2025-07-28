@@ -65,3 +65,8 @@ export async function rateUser(
   })
   return response.data
 }
+
+export async function getProviderRatings(userId: string) {
+  const response = await api.get(`providers/${userId}/ratings`)
+  return response.data
+}
