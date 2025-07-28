@@ -58,7 +58,7 @@ export async function rateUser(
   stars: number,
   comment?: string,
 ) {
-  const response = await api.post(`services/${userId}/ratings`, {
+  const response = await api.post(`providers/${userId}/ratings`, {
     stars,
     comment,
   })
