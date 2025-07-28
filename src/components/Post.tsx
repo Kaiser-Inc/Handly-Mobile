@@ -7,6 +7,7 @@ import {
   Send,
   SquarePen,
   Trash2,
+  TriangleAlert,
 } from 'lucide-react-native'
 import { TouchableOpacity } from 'react-native'
 import DefaultService from '../assets/defaut-service.svg'
@@ -47,6 +48,10 @@ export function Post({
   onRatePress,
 }: PostProps) {
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
+
+  async function handleReport() {
+    console.log('report')
+  }
 
   async function handleFavorite() {
     const originalState = isFavorited
@@ -128,7 +133,11 @@ export function Post({
                 </VStack>
               </TouchableOpacity>
               <HStack className=" ml-auto ">
-                <Send size={24} stroke="#95A1B1" />
+                <TouchableOpacity onPress={handleReport}>
+                  <VStack className=" felx flex-row gap-2 justify-center items-center">
+                    <TriangleAlert size={24} stroke="#F05D6C" />
+                  </VStack>
+                </TouchableOpacity>
               </HStack>
             </>
           )}

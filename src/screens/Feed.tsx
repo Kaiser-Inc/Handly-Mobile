@@ -9,15 +9,15 @@ import { RateChoiceModal } from '@components/RateChoiceModal'
 import { RateModal } from '@components/RateModal'
 import { SearchBar } from '@components/SearchBar'
 import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
-import type { ServiceFeedDTO } from '@dtos/serviceDTO'
+import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useFocusEffect } from '@react-navigation/native'
-import { fetchFavorites, getFeed } from '@services/services-services'
+import { fetchFavorites, fetchServices } from '@services/services-services'
 import { useCallback, useState } from 'react'
 
 export function Feed() {
   const { isLoadingUserStorageData, token } = useAuth()
-  const [services, setServices] = useState<ServiceFeedDTO[]>([])
+  const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -36,7 +36,7 @@ export function Feed() {
     }
     try {
       const [servicesData, favoritesData] = await Promise.all([
-        getFeed(),
+        fetchServices(),
         fetchFavorites(),
       ])
 
@@ -44,7 +44,7 @@ export function Feed() {
         (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
       )
 
-      setServices(servicesData as ServiceFeedDTO[])
+      setServices(servicesData as ServiceWithProviderDTO[])
       setFavoriteIds(favIds)
     } catch (error) {
       console.error('Erro ao carregar dados do feed:', error)
@@ -58,11 +58,13 @@ export function Feed() {
   )
 
   const filteredServices = services.filter(
-    (service: ServiceFeedDTO) =>
-      service.service_name.toLowerCase().includes(search.toLowerCase()) ||
+    (service: ServiceWithProviderDTO) =>
+      service.name.toLowerCase().includes(search.toLowerCase()) ||
       service.description?.toLowerCase().includes(search.toLowerCase()) ||
-      service.provider_name.toLowerCase().includes(search.toLowerCase()),
+      service.provider.name.toLowerCase().includes(search.toLowerCase()),
   )
+
+  const selectedService = services.find((s) => s.id === selectedServiceId)
 
   const handlePostPress = (serviceId: string) => {
     setSelectedServiceId(serviceId)
@@ -74,7 +76,8 @@ export function Feed() {
     setSelectedServiceId(null)
   }
 
-  const handleRatePress = () => {
+  const handleRatePress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
     setIsRateChoiceModalVisible(true)
   }
 
@@ -95,6 +98,13 @@ export function Feed() {
     setRateType(null)
   }
 
+  const getTargetId = () => {
+    if (!rateType || !selectedService) return ''
+    return rateType === 'service'
+      ? selectedService.id
+      : selectedService.provider.cpf_cnpj
+  }
+
   return (
     <SafeAreaView className="flex-1" style={{ backgroundColor: 'transparent' }}>
       <Image
@@ -113,17 +123,17 @@ export function Feed() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        {filteredServices.map((service: ServiceFeedDTO) => (
+        {filteredServices.map((service: ServiceWithProviderDTO) => (
           <Post
             key={service.id}
             serviceId={service.id}
             isInitiallyFavorited={favoriteIds.has(service.id)}
-            name={service.provider_name}
+            name={service.provider.name}
             categories={service.categories}
-            profileImage={service.profile_pic}
+            profileImage={service.provider.profile_pic}
             serviceImage={service.image}
-            onPress={handlePostPress}
-            onRatePress={handleRatePress}
+            onPress={() => handlePostPress(service.id)}
+            onRatePress={() => handleRatePress(service.id)}
           />
         ))}
       </ScrollView>
@@ -145,6 +155,7 @@ export function Feed() {
       <RateModal
         visible={isRateModalVisible}
         type={rateType}
+        targetId={getTargetId()}
         onClose={handleCloseRateModal}
       />
     </SafeAreaView>

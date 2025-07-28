@@ -52,3 +52,15 @@ export async function updateUser(updatedUsername: updatedUsernameData) {
   const response = await api.put('/protected/profile', updatedUsername)
   return response.data
 }
+
+export async function rateUser(
+  userId: string,
+  stars: number,
+  comment?: string,
+) {
+  const response = await api.post(`services/${userId}/ratings`, {
+    stars,
+    comment,
+  })
+  return response.data
+}

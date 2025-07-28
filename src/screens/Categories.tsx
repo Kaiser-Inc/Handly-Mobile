@@ -7,21 +7,25 @@ import { Badge } from '@components/Badge'
 import { GradientButton } from '@components/GradientButton'
 import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
+import { RateChoiceModal } from '@components/RateChoiceModal'
+import { RateModal } from '@components/RateModal'
 import { SearchBar } from '@components/SearchBar'
 import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import { ToastMessage } from '@components/ToastMessage'
-import type { ServiceFeedDTO } from '@dtos/serviceDTO'
+import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { fetchFavorites, getCategories } from '@services/services-services'
+import { fetchFavorites, fetchServices, getCategories } from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
 export function Categories() {
   const { token } = useAuth()
   const [selected, setSelected] = useState<string[]>([])
   const [categories, setCategories] = useState<string[]>([])
-  const [services, setServices] = useState<ServiceFeedDTO[]>([])
-  const [filteredServices, setFilteredServices] = useState<ServiceFeedDTO[]>([])
+  const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
+  const [filteredServices, setFilteredServices] = useState<
+    ServiceWithProviderDTO[]
+  >([])
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
@@ -30,16 +34,24 @@ export function Categories() {
   )
   const [search, setSearch] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
+    null,
+  )
+
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
+    useState(false)
+  const [isRateModalVisible, setIsRateModalVisible] = useState(false)
+  const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
 
   const loadData = useCallback(async () => {
     if (!token) {
       return
     }
     try {
-      const [categoriesData, favoritesData] = await Promise.all([
-        getCategories([]),
+      const [servicesData, favoritesData, categoriesData] = await Promise.all([
+        fetchServices(),
         fetchFavorites(),
+        getCategories([]),
       ])
 
       const favIds = new Set(
@@ -47,7 +59,7 @@ export function Categories() {
       )
 
       setCategories(categoriesData.categories)
-      setServices(categoriesData.services)
+      setServices(servicesData as ServiceWithProviderDTO[])
       setFavoriteIds(favIds)
       setFilteredServices([])
     } catch (error) {
@@ -93,6 +105,8 @@ export function Categories() {
     setToastVisible(true)
   }
 
+  const selectedService = services.find((s) => s.id === selectedServiceId)
+
   const handlePostPress = (serviceId: string) => {
     setSelectedServiceId(serviceId)
     setIsModalVisible(true)
@@ -114,6 +128,35 @@ export function Categories() {
       }
       return newFavIds
     })
+  }
+
+  const handleRatePress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsRateChoiceModalVisible(true)
+  }
+
+  const handleRateService = () => {
+    setIsRateChoiceModalVisible(false)
+    setRateType('service')
+    setIsRateModalVisible(true)
+  }
+
+  const handleRateProvider = () => {
+    setIsRateChoiceModalVisible(false)
+    setRateType('provider')
+    setIsRateModalVisible(true)
+  }
+
+  const handleCloseRateModal = () => {
+    setIsRateModalVisible(false)
+    setRateType(null)
+  }
+
+  const getTargetId = () => {
+    if (!rateType || !selectedService) return ''
+    return rateType === 'service'
+      ? selectedService.id
+      : selectedService.provider.cpf_cnpj
   }
 
   const filteredCategories = categories.filter((category) =>
@@ -174,11 +217,12 @@ export function Categories() {
               key={service.id}
               serviceId={service.id}
               isInitiallyFavorited={favoriteIds.has(service.id)}
-              name={service.provider_name}
+              name={service.provider.name}
               categories={service.categories}
-              profileImage={service.profile_pic}
+              profileImage={service.provider.profile_pic}
               serviceImage={service.image}
-              onPress={handlePostPress}
+              onPress={() => handlePostPress(service.id)}
+              onRatePress={() => handleRatePress(service.id)}
             />
           ))}
         </View>
@@ -190,6 +234,20 @@ export function Categories() {
         onClose={handleCloseModal}
         isInitiallyFavorited={favoriteIds.has(selectedServiceId || '')}
         onFavoriteChange={handleFavoriteChange}
+      />
+
+      <RateChoiceModal
+        visible={isRateChoiceModalVisible}
+        onClose={() => setIsRateChoiceModalVisible(false)}
+        onRateService={handleRateService}
+        onRateProvider={handleRateProvider}
+      />
+
+      <RateModal
+        visible={isRateModalVisible}
+        type={rateType}
+        targetId={getTargetId()}
+        onClose={handleCloseRateModal}
       />
     </SafeAreaView>
   )

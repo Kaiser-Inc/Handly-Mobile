@@ -88,3 +88,15 @@ export async function fetchFavorites() {
   const response = await api.get('/protected/favorites')
   return response.data
 }
+
+export async function rateService(
+  serviceId: string,
+  stars: number,
+  comment?: string,
+) {
+  const response = await api.post(`services/${serviceId}/ratings`, {
+    stars,
+    comment,
+  })
+  return response.data
+}

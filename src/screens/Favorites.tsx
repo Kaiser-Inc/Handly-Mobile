@@ -5,22 +5,29 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import BackgroundImg from '@assets/bg.png'
 import { HomeHeader } from '@components/HomeHeader'
 import { Post } from '@components/Post'
+import { RateChoiceModal } from '@components/RateChoiceModal'
+import { RateModal } from '@components/RateModal'
 import { SearchBar } from '@components/SearchBar'
 import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
-import type { ServiceFeedDTO } from '@dtos/serviceDTO'
+import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { fetchFavorites, getFeed } from '@services/services-services'
+import { fetchFavorites, fetchServices } from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
 export function Favorites() {
   const { isLoadingUserStorageData, token } = useAuth()
-  const [services, setServices] = useState<ServiceFeedDTO[]>([])
+  const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [search, setSearch] = useState('')
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
     null,
   )
+
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
+    useState(false)
+  const [isRateModalVisible, setIsRateModalVisible] = useState(false)
+  const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
 
   const loadFavorites = useCallback(async () => {
     if (isLoadingUserStorageData || !token) {
@@ -28,7 +35,7 @@ export function Favorites() {
     }
     try {
       const [servicesData, favoritesData] = await Promise.all([
-        getFeed(),
+        fetchServices(),
         fetchFavorites(),
       ])
 
@@ -36,9 +43,9 @@ export function Favorites() {
         (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
       )
 
-      const favoriteServices = (servicesData as ServiceFeedDTO[]).filter(
-        (service) => favIds.has(service.id),
-      )
+      const favoriteServices = (
+        servicesData as ServiceWithProviderDTO[]
+      ).filter((service) => favIds.has(service.id))
 
       setServices(favoriteServices)
     } catch (error) {
@@ -58,6 +65,8 @@ export function Favorites() {
     )
   }
 
+  const selectedService = services.find((s) => s.id === selectedServiceId)
+
   const handlePostPress = (serviceId: string) => {
     setSelectedServiceId(serviceId)
     setIsModalVisible(true)
@@ -75,10 +84,40 @@ export function Favorites() {
     }
   }
 
+  const handleRatePress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsRateChoiceModalVisible(true)
+  }
+
+  const handleRateService = () => {
+    setIsRateChoiceModalVisible(false)
+    setRateType('service')
+    setIsRateModalVisible(true)
+  }
+
+  const handleRateProvider = () => {
+    setIsRateChoiceModalVisible(false)
+    setRateType('provider')
+    setIsRateModalVisible(true)
+  }
+
+  const handleCloseRateModal = () => {
+    setIsRateModalVisible(false)
+    setRateType(null)
+  }
+
+  const getTargetId = () => {
+    if (!rateType || !selectedService) return ''
+    return rateType === 'service'
+      ? selectedService.id
+      : selectedService.provider.cpf_cnpj
+  }
+
   const filteredServices = services.filter(
-    (service: ServiceFeedDTO) =>
-      service.service_name.toLowerCase().includes(search.toLowerCase()) ||
-      service.description?.toLowerCase().includes(search.toLowerCase()),
+    (service: ServiceWithProviderDTO) =>
+      service.name.toLowerCase().includes(search.toLowerCase()) ||
+      service.description?.toLowerCase().includes(search.toLowerCase()) ||
+      service.provider.name.toLowerCase().includes(search.toLowerCase()),
   )
 
   return (
@@ -99,27 +138,41 @@ export function Favorites() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        {filteredServices.map((service: ServiceFeedDTO) => (
+        {filteredServices.map((service: ServiceWithProviderDTO) => (
           <Post
             key={service.id}
             serviceId={service.id}
             isInitiallyFavorited={true}
-            name={service.provider_name}
+            name={service.provider.name}
             categories={service.categories}
-            profileImage={service.profile_pic}
+            profileImage={service.provider.profile_pic}
             serviceImage={service.image}
             onUnfavorite={handleUnfavorite}
-            onPress={handlePostPress}
+            onPress={() => handlePostPress(service.id)}
+            onRatePress={() => handleRatePress(service.id)}
           />
         ))}
       </ScrollView>
-
       <ServiceDetailsModal
         visible={isModalVisible}
         serviceId={selectedServiceId}
         onClose={handleCloseModal}
         isInitiallyFavorited={true}
         onFavoriteChange={handleFavoriteChange}
+      />
+
+      <RateChoiceModal
+        visible={isRateChoiceModalVisible}
+        onClose={() => setIsRateChoiceModalVisible(false)}
+        onRateService={handleRateService}
+        onRateProvider={handleRateProvider}
+      />
+
+      <RateModal
+        visible={isRateModalVisible}
+        type={rateType}
+        targetId={getTargetId()}
+        onClose={handleCloseRateModal}
       />
     </SafeAreaView>
   )
