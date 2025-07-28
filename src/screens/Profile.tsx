@@ -289,12 +289,22 @@ export function Profile() {
             )}
           </View>
 
-          <Text className="text-gray-400 mt-2">
-            {user?.email || 'Carregando...'}
-          </Text>
-
-          {user?.role === 'provider' && (
+          {user?.role === 'provider' ? (
             <View className="w-full flex justify-center items-center mt-8 px-4">
+              <View className=" flex flex-row items-cente w-11/12 justify-center items-center py-4">
+                <View className=" flex flex-col items-center border-r border-purple-900 px-2 py-3 w-1/2">
+                  <Text className="text-800 font-bold text-md">
+                    {user.email}
+                  </Text>
+                  <Text>Email</Text>
+                </View>
+                <View className=" flex flex-col items-center border-l border-purple-900 px-2 py-3 w-1/2">
+                  <Text className="text-800 font-bold text-lg">
+                    {user.phone ? user.phone : '-'}
+                  </Text>
+                  <Text>Contato</Text>
+                </View>
+              </View>
               <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
               {services.length === 0 ? (
                 <Text>Nenhum serviço encontrado.</Text>
@@ -316,6 +326,10 @@ export function Profile() {
                 ))
               )}
             </View>
+          ) : (
+            <Text className="text-gray-400 mt-2">
+              {user?.email || 'Carregando...'}
+            </Text>
           )}
 
           <View className=" flex flex-col w-10/12 mx-auto mt-8">

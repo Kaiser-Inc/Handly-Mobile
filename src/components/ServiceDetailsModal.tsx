@@ -1,4 +1,4 @@
-import type { ServiceDTO } from '@dtos/serviceDTO'
+import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { Image, Text, VStack, View } from '@gluestack-ui/themed'
 import { apiUrl } from '@services/api/api'
 import { favoriteService, getService } from '@services/services-services'
@@ -26,7 +26,8 @@ export function ServiceDetailsModal({
   const slideAnim = React.useRef(
     new Animated.Value(Dimensions.get('window').height),
   ).current
-  const [serviceDetails, setServiceDetails] = useState<ServiceDTO | null>(null)
+  const [serviceDetails, setServiceDetails] =
+    useState<ServiceWithProviderDTO | null>(null)
   const [loading, setLoading] = useState(true)
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
 
@@ -134,7 +135,7 @@ export function ServiceDetailsModal({
               </Pressable>
             </VStack>
             <View className=" flex flex-row w-full flex-wrap items-start">
-              {serviceDetails.categories.map((category) => (
+              {serviceDetails.categories.map((category: string) => (
                 <Badge key={category} value={category} selected={true} />
               ))}
             </View>
