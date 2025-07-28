@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
 } from 'react-native'
 
-import { reportService, reportUser } from '@services/report-services'
+import { reportService } from '@services/services-services'
+import { reportUser } from '@services/users-services'
 import { AppError } from '@utils/AppError'
 import { ReportReason } from '../@types/reportReasons'
 import { GradientButton } from './GradientButton'
