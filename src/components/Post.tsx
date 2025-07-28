@@ -30,6 +30,7 @@ interface PostProps {
   onUnfavorite?: (serviceId: string) => void
   onPress?: (serviceId: string) => void
   onRatePress?: () => void
+  onReportPress?: () => void
 }
 
 export function Post({
@@ -46,11 +47,14 @@ export function Post({
   onUnfavorite,
   onPress,
   onRatePress,
+  onReportPress,
 }: PostProps) {
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
 
   async function handleReport() {
-    console.log('report')
+    if (onReportPress) {
+      onReportPress()
+    }
   }
 
   async function handleFavorite() {

@@ -44,12 +44,7 @@ import {
   uploadProfilePic,
 } from '@services/users-services'
 import { z } from 'zod'
-import {
-  type Rating,
-  nameProfileSchema,
-  phoneProfileSchema,
-  profileUpdateSchema,
-} from '../@types/profileSchema'
+import { type Rating, profileUpdateSchema } from '../@types/profileSchema'
 import { formatPhoneNumber } from '../utils/formatPhone'
 
 import Reaching from '@assets/Reaching.svg'
@@ -145,7 +140,6 @@ export function Profile() {
       }
 
       profileUpdateSchema.parse(dataToUpdate)
-      console.log('Dados enviados para updateUser:', dataToUpdate)
       await updateUser(dataToUpdate)
       await loadUserProfile()
       setIsEditingName(false)
@@ -251,7 +245,7 @@ export function Profile() {
       if (user?.role === 'provider') {
         const allServices: ServiceWithProviderDTO[] = await fetchServices()
         const filtered = allServices.filter(
-          (service) => service.provider_key === user.cpf_cnpj,
+          (service) => service.provider.cpf_cnpj === user.cpf_cnpj,
         )
         setServices(filtered)
       }

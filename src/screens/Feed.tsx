@@ -10,6 +10,8 @@ import { RateChoiceModal } from '@components/RateChoiceModal'
 import { RateModal } from '@components/RateModal'
 import { SearchBar } from '@components/SearchBar'
 import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
+import { ReportChoiceModal } from '@components/ReportChoiceModal'
+import { ReportModal } from '@components/ReportModal'
 import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useFocusEffect } from '@react-navigation/native'
@@ -26,9 +28,17 @@ export function Feed() {
     null,
   )
 
-  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] = useState(false)
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
+    useState(false)
   const [isRateModalVisible, setIsRateModalVisible] = useState(false)
   const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
+
+  const [isReportChoiceModalVisible, setIsReportChoiceModalVisible] =
+    useState(false)
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false)
+  const [reportType, setReportType] = useState<'service' | 'provider' | null>(
+    null,
+  )
 
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
 
@@ -84,6 +94,7 @@ export function Feed() {
   const handleCloseModal = () => {
     setIsModalVisible(false)
     setSelectedServiceId(null)
+    loadData()
   }
 
   const handleRatePress = (serviceId: string) => {
@@ -111,6 +122,35 @@ export function Feed() {
   const getTargetId = () => {
     if (!rateType || !selectedService) return ''
     return rateType === 'service'
+      ? selectedService.id
+      : selectedService.provider.cpf_cnpj
+  }
+
+  const handleReportPress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsReportChoiceModalVisible(true)
+  }
+
+  const handleReportService = () => {
+    setIsReportChoiceModalVisible(false)
+    setReportType('service')
+    setIsReportModalVisible(true)
+  }
+
+  const handleReportProvider = () => {
+    setIsReportChoiceModalVisible(false)
+    setReportType('provider')
+    setIsReportModalVisible(true)
+  }
+
+  const handleCloseReportModal = () => {
+    setIsReportModalVisible(false)
+    setReportType(null)
+  }
+
+  const getReportTargetId = () => {
+    if (!reportType || !selectedService) return ''
+    return reportType === 'service'
       ? selectedService.id
       : selectedService.provider.cpf_cnpj
   }
@@ -144,6 +184,7 @@ export function Feed() {
             serviceImage={service.image}
             onPress={() => handlePostPress(service.id)}
             onRatePress={() => handleRatePress(service.id)}
+            onReportPress={() => handleReportPress(service.id)}
           />
         ))}
       </ScrollView>
@@ -167,6 +208,20 @@ export function Feed() {
         type={rateType}
         targetId={getTargetId()}
         onClose={handleCloseRateModal}
+      />
+
+      <ReportChoiceModal
+        visible={isReportChoiceModalVisible}
+        onClose={() => setIsReportChoiceModalVisible(false)}
+        onReportService={handleReportService}
+        onReportProvider={handleReportProvider}
+      />
+
+      <ReportModal
+        visible={isReportModalVisible}
+        type={reportType}
+        targetId={getReportTargetId()}
+        onClose={handleCloseReportModal}
       />
 
       <NotificationModal

@@ -1,4 +1,5 @@
 import { storageTokenGet } from '@storage/storageToken'
+import type { ReportReason } from '../@types/reportReasons'
 import type { SignInData } from '../@types/signInSchema'
 import type { SignUpData } from '../@types/singUpSchema'
 import { api, apiUrl } from './api/api'
@@ -68,5 +69,17 @@ export async function rateUser(
 
 export async function getProviderRatings(userId: string) {
   const response = await api.get(`providers/${userId}/ratings`)
+  return response.data
+}
+
+export async function reportUser(
+  userId: string,
+  reason: ReportReason,
+  description: string,
+) {
+  const response = await api.post(`reports/user/${userId}`, {
+    reason,
+    description,
+  })
   return response.data
 }
