@@ -16,6 +16,7 @@ import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Camera, ChevronRight, Pencil, ThumbsUp } from 'lucide-react-native'
+import { Star } from 'lucide-react-native'
 
 import BackgroundImg from '@assets/bg.png'
 import { DeleteServiceModal } from '@components/DeleteServiceModal'
@@ -38,11 +39,18 @@ import {
 import {
   getProfile,
   getProfilePic,
+  getProviderRatings,
   updateUser,
   uploadProfilePic,
 } from '@services/users-services'
 import { z } from 'zod'
-import { nameProfileSchema } from '../@types/profileSchema'
+import {
+  type Rating,
+  nameProfileSchema,
+  phoneProfileSchema,
+  profileUpdateSchema,
+} from '../@types/profileSchema'
+import { formatPhoneNumber } from '../utils/formatPhone'
 
 import Reaching from '@assets/Reaching.svg'
 import AngryEmoji from '@assets/angry.svg'
@@ -60,6 +68,8 @@ export function Profile() {
 
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState('')
+  const [isEditingPhone, setIsEditingPhone] = useState(false)
+  const [editedPhone, setEditedPhone] = useState('')
   const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [isSignOutModalVisible, setIsSignOutModalVisible] = useState(false)
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
@@ -67,11 +77,15 @@ export function Profile() {
     null,
   )
 
+  const [showing, setShowing] = useState('services')
+  const [ratings, setRatings] = useState<Rating[]>([])
+
   const loadUserProfile = useCallback(async () => {
     try {
       const userData = await getProfile()
       setUser(userData)
       setEditedName(userData.name)
+      setEditedPhone(userData.phone || '')
 
       const profilePicData = await getProfilePic()
       if (profilePicData?.profile_pic) {
@@ -116,29 +130,45 @@ export function Profile() {
     }
   }
 
-  async function handleUpdateName() {
+  async function handleUpdateProfile() {
     try {
-      const validatedName = nameProfileSchema.parse(editedName)
+      const dataToUpdate: { name?: string; phone?: string } = {
+        name: user?.name,
+        phone: user?.phone ?? undefined,
+      }
 
-      await updateUser({ name: validatedName })
+      if (isEditingName) {
+        dataToUpdate.name = editedName
+      }
+      if (isEditingPhone) {
+        dataToUpdate.phone = editedPhone
+      }
+
+      profileUpdateSchema.parse(dataToUpdate)
+      console.log('Dados enviados para updateUser:', dataToUpdate)
+      await updateUser(dataToUpdate)
       await loadUserProfile()
       setIsEditingName(false)
-      showToast('Nome atualizado com sucesso!', 'success')
+      setIsEditingPhone(false)
+      showToast('Perfil atualizado com sucesso!', 'success')
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessage = error.errors[0]?.message || 'Erro de validação'
         showToast(errorMessage, 'error')
       } else {
-        showToast('Erro ao atualizar o nome.', 'error')
+        showToast('Erro ao atualizar o perfil.', 'error')
       }
     }
   }
 
-  function showToast(message: string, type: 'success' | 'error' | 'info') {
-    setToastMessage(message)
-    setToastType(type)
-    setToastVisible(true)
-  }
+  const showToast = useCallback(
+    (message: string, type: 'success' | 'error' | 'info') => {
+      setToastMessage(message)
+      setToastType(type)
+      setToastVisible(true)
+    },
+    [],
+  )
 
   async function handleEditService(serviceId: string) {
     navigation.navigate('Serviço', { serviceId })
@@ -205,6 +235,17 @@ export function Profile() {
 
   useScreenRefresh(loadUserProfile)
 
+  const loadUserRatings = useCallback(async () => {
+    try {
+      if (user?.role === 'provider' && user.cpf_cnpj) {
+        const userRatings = await getProviderRatings(user.cpf_cnpj)
+        setRatings(userRatings)
+      }
+    } catch (error) {
+      showToast('Erro ao carregar avaliações.', 'error')
+    }
+  }, [user, showToast])
+
   useEffect(() => {
     async function fetchAndSetServices() {
       if (user?.role === 'provider') {
@@ -217,6 +258,12 @@ export function Profile() {
     }
     fetchAndSetServices()
   }, [user])
+
+  useEffect(() => {
+    if (showing === 'rates' && user?.role === 'provider') {
+      loadUserRatings()
+    }
+  }, [showing, user, loadUserRatings])
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -232,7 +279,7 @@ export function Profile() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 80 }}
       >
         <Center className="w-full items-center py-8">
           <Text className="font-bold text-xl mb-8">Perfil</Text>
@@ -272,7 +319,10 @@ export function Profile() {
                     onChangeText={setEditedName}
                     placeholder="Digite seu nome"
                   />
-                  <TouchableOpacity className="ml-2" onPress={handleUpdateName}>
+                  <TouchableOpacity
+                    className="ml-2"
+                    onPress={handleUpdateProfile}
+                  >
                     <ThumbsUp size={20} color="#9356FC" />
                   </TouchableOpacity>
                 </Input>
@@ -289,53 +339,151 @@ export function Profile() {
             )}
           </View>
 
-          <Text className="text-gray-400 mt-2">
-            {user?.email || 'Carregando...'}
-          </Text>
-
-          {user?.role === 'provider' && (
+          {user?.role === 'provider' ? (
             <View className="w-full flex justify-center items-center mt-8 px-4">
-              <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
-              {services.length === 0 ? (
-                <Text>Nenhum serviço encontrado.</Text>
+              <View className=" flex flex-row items-cente w-11/12 justify-center items-center py-4">
+                <View className=" flex flex-col items-center px-2 py-3 w-1/2">
+                  <Text className="text-800 font-bold text-md">
+                    {user.email}
+                  </Text>
+                  <Text className=" text-gray-400">Email</Text>
+                </View>
+                <View className="border h-20 border-purple-900" />
+                <View className=" flex flex-col items-center px-2 py-3 w-1/2">
+                  {isEditingPhone ? (
+                    <VStack className="flex flex-col justify-start w-full">
+                      <Text className="font-bold text-md">Telefone</Text>
+                      <Input className="w-full border-b-2 border-purple-300 flex flex-row justify-between items-center">
+                        <InputField
+                          value={formatPhoneNumber(editedPhone)}
+                          onChangeText={(text) =>
+                            setEditedPhone(text.replace(/\D/g, ''))
+                          }
+                          placeholder="Digite seu telefone"
+                          keyboardType="phone-pad"
+                        />
+                        <TouchableOpacity
+                          className="ml-2"
+                          onPress={handleUpdateProfile}
+                        >
+                          <ThumbsUp size={20} color="#9356FC" />
+                        </TouchableOpacity>
+                      </Input>
+                    </VStack>
+                  ) : (
+                    <>
+                      <View className=" flex flex-row gap-2">
+                        <Text className="text-800 font-bold text-md">
+                          {formatPhoneNumber(user.phone)}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setIsEditingPhone(true)}
+                        >
+                          <Pencil size={18} color="#4B5563" />
+                        </TouchableOpacity>
+                      </View>
+                      <Text className=" text-gray-400">Contato</Text>
+                    </>
+                  )}
+                </View>
+              </View>
+              <View className="flex flex-row justify-between my-4 w-10/12 gap-2">
+                <Button
+                  onPress={() => setShowing('services')}
+                  className={`flex flex-row w-[47.5%] rounded-md py-3 justify-center ${showing === 'services' ? 'bg-purple-500 text-white ' : 'bg-steam-100 text-gray-800  ´'}  `}
+                >
+                  <ButtonText
+                    className={`font-bold ${showing === 'services' ? ' text-white ' : '  text-gray-400 ´'}  `}
+                  >
+                    Serviço
+                  </ButtonText>
+                </Button>
+                <Button
+                  onPress={() => setShowing('rates')}
+                  className={`flex flex-row w-[47.5%] rounded-md py-3 justify-center ${showing !== 'services' ? 'bg-purple-500 text-white ' : 'bg-steam-100 text-gray-800  ´'}  `}
+                >
+                  <ButtonText
+                    className={`font-bold ${showing !== 'services' ? ' text-white ' : '  text-gray-400 ´'}  `}
+                  >
+                    Avaliações
+                  </ButtonText>
+                </Button>
+              </View>
+              {showing === 'services' ? (
+                <View className=" flex flex-col items-center">
+                  <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
+                  {services.length === 0 ? (
+                    <Text>Nenhum serviço encontrado.</Text>
+                  ) : (
+                    services.map((service) => (
+                      <Post
+                        key={service.id}
+                        serviceId={service.id}
+                        name={user.name}
+                        isInitiallyFavorited={false}
+                        categories={service.categories}
+                        serviceImage={service.image}
+                        profileImage={user.profile_pic}
+                        isProvider={true}
+                        onEdit={() => handleEditService(service.id)}
+                        onDelete={() => handleDeleteService(service.id)}
+                        onUploadImage={() =>
+                          handleUploadServiceImage(service.id)
+                        }
+                      />
+                    ))
+                  )}
+                </View>
               ) : (
-                services.map((service) => (
-                  <Post
-                    key={service.id}
-                    serviceId={service.id}
-                    name={user.name}
-                    isInitiallyFavorited={false}
-                    categories={service.categories}
-                    serviceImage={service.image}
-                    profileImage={user.profile_pic}
-                    isProvider={true}
-                    onEdit={() => handleEditService(service.id)}
-                    onDelete={() => handleDeleteService(service.id)}
-                    onUploadImage={() => handleUploadServiceImage(service.id)}
-                  />
-                ))
+                <ScrollView
+                  className="mt-8 w-10/12"
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ paddingBottom: 80 }}
+                >
+                  {ratings.length === 0 ? (
+                    <VStack className="flex-1 justify-center items-center">
+                      <Text className="text-lg text-gray-600">
+                        Você ainda não possui avaliações.
+                      </Text>
+                    </VStack>
+                  ) : (
+                    ratings.map((rating) => (
+                      <View
+                        key={rating.id}
+                        className="bg-steam-100 p-3 rounded-lg mb-2"
+                      >
+                        <Text className="font-bold flex flex-row items-center">
+                          Nota: {rating.stars}.0{' '}
+                          <Star size={12} fill="#9356FC" stroke="#9356FC" />
+                        </Text>
+                        <Text>{rating.comment}</Text>
+                      </View>
+                    ))
+                  )}
+                </ScrollView>
               )}
             </View>
+          ) : (
+            <Text className="text-gray-400 mt-2">
+              {user?.email || 'Carregando...'}
+            </Text>
           )}
-
-          <View className=" flex flex-col w-10/12 mx-auto mt-8">
-            <Button
-              onPress={openSignOutModal}
-              className=" flex flex-row bg-steam-100 w-10/12 rounded-2xl mx-auto py-6"
-            >
-              <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
-                <AngryEmoji width={30} height={30} />
-              </View>
-              <ButtonText className=" text-gray-600 text-xl p-2">
-                Sair
-              </ButtonText>
-              <View className=" flex flex-rowe p-2 ml-auto mr-8">
-                <ChevronRight stroke="#95A1B1" />
-              </View>
-            </Button>
-          </View>
         </Center>
       </ScrollView>
+      <View className=" absolute bottom-8 flex flex-col w-full mx-auto mt-8">
+        <Button
+          onPress={openSignOutModal}
+          className=" flex flex-row bg-steam-100 w-10/12 rounded-2xl mx-auto py-6"
+        >
+          <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
+            <AngryEmoji width={30} height={30} />
+          </View>
+          <ButtonText className=" text-gray-600 text-xl p-2">Sair</ButtonText>
+          <View className=" flex flex-rowe p-2 ml-auto mr-8">
+            <ChevronRight stroke="#95A1B1" />
+          </View>
+        </Button>
+      </View>
       <SignOutModal
         visible={isSignOutModalVisible}
         onClose={() => setIsSignOutModalVisible(false)}

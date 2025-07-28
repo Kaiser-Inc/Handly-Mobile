@@ -100,3 +100,8 @@ export async function rateService(
   })
   return response.data
 }
+
+export async function getServiceRatings(serviceId: string) {
+  const response = await api.get(`services/${serviceId}/ratings`)
+  return response.data
+}

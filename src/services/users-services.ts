@@ -44,12 +44,13 @@ export async function uploadProfilePic(formData: FormData) {
 
   return await response.json()
 }
-interface updatedUsernameData {
-  name: string
+interface ProfileUpdateData {
+  name?: string
+  phone?: string
 }
 
-export async function updateUser(updatedUsername: updatedUsernameData) {
-  const response = await api.put('/protected/profile', updatedUsername)
+export async function updateUser(data: ProfileUpdateData) {
+  const response = await api.put('/protected/profile', data)
   return response.data
 }
 
@@ -58,9 +59,14 @@ export async function rateUser(
   stars: number,
   comment?: string,
 ) {
-  const response = await api.post(`services/${userId}/ratings`, {
+  const response = await api.post(`providers/${userId}/ratings`, {
     stars,
     comment,
   })
+  return response.data
+}
+
+export async function getProviderRatings(userId: string) {
+  const response = await api.get(`providers/${userId}/ratings`)
   return response.data
 }
