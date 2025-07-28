@@ -9,7 +9,13 @@ import {
 import { formatPhoneNumber } from '@utils/formatPhone'
 import { ChevronLeft, Heart, Star } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
-import { Animated, Dimensions, Pressable, TouchableOpacity } from 'react-native'
+import {
+  Animated,
+  Dimensions,
+  Pressable,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native'
 import type { ServiceRating } from '../@types/serviceSchema'
 import DefaultService from '../assets/defaut-service.svg'
 import { Badge } from './Badge'
@@ -37,6 +43,7 @@ export function ServiceDetailsModal({
   const [loading, setLoading] = useState(true)
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
   const [averageRating, setAverageRating] = useState<number | null>(null)
+  const [allRatings, setAllRatings] = useState<ServiceRating[]>([])
 
   useEffect(() => {
     setIsFavorited(isInitiallyFavorited)
@@ -55,6 +62,7 @@ export function ServiceDetailsModal({
         Promise.all([getService(serviceId), getServiceRatings(serviceId)])
           .then(([serviceData, ratingsData]) => {
             setServiceDetails(serviceData)
+            setAllRatings(ratingsData) // Store all ratings
             let calculatedAverage = null
             if (ratingsData && ratingsData.length > 0) {
               const totalStars = ratingsData.reduce(
@@ -72,6 +80,7 @@ export function ServiceDetailsModal({
             )
             setServiceDetails(null)
             setAverageRating(null)
+            setAllRatings([])
           })
           .finally(() => {
             setLoading(false)
@@ -85,6 +94,7 @@ export function ServiceDetailsModal({
       }).start(() => {
         setServiceDetails(null)
         setAverageRating(null)
+        setAllRatings([])
       })
     }
   }, [visible, serviceId, slideAnim])
@@ -129,7 +139,11 @@ export function ServiceDetailsModal({
             <Text className="text-lg text-gray-600">Carregando...</Text>
           </View>
         ) : serviceDetails ? (
-          <View className=" mt-8">
+          <ScrollView
+            className=" mt-8"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 80 }}
+          >
             <VStack className=" flex flex-col mx-auto mb-4 relative">
               {serviceDetails.image ? (
                 <Image
@@ -188,8 +202,27 @@ export function ServiceDetailsModal({
                   <Text>Contato</Text>
                 </View>
               </View>
+
+              {allRatings.length > 0 && (
+                <View className="mt-4">
+                  <Text className="text-xl font-bold text-gray-800 mb-2">
+                    Comentários:
+                  </Text>
+                  {allRatings.map((rating) => (
+                    <View
+                      key={rating.id}
+                      className="bg-steam-100 p-3 rounded-lg mb-2"
+                    >
+                      <Text className="font-bold flex flex-row justify-">
+                        Nota: {rating.stars}.0 <Star size={12} />
+                      </Text>
+                      <Text>{rating.comment}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
-          </View>
+          </ScrollView>
         ) : (
           <View className="flex-1 justify-center items-center">
             <Text className="text-lg text-red-500">
