@@ -94,6 +94,7 @@ export function Feed() {
   const handleCloseModal = () => {
     setIsModalVisible(false)
     setSelectedServiceId(null)
+    loadData()
   }
 
   const handleRatePress = (serviceId: string) => {
