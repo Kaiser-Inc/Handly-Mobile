@@ -30,7 +30,6 @@ export function RateModal({
   const [comment, setComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Estados para o Toast
   const [toastVisible, setToastVisible] = useState(false)
   const [toastMessage, setToastMessage] = useState('')
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
@@ -84,7 +83,7 @@ export function RateModal({
         await rateUser(targetId, rating, comment)
       }
       showToast('Avaliação enviada com sucesso!', 'success')
-      setTimeout(() => onClose(), 1500) // Fecha o modal após o toast
+      setTimeout(() => onClose(), 1500)
     } catch (error) {
       const isAppError = error instanceof AppError
       const errorMessage = isAppError
@@ -158,8 +157,8 @@ export function RateModal({
           </Text>
 
           <TextInput
-            className="w-11/12 h-28 bg-gray-100 rounded-lg p-4 mb-8"
-            placeholder="Deixe seu comentário aqui... (opcional)"
+            className="w-11/12 h-28 bg-steam-100 rounded-lg p-4 mb-8"
+            placeholder="Opcional"
             value={comment}
             onChangeText={setComment}
             multiline
