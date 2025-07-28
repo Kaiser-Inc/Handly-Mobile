@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import BackgroundImg from '@assets/bg.png'
 import { HomeHeader } from '@components/HomeHeader'
+import { NotificationModal } from '@components/NotificationModal'
 import { Post } from '@components/Post'
 import { RateChoiceModal } from '@components/RateChoiceModal'
 import { RateModal } from '@components/RateModal'
@@ -25,10 +26,19 @@ export function Feed() {
     null,
   )
 
-  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
-    useState(false)
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] = useState(false)
   const [isRateModalVisible, setIsRateModalVisible] = useState(false)
   const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
+
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false)
+
+  const handleOpenNotificationModal = () => {
+    setIsNotificationModalOpen(true)
+  }
+
+  const handleCloseNotificationModal = () => {
+    setIsNotificationModalOpen(false)
+  }
 
   const loadData = useCallback(async () => {
     if (isLoadingUserStorageData || !token) {
@@ -114,7 +124,7 @@ export function Feed() {
         className="w-full h-full absolute"
       />
       <VStack className="flex">
-        <HomeHeader>
+        <HomeHeader onBellPress={handleOpenNotificationModal}>
           <SearchBar onChange={setSearch} />
         </HomeHeader>
       </VStack>
@@ -157,6 +167,11 @@ export function Feed() {
         type={rateType}
         targetId={getTargetId()}
         onClose={handleCloseRateModal}
+      />
+
+      <NotificationModal
+        isOpen={isNotificationModalOpen}
+        onClose={handleCloseNotificationModal}
       />
     </SafeAreaView>
   )

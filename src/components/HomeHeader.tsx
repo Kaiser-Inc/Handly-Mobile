@@ -6,9 +6,10 @@ import type { ReactNode } from 'react'
 
 interface HomeHeaderProps {
   children?: ReactNode
+  onBellPress: () => void
 }
 
-export function HomeHeader({ children }: HomeHeaderProps) {
+export function HomeHeader({ children, onBellPress }: HomeHeaderProps) {
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
   return (
@@ -20,7 +21,9 @@ export function HomeHeader({ children }: HomeHeaderProps) {
       </HStack>
       <HStack className="flex flex-row flex-1">{children}</HStack>
       <HStack className="flex flex-row items-center gap-4">
-        <Bell size={30} />
+        <Pressable onPress={onBellPress}>
+          <Bell size={30} />
+        </Pressable>
       </HStack>
     </HStack>
   )
