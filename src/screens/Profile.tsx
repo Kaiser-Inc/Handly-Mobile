@@ -253,7 +253,7 @@ export function Profile() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
+        contentContainerStyle={{ paddingBottom: 80 }}
       >
         <Center className="w-full items-center py-8">
           <Text className="font-bold text-xl mb-8">Perfil</Text>
@@ -387,25 +387,22 @@ export function Profile() {
               {user?.email || 'Carregando...'}
             </Text>
           )}
-
-          <View className=" flex flex-col w-10/12 mx-auto mt-8">
-            <Button
-              onPress={openSignOutModal}
-              className=" flex flex-row bg-steam-100 w-10/12 rounded-2xl mx-auto py-6"
-            >
-              <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
-                <AngryEmoji width={30} height={30} />
-              </View>
-              <ButtonText className=" text-gray-600 text-xl p-2">
-                Sair
-              </ButtonText>
-              <View className=" flex flex-rowe p-2 ml-auto mr-8">
-                <ChevronRight stroke="#95A1B1" />
-              </View>
-            </Button>
-          </View>
         </Center>
       </ScrollView>
+      <View className=" absolute bottom-8 flex flex-col w-full mx-auto mt-8">
+        <Button
+          onPress={openSignOutModal}
+          className=" flex flex-row bg-steam-100 w-10/12 rounded-2xl mx-auto py-6"
+        >
+          <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
+            <AngryEmoji width={30} height={30} />
+          </View>
+          <ButtonText className=" text-gray-600 text-xl p-2">Sair</ButtonText>
+          <View className=" flex flex-rowe p-2 ml-auto mr-8">
+            <ChevronRight stroke="#95A1B1" />
+          </View>
+        </Button>
+      </View>
       <SignOutModal
         visible={isSignOutModalVisible}
         onClose={() => setIsSignOutModalVisible(false)}
