@@ -44,8 +44,8 @@ export function ReportChoiceModal({
         style={{ transform: [{ scale: scaleValue }] }}
         className="bg-white w-10/12 rounded-xl p-6 shadow-lg"
       >
-        <View className="mx-auto bg-steam-100 p-3 rounded-full">
-          <Flag size={32} color="#9356FC" />
+        <View className="mx-auto bg-danger-100 p-3 rounded-full">
+          <Flag size={32} color="#F05D6C" />
         </View>
         <Text className="text-xl font-bold text-center text-gray-800 mt-4">
           Denunciar
