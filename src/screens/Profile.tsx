@@ -161,11 +161,14 @@ export function Profile() {
     }
   }
 
-  function showToast(message: string, type: 'success' | 'error' | 'info') {
-    setToastMessage(message)
-    setToastType(type)
-    setToastVisible(true)
-  }
+  const showToast = useCallback(
+    (message: string, type: 'success' | 'error' | 'info') => {
+      setToastMessage(message)
+      setToastType(type)
+      setToastVisible(true)
+    },
+    [],
+  )
 
   async function handleEditService(serviceId: string) {
     navigation.navigate('Serviço', { serviceId })
@@ -241,7 +244,7 @@ export function Profile() {
     } catch (error) {
       showToast('Erro ao carregar avaliações.', 'error')
     }
-  }, [user])
+  }, [user, showToast])
 
   useEffect(() => {
     async function fetchAndSetServices() {
