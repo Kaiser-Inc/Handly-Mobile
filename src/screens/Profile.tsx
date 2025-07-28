@@ -296,13 +296,13 @@ export function Profile() {
                   <Text className="text-800 font-bold text-md">
                     {user.email}
                   </Text>
-                  <Text>Email</Text>
+                  <Text className=" text-gray-400">Email</Text>
                 </View>
                 <View className=" flex flex-col items-center border-l border-purple-900 px-2 py-3 w-1/2">
-                  <Text className="text-800 font-bold text-lg">
+                  <Text className="text-800 font-bold text-md">
                     {user.phone ? user.phone : '-'}
                   </Text>
-                  <Text>Contato</Text>
+                  <Text className=" text-gray-400">Contato</Text>
                 </View>
               </View>
               <Text className="font-bold text-lg mb-8">Meus Serviços</Text>

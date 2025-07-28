@@ -66,7 +66,6 @@ export function RateModal({
   }
 
   const handleOnSubmit = async () => {
-    console.log(targetId, rating, comment)
     if (rating === 0) {
       showToast(
         'Por favor, selecione uma avaliação de 1 a 5 estrelas.',
