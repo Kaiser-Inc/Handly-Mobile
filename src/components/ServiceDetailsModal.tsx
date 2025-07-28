@@ -2,6 +2,7 @@ import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { Image, Text, VStack, View } from '@gluestack-ui/themed'
 import { apiUrl } from '@services/api/api'
 import { favoriteService, getService } from '@services/services-services'
+import { formatPhoneNumber } from '@utils/formatPhone'
 import { ChevronLeft, Heart, Star } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
 import { Animated, Dimensions, Pressable, TouchableOpacity } from 'react-native'
@@ -112,7 +113,7 @@ export function ServiceDetailsModal({
             <VStack className=" flex flex-col mx-auto mb-4 relative">
               {serviceDetails.image ? (
                 <Image
-                  width={400}
+                  width={390}
                   height={215}
                   className=" rounded-2xl "
                   source={{
@@ -150,16 +151,17 @@ export function ServiceDetailsModal({
                 <Star stroke="#9356FC" />
                 <Text className=" text-800 font-bold text-lg">5.0</Text>
               </View>
-              <View className=" flex flex-row items-cente w-11/12 justify-center items-center py-4">
-                <View className=" flex flex-col items-center border-r border-purple-900 px-2 py-3 w-1/2">
-                  <Text className="text-800 font-bold text-lg">
-                    perseu@gmail.com
+              <View className=" flex flex-row items-cente w-full justify-center items-center py-4">
+                <View className=" flex flex-col items-center px-3 py-3 w-fit">
+                  <Text className="text-800 font-bold text-md">
+                    {serviceDetails.provider.email}
                   </Text>
                   <Text>Email</Text>
                 </View>
-                <View className=" flex flex-col items-center border-l border-purple-900 px-2 py-3 w-1/2">
-                  <Text className="text-800 font-bold text-lg">
-                    (137)99999-9999
+                <View className="border h-20 border-purple-900" />
+                <View className=" flex flex-col items-center px-3 py-3 w-fit">
+                  <Text className="text-800 font-bold text-md">
+                    {formatPhoneNumber(serviceDetails.provider.phone)}
                   </Text>
                   <Text>Contato</Text>
                 </View>
