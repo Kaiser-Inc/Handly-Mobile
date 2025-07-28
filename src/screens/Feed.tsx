@@ -102,7 +102,7 @@ export function Feed() {
     if (!rateType || !selectedService) return ''
     return rateType === 'service'
       ? selectedService.id
-      : selectedService.provider_id
+      : selectedService.provider.cpf_cnpj
   }
 
   return (

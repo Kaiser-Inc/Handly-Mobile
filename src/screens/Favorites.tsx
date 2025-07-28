@@ -110,7 +110,7 @@ export function Favorites() {
     if (!rateType || !selectedService) return ''
     return rateType === 'service'
       ? selectedService.id
-      : selectedService.provider_id
+      : selectedService.provider.cpf_cnpj
   }
 
   const filteredServices = services.filter(
