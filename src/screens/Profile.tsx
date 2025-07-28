@@ -42,7 +42,11 @@ import {
   uploadProfilePic,
 } from '@services/users-services'
 import { z } from 'zod'
-import { nameProfileSchema, phoneProfileSchema, profileUpdateSchema } from '../@types/profileSchema'
+import {
+  nameProfileSchema,
+  phoneProfileSchema,
+  profileUpdateSchema,
+} from '../@types/profileSchema'
 import { formatPhoneNumber } from '../utils/formatPhone'
 
 import Reaching from '@assets/Reaching.svg'
@@ -289,7 +293,10 @@ export function Profile() {
                     onChangeText={setEditedName}
                     placeholder="Digite seu nome"
                   />
-                  <TouchableOpacity className="ml-2" onPress={handleUpdateProfile}>
+                  <TouchableOpacity
+                    className="ml-2"
+                    onPress={handleUpdateProfile}
+                  >
                     <ThumbsUp size={20} color="#9356FC" />
                   </TouchableOpacity>
                 </Input>
@@ -309,37 +316,47 @@ export function Profile() {
           {user?.role === 'provider' ? (
             <View className="w-full flex justify-center items-center mt-8 px-4">
               <View className=" flex flex-row items-cente w-11/12 justify-center items-center py-4">
-                <View className=" flex flex-col items-center border-r border-purple-900 px-2 py-3 w-1/2">
+                <View className=" flex flex-col items-center px-2 py-3 w-1/2">
                   <Text className="text-800 font-bold text-md">
                     {user.email}
                   </Text>
                   <Text className=" text-gray-400">Email</Text>
                 </View>
-                <View className=" flex flex-col items-center border-l border-purple-900 px-2 py-3 w-1/2">
+                <View className="border h-20 border-purple-900" />
+                <View className=" flex flex-col items-center px-2 py-3 w-1/2">
                   {isEditingPhone ? (
                     <VStack className="flex flex-col justify-start w-full">
                       <Text className="font-bold text-md">Telefone</Text>
                       <Input className="w-full border-b-2 border-purple-300 flex flex-row justify-between items-center">
                         <InputField
                           value={formatPhoneNumber(editedPhone)}
-                          onChangeText={(text) => setEditedPhone(text.replace(/\D/g, ''))}
+                          onChangeText={(text) =>
+                            setEditedPhone(text.replace(/\D/g, ''))
+                          }
                           placeholder="Digite seu telefone"
                           keyboardType="phone-pad"
                         />
-                        <TouchableOpacity className="ml-2" onPress={handleUpdateProfile}>
+                        <TouchableOpacity
+                          className="ml-2"
+                          onPress={handleUpdateProfile}
+                        >
                           <ThumbsUp size={20} color="#9356FC" />
                         </TouchableOpacity>
                       </Input>
                     </VStack>
                   ) : (
                     <>
-                      <Text className="text-800 font-bold text-md">
-                        {formatPhoneNumber(user.phone)}
-                      </Text>
+                      <View className=" flex flex-row gap-2">
+                        <Text className="text-800 font-bold text-md">
+                          {formatPhoneNumber(user.phone)}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => setIsEditingPhone(true)}
+                        >
+                          <Pencil size={18} color="#4B5563" />
+                        </TouchableOpacity>
+                      </View>
                       <Text className=" text-gray-400">Contato</Text>
-                      <TouchableOpacity onPress={() => setIsEditingPhone(true)}>
-                        <Pencil size={18} color="#4B5563" />
-                      </TouchableOpacity>
                     </>
                   )}
                 </View>
