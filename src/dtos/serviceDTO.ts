@@ -1,20 +1,21 @@
-export type ServiceDTO = {
-  categories: string[]
-  created_at: Date
-  description: string
-  id: string
-  image: string
+export type ProviderDTO = {
+  cpf_cnpj: string
   name: string
-  provider_key: string
-  updated_at: Date
+  email: string
+  role: 'provider'
+  phone: string | null
+  profile_pic: string
 }
 
-export type ServiceFeedDTO = {
+export type ServiceWithProviderDTO = {
   id: string
+  provider_key: string
   categories: string[]
-  provider_name: string
-  profile_pic: string
-  image: string
-  service_name: string
+  name: string
   description: string
+  image: string
+  created_at: number[] | Date
+  updated_at: number[] | Date
+  provider: ProviderDTO
+  provider_id: string
 }

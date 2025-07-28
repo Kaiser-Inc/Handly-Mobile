@@ -23,7 +23,7 @@ import { Post } from '@components/Post'
 import { SignOutModal } from '@components/SignOutModal'
 import { ToastMessage } from '@components/ToastMessage'
 import { UserPhoto } from '@components/UserPhoto'
-import type { ServiceDTO } from '@dtos/serviceDTO'
+import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import type { UserDTO } from '@dtos/userDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
@@ -60,7 +60,7 @@ export function Profile() {
 
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState('')
-  const [services, setServices] = useState<ServiceDTO[]>([])
+  const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [isSignOutModalVisible, setIsSignOutModalVisible] = useState(false)
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
@@ -208,7 +208,7 @@ export function Profile() {
   useEffect(() => {
     async function fetchAndSetServices() {
       if (user?.role === 'provider') {
-        const allServices: ServiceDTO[] = await fetchServices()
+        const allServices: ServiceWithProviderDTO[] = await fetchServices()
         const filtered = allServices.filter(
           (service) => service.provider_key === user.cpf_cnpj,
         )
