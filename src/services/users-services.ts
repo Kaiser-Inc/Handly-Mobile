@@ -44,12 +44,13 @@ export async function uploadProfilePic(formData: FormData) {
 
   return await response.json()
 }
-interface updatedUsernameData {
-  name: string
+interface ProfileUpdateData {
+  name?: string
+  phone?: string
 }
 
-export async function updateUser(updatedUsername: updatedUsernameData) {
-  const response = await api.put('/protected/profile', updatedUsername)
+export async function updateUser(data: ProfileUpdateData) {
+  const response = await api.put('/protected/profile', data)
   return response.data
 }
 

@@ -42,7 +42,7 @@ import {
   uploadProfilePic,
 } from '@services/users-services'
 import { z } from 'zod'
-import { nameProfileSchema } from '../@types/profileSchema'
+import { nameProfileSchema, phoneProfileSchema, profileUpdateSchema } from '../@types/profileSchema'
 
 import Reaching from '@assets/Reaching.svg'
 import AngryEmoji from '@assets/angry.svg'
@@ -60,6 +60,8 @@ export function Profile() {
 
   const [isEditingName, setIsEditingName] = useState(false)
   const [editedName, setEditedName] = useState('')
+  const [isEditingPhone, setIsEditingPhone] = useState(false)
+  const [editedPhone, setEditedPhone] = useState('')
   const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [isSignOutModalVisible, setIsSignOutModalVisible] = useState(false)
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
@@ -72,6 +74,7 @@ export function Profile() {
       const userData = await getProfile()
       setUser(userData)
       setEditedName(userData.name)
+      setEditedPhone(userData.phone || '')
 
       const profilePicData = await getProfilePic()
       if (profilePicData?.profile_pic) {
@@ -116,20 +119,33 @@ export function Profile() {
     }
   }
 
-  async function handleUpdateName() {
+  async function handleUpdateProfile() {
     try {
-      const validatedName = nameProfileSchema.parse(editedName)
+      const dataToUpdate: { name?: string; phone?: string } = {
+        name: user?.name,
+        phone: user?.phone ?? undefined,
+      }
 
-      await updateUser({ name: validatedName })
+      if (isEditingName) {
+        dataToUpdate.name = editedName
+      }
+      if (isEditingPhone) {
+        dataToUpdate.phone = editedPhone
+      }
+
+      profileUpdateSchema.parse(dataToUpdate)
+      console.log('Dados enviados para updateUser:', dataToUpdate)
+      await updateUser(dataToUpdate)
       await loadUserProfile()
       setIsEditingName(false)
-      showToast('Nome atualizado com sucesso!', 'success')
+      setIsEditingPhone(false)
+      showToast('Perfil atualizado com sucesso!', 'success')
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessage = error.errors[0]?.message || 'Erro de validação'
         showToast(errorMessage, 'error')
       } else {
-        showToast('Erro ao atualizar o nome.', 'error')
+        showToast('Erro ao atualizar o perfil.', 'error')
       }
     }
   }
@@ -272,7 +288,7 @@ export function Profile() {
                     onChangeText={setEditedName}
                     placeholder="Digite seu nome"
                   />
-                  <TouchableOpacity className="ml-2" onPress={handleUpdateName}>
+                  <TouchableOpacity className="ml-2" onPress={handleUpdateProfile}>
                     <ThumbsUp size={20} color="#9356FC" />
                   </TouchableOpacity>
                 </Input>
@@ -299,10 +315,32 @@ export function Profile() {
                   <Text className=" text-gray-400">Email</Text>
                 </View>
                 <View className=" flex flex-col items-center border-l border-purple-900 px-2 py-3 w-1/2">
-                  <Text className="text-800 font-bold text-md">
-                    {user.phone ? user.phone : '-'}
-                  </Text>
-                  <Text className=" text-gray-400">Contato</Text>
+                  {isEditingPhone ? (
+                    <VStack className="flex flex-col justify-start w-full">
+                      <Text className="font-bold text-md">Telefone</Text>
+                      <Input className="w-full border-b-2 border-purple-300 flex flex-row justify-between items-center">
+                        <InputField
+                          value={editedPhone}
+                          onChangeText={setEditedPhone}
+                          placeholder="Digite seu telefone"
+                          keyboardType="phone-pad"
+                        />
+                        <TouchableOpacity className="ml-2" onPress={handleUpdateProfile}>
+                          <ThumbsUp size={20} color="#9356FC" />
+                        </TouchableOpacity>
+                      </Input>
+                    </VStack>
+                  ) : (
+                    <>
+                      <Text className="text-800 font-bold text-md">
+                        {user.phone ? user.phone : '-'}
+                      </Text>
+                      <Text className=" text-gray-400">Contato</Text>
+                      <TouchableOpacity onPress={() => setIsEditingPhone(true)}>
+                        <Pencil size={18} color="#4B5563" />
+                      </TouchableOpacity>
+                    </>
+                  )}
                 </View>
               </View>
               <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
