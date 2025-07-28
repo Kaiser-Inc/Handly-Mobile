@@ -1,0 +1,34 @@
+appId: com.kaiser.handly
+env: 
+  SERVICE_NAME: Pinturas com oleo
+  DESCRIPTION: Pinturass
+  CATEGORIE: pintor
+---
+- runFlow:
+    file: ../../sign_in/CT044_login_with_valid_credentials.yaml
+
+- tapOn:
+    "Serviço"
+   
+- tapOn:
+    id: serviceNameInput
+- inputText: ${SERVICE_NAME}
+
+- tapOn:
+    id: serviceDescriptionInput
+- inputText: ${DESCRIPTION}
+
+- tapOn:
+    id: serviceCategoriesInput
+- inputText: ${CATEGORIE}
+
+- hideKeyboard
+
+- doubleTapOn:
+    point: "50%,58%"
+
+- tapOn:
+    id: serviceSubmitButton
+
+- assertVisible:
+    text: "A descrição deve ter no mínimo 10 caracteres. "

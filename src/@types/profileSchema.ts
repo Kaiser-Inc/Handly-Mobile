@@ -11,6 +11,27 @@ export const nameProfileSchema = z
     message: 'O nome não deve conter números',
   })
 
+export const phoneProfileSchema = z
+  .string()
+  .min(10, 'O telefone deve ter no mínimo 10 dígitos')
+  .max(11, 'O telefone deve ter no máximo 11 dígitos')
+  .refine((val) => /^\d+$/.test(val), {
+    message: 'O telefone deve conter apenas números',
+  })
+  .optional()
+  .or(z.literal(''))
+
+export const profileUpdateSchema = z.object({
+  name: nameProfileSchema.optional(),
+  phone: phoneProfileSchema.optional(),
+})
+
 export const imageProfileSchema = z.string().startsWith('data:image/', {
   message: 'A imagem deve estar em base64 e iniciar com "data:image/".',
 })
+
+export interface Rating {
+  id: string
+  stars: number
+  comment: string
+}

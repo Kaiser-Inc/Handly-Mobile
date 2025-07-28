@@ -1,10 +1,22 @@
-import type { ServiceDTO } from '@dtos/serviceDTO'
+import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { Image, Text, VStack, View } from '@gluestack-ui/themed'
 import { apiUrl } from '@services/api/api'
-import { favoriteService, getService } from '@services/services-services'
+import {
+  favoriteService,
+  getService,
+  getServiceRatings,
+} from '@services/services-services'
+import { formatPhoneNumber } from '@utils/formatPhone'
 import { ChevronLeft, Heart, Star } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
-import { Animated, Dimensions, Pressable, TouchableOpacity } from 'react-native'
+import {
+  Animated,
+  Dimensions,
+  Pressable,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native'
+import type { ServiceRating } from '../@types/serviceSchema'
 import DefaultService from '../assets/defaut-service.svg'
 import { Badge } from './Badge'
 
@@ -26,9 +38,12 @@ export function ServiceDetailsModal({
   const slideAnim = React.useRef(
     new Animated.Value(Dimensions.get('window').height),
   ).current
-  const [serviceDetails, setServiceDetails] = useState<ServiceDTO | null>(null)
+  const [serviceDetails, setServiceDetails] =
+    useState<ServiceWithProviderDTO | null>(null)
   const [loading, setLoading] = useState(true)
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
+  const [averageRating, setAverageRating] = useState<number | null>(null)
+  const [allRatings, setAllRatings] = useState<ServiceRating[]>([])
 
   useEffect(() => {
     setIsFavorited(isInitiallyFavorited)
@@ -44,13 +59,28 @@ export function ServiceDetailsModal({
 
       if (serviceId) {
         setLoading(true)
-        getService(serviceId)
-          .then((data) => {
-            setServiceDetails(data)
+        Promise.all([getService(serviceId), getServiceRatings(serviceId)])
+          .then(([serviceData, ratingsData]) => {
+            setServiceDetails(serviceData)
+            setAllRatings(ratingsData) // Store all ratings
+            let calculatedAverage = null
+            if (ratingsData && ratingsData.length > 0) {
+              const totalStars = ratingsData.reduce(
+                (sum: number, rating: ServiceRating) => sum + rating.stars,
+                0,
+              )
+              calculatedAverage = totalStars / ratingsData.length
+            }
+            setAverageRating(calculatedAverage)
           })
           .catch((error) => {
-            console.error('Erro ao buscar detalhes do serviço:', error)
+            console.error(
+              'Erro ao buscar detalhes ou avaliações do serviço:',
+              error,
+            )
             setServiceDetails(null)
+            setAverageRating(null)
+            setAllRatings([])
           })
           .finally(() => {
             setLoading(false)
@@ -63,6 +93,8 @@ export function ServiceDetailsModal({
         useNativeDriver: true,
       }).start(() => {
         setServiceDetails(null)
+        setAverageRating(null)
+        setAllRatings([])
       })
     }
   }, [visible, serviceId, slideAnim])
@@ -107,11 +139,15 @@ export function ServiceDetailsModal({
             <Text className="text-lg text-gray-600">Carregando...</Text>
           </View>
         ) : serviceDetails ? (
-          <View className=" mt-8">
+          <ScrollView
+            className=" mt-8"
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 80 }}
+          >
             <VStack className=" flex flex-col mx-auto mb-4 relative">
               {serviceDetails.image ? (
                 <Image
-                  width={400}
+                  width={390}
                   height={215}
                   className=" rounded-2xl "
                   source={{
@@ -134,7 +170,7 @@ export function ServiceDetailsModal({
               </Pressable>
             </VStack>
             <View className=" flex flex-row w-full flex-wrap items-start">
-              {serviceDetails.categories.map((category) => (
+              {serviceDetails.categories.map((category: string) => (
                 <Badge key={category} value={category} selected={true} />
               ))}
             </View>
@@ -147,24 +183,46 @@ export function ServiceDetailsModal({
               </Text>
               <View className=" flex flex-row items-center gap-2">
                 <Star stroke="#9356FC" />
-                <Text className=" text-800 font-bold text-lg">5.0</Text>
+                <Text className=" text-800 font-bold text-lg">
+                  {averageRating !== null ? averageRating.toFixed(1) : 'N/A'}
+                </Text>
               </View>
-              <View className=" flex flex-row items-cente w-11/12 justify-center items-center py-4">
-                <View className=" flex flex-col items-center border-r border-purple-900 px-2 py-3 w-1/2">
-                  <Text className="text-800 font-bold text-lg">
-                    perseu@gmail.com
+              <View className=" flex flex-row items-cente w-full justify-center items-center py-4">
+                <View className=" flex flex-col items-center px-3 py-3 w-fit">
+                  <Text className="text-800 font-bold text-md">
+                    {serviceDetails.provider.email}
                   </Text>
                   <Text>Email</Text>
                 </View>
-                <View className=" flex flex-col items-center border-l border-purple-900 px-2 py-3 w-1/2">
-                  <Text className="text-800 font-bold text-lg">
-                    (137)99999-9999
+                <View className="border h-20 border-purple-900" />
+                <View className=" flex flex-col items-center px-3 py-3 w-fit">
+                  <Text className="text-800 font-bold text-md">
+                    {formatPhoneNumber(serviceDetails.provider.phone)}
                   </Text>
                   <Text>Contato</Text>
                 </View>
               </View>
+
+              {allRatings.length > 0 && (
+                <View className="mt-4">
+                  <Text className="text-xl font-bold text-gray-800 mb-2">
+                    Comentários:
+                  </Text>
+                  {allRatings.map((rating) => (
+                    <View
+                      key={rating.id}
+                      className="bg-steam-100 p-3 rounded-lg mb-2"
+                    >
+                      <Text className="font-bold flex flex-row justify-">
+                        Nota: {rating.stars}.0 <Star size={12} />
+                      </Text>
+                      <Text>{rating.comment}</Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </View>
-          </View>
+          </ScrollView>
         ) : (
           <View className="flex-1 justify-center items-center">
             <Text className="text-lg text-red-500">

@@ -1,23 +1,40 @@
 import { Text, VStack, View } from '@gluestack-ui/themed'
 import { ChevronLeft, Star } from 'lucide-react-native'
 import React, { useEffect, useState } from 'react'
-import { Animated, Dimensions, TouchableOpacity } from 'react-native'
+import { Animated, Dimensions, TextInput, TouchableOpacity } from 'react-native'
 
 import LoveEmoji from '@assets/love.svg'
+import { rateService } from '@services/services-services'
+import { rateUser } from '@services/users-services'
+import { AppError } from '@utils/AppError'
 import { GradientButton } from './GradientButton'
+import { ToastMessage } from './ToastMessage' // Importe o ToastMessage
 
 interface RateModalProps {
   visible: boolean
   type: 'service' | 'provider' | null
+  targetId: string
   onClose: () => void
 }
 
-export function RateModal({ visible, type, onClose }: RateModalProps) {
+export function RateModal({
+  visible,
+  type,
+  targetId,
+  onClose,
+}: RateModalProps) {
   const slideAnim = React.useRef(
     new Animated.Value(Dimensions.get('window').height),
   ).current
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [toastVisible, setToastVisible] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
+    'error',
+  )
 
   useEffect(() => {
     if (visible) {
@@ -42,11 +59,39 @@ export function RateModal({ visible, type, onClose }: RateModalProps) {
     setRating(selectedRating)
   }
 
-  const handleOnSubmit = () => {
-    console.log(
-      `Avaliação de ${type}: Estrelas: ${rating}, Comentário: ${comment}`,
-    )
-    onClose()
+  const showToast = (message: string, type: 'success' | 'error' | 'info') => {
+    setToastMessage(message)
+    setToastType(type)
+    setToastVisible(true)
+  }
+
+  const handleOnSubmit = async () => {
+    if (rating === 0) {
+      showToast(
+        'Por favor, selecione uma avaliação de 1 a 5 estrelas.',
+        'error',
+      )
+      return
+    }
+
+    setIsSubmitting(true)
+    try {
+      if (type === 'service') {
+        await rateService(targetId, rating, comment)
+      } else {
+        await rateUser(targetId, rating, comment)
+      }
+      showToast('Avaliação enviada com sucesso!', 'success')
+      setTimeout(() => onClose(), 1500)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const errorMessage = isAppError
+        ? error.message
+        : 'Não foi possível enviar a avaliação. Tente novamente mais tarde.'
+      showToast(errorMessage, 'error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (!visible || !type) {
@@ -55,6 +100,12 @@ export function RateModal({ visible, type, onClose }: RateModalProps) {
 
   return (
     <View className="absolute inset-0 z-50 flex items-center justify-end bg-black/50">
+      <ToastMessage
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
       <Animated.View
         style={{ transform: [{ translateY: slideAnim }] }}
         className="bg-white w-full rounded-t-3xl p-6 shadow-lg h-[95%]"
@@ -104,7 +155,20 @@ export function RateModal({ visible, type, onClose }: RateModalProps) {
             Quer deixar um comentário?
           </Text>
 
-          <GradientButton onPress={handleOnSubmit} text="Enviar avaliação" />
+          <TextInput
+            className="w-11/12 h-28 bg-steam-100 rounded-lg p-4 mb-8"
+            placeholder="Opcional"
+            value={comment}
+            onChangeText={setComment}
+            multiline
+            textAlignVertical="top"
+          />
+
+          <GradientButton
+            onPress={handleOnSubmit}
+            text="Enviar avaliação"
+            isLoading={isSubmitting}
+          />
         </VStack>
       </Animated.View>
     </View>

@@ -1,4 +1,5 @@
 import { storageTokenGet } from '@storage/storageToken'
+import type { ReportReason } from '../@types/reportReasons'
 import type { serviceData } from '../@types/serviceSchema'
 import { api, apiUrl } from './api/api'
 
@@ -86,5 +87,34 @@ export async function favoriteService(serviceId: string) {
 
 export async function fetchFavorites() {
   const response = await api.get('/protected/favorites')
+  return response.data
+}
+
+export async function rateService(
+  serviceId: string,
+  stars: number,
+  comment?: string,
+) {
+  const response = await api.post(`services/${serviceId}/ratings`, {
+    stars,
+    comment,
+  })
+  return response.data
+}
+
+export async function getServiceRatings(serviceId: string) {
+  const response = await api.get(`services/${serviceId}/ratings`)
+  return response.data
+}
+
+export async function reportService(
+  serviceId: string,
+  reason: ReportReason,
+  description: string,
+) {
+  const response = await api.post(`reports/service/${serviceId}`, {
+    reason,
+    description,
+  })
   return response.data
 }
