@@ -7,9 +7,9 @@ interface SearchBarProps {
 export function SearchBar({ onChange }: SearchBarProps) {
   return (
     <HStack className="mx-auto rounded-2xl w-11/12 flex flex-row px-4 my-6 bg-white items-center border border-purple-900">
-      <Input className="flex-1">
+      <Input className="flex-1 h-fit">
         <InputField
-          className="w-full mx-2"
+          className="w-full mx-2 text-base py-2"
           placeholder="Pesquisar..."
           onChangeText={onChange}
         />
