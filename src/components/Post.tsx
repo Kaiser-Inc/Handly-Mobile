@@ -125,7 +125,7 @@ export function Post({
               <TouchableOpacity onPress={handleFavorite}>
                 <VStack className=" felx flex-row gap-2 justify-center items-center">
                   <Heart
-                    size={24}
+                    size={28}
                     fill={isFavorited ? '#F05D6C' : 'none'}
                     stroke={isFavorited ? '#F05D6C' : '#95A1B1'}
                   />
@@ -133,13 +133,13 @@ export function Post({
               </TouchableOpacity>
               <TouchableOpacity onPress={onRatePress}>
                 <VStack className=" felx flex-row gap-2 justify-center items-center">
-                  <MessageCircleMore size={24} stroke="#95A1B1" />
+                  <MessageCircleMore size={28} stroke="#95A1B1" />
                 </VStack>
               </TouchableOpacity>
               <HStack className=" ml-auto ">
                 <TouchableOpacity onPress={handleReport}>
                   <VStack className=" felx flex-row gap-2 justify-center items-center">
-                    <TriangleAlert size={24} stroke="#F05D6C" />
+                    <TriangleAlert size={28} stroke="#F05D6C" />
                   </VStack>
                 </TouchableOpacity>
               </HStack>
