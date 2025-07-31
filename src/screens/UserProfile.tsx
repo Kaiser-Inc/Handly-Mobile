@@ -1,3 +1,11 @@
+import { Post } from '@components/Post'
+import { ReportChoiceModal } from '@components/ReportChoiceModal'
+import { ReportModal } from '@components/ReportModal'
+import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
+import { ToastMessage } from '@components/ToastMessage'
+import { UserPhoto } from '@components/UserPhoto'
+import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
+import type { UserDTO } from '@dtos/userDTO'
 import {
   Button,
   ButtonText,
@@ -7,34 +15,30 @@ import {
   VStack,
   View,
 } from '@gluestack-ui/themed'
+import { useAuth } from '@hooks/useAuth'
 import { useRoute } from '@react-navigation/native'
-import { useCallback, useEffect, useState } from 'react'
-import { ScrollView } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-
-import { Star } from 'lucide-react-native'
-
-import Reaching from '@assets/Reaching.svg'
-import BackgroundImg from '@assets/bg.png'
-import { Post } from '@components/Post'
-import { ToastMessage } from '@components/ToastMessage'
-import { UserPhoto } from '@components/UserPhoto'
-import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
-import type { UserDTO } from '@dtos/userDTO'
 import { apiUrl } from '@services/api/api'
-import { fetchServices } from '@services/services-services'
+import { fetchFavorites, fetchServices } from '@services/services-services'
 import {
   getProfileByCpfCnpj,
   getProviderRatings,
 } from '@services/users-services'
+import { formatPhoneNumber } from '@utils/formatPhone'
+import { Star } from 'lucide-react-native'
+import { useCallback, useEffect, useState } from 'react'
+import { ScrollView } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import type { Rating } from '../@types/profileSchema'
-import { formatPhoneNumber } from '../utils/formatPhone'
+
+import Reaching from '@assets/Reaching.svg'
+import BackgroundImg from '@assets/bg.png'
 
 type RouteParams = {
   provider_key: string
 }
 
 export function UserProfile() {
+  const { token } = useAuth()
   const [user, setUser] = useState<UserDTO | null>(null)
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null)
   const [toastVisible, setToastVisible] = useState(false)
@@ -44,6 +48,18 @@ export function UserProfile() {
   )
 
   const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
+    null,
+  )
+
+  const [isReportChoiceModalVisible, setIsReportChoiceModalVisible] =
+    useState(false)
+  const [isReportModalVisible, setIsReportModalVisible] = useState(false)
+  const [reportType, setReportType] = useState<'service' | 'provider' | null>(
+    null,
+  )
 
   const [showing, setShowing] = useState('services')
   const [ratings, setRatings] = useState<Rating[]>([])
@@ -59,6 +75,38 @@ export function UserProfile() {
     [],
   )
 
+  const loadData = useCallback(async () => {
+    if (!token) return
+    try {
+      const [userData, favoritesData, servicesData] = await Promise.all([
+        getProfileByCpfCnpj(provider_key),
+        fetchFavorites(),
+        fetchServices(),
+      ])
+
+      setUser(userData)
+      if (userData.profile_pic) {
+        setProfilePicUrl(
+          `${apiUrl}/uploads/profile_pics/${userData.profile_pic}`,
+        )
+      } else {
+        setProfilePicUrl(null)
+      }
+
+      const favIds = new Set(
+        (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
+      )
+      setFavoriteIds(favIds)
+
+      const userServices = (servicesData as ServiceWithProviderDTO[]).filter(
+        (service) => service.provider.cpf_cnpj === userData.cpf_cnpj,
+      )
+      setServices(userServices)
+    } catch (error) {
+      showToast('Erro ao carregar dados do perfil.', 'error')
+    }
+  }, [provider_key, token, showToast])
+
   const loadUserRatings = useCallback(async () => {
     try {
       if (user?.role === 'provider' && user.cpf_cnpj) {
@@ -70,45 +118,57 @@ export function UserProfile() {
     }
   }, [user, showToast])
 
-  const loadUserProfile = useCallback(async () => {
-    try {
-      const userData = await getProfileByCpfCnpj(provider_key)
-      setUser(userData)
-
-      if (userData.profile_pic) {
-        setProfilePicUrl(
-          `${apiUrl}/uploads/profile_pics/${userData.profile_pic}`,
-        )
-      } else {
-        setProfilePicUrl(null)
-      }
-    } catch (error) {
-      showToast('Erro ao carregar o perfil do usuário.', 'error')
-    }
-  }, [provider_key, showToast])
-
   useEffect(() => {
-    loadUserProfile()
-  }, [loadUserProfile])
-
-  useEffect(() => {
-    async function fetchAndSetServices() {
-      if (user?.role === 'provider') {
-        const allServices: ServiceWithProviderDTO[] = await fetchServices()
-        const filtered = allServices.filter(
-          (service) => service.provider.cpf_cnpj === user.cpf_cnpj,
-        )
-        setServices(filtered)
-      }
-    }
-    fetchAndSetServices()
-  }, [user])
+    loadData()
+  }, [loadData])
 
   useEffect(() => {
     if (showing === 'rates' && user?.role === 'provider') {
       loadUserRatings()
     }
   }, [showing, user, loadUserRatings])
+
+  const selectedService = services.find((s) => s.id === selectedServiceId)
+
+  const handlePostPress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsModalVisible(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false)
+    setSelectedServiceId(null)
+    loadData()
+  }
+
+  const handleReportPress = (serviceId: string) => {
+    setSelectedServiceId(serviceId)
+    setIsReportChoiceModalVisible(true)
+  }
+
+  const handleReportService = () => {
+    setIsReportChoiceModalVisible(false)
+    setReportType('service')
+    setIsReportModalVisible(true)
+  }
+
+  const handleReportProvider = () => {
+    setIsReportChoiceModalVisible(false)
+    setReportType('provider')
+    setIsReportModalVisible(true)
+  }
+
+  const handleCloseReportModal = () => {
+    setIsReportModalVisible(false)
+    setReportType(null)
+  }
+
+  const getReportTargetId = () => {
+    if (!reportType || !selectedService) return ''
+    return reportType === 'service'
+      ? selectedService.id
+      : selectedService.provider.cpf_cnpj
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -225,11 +285,13 @@ export function UserProfile() {
                         serviceId={service.id}
                         name={user.name}
                         providerCpfCnpj={user.cpf_cnpj}
-                        isInitiallyFavorited={false}
+                        isInitiallyFavorited={favoriteIds.has(service.id)}
                         categories={service.categories}
                         serviceImage={service.image}
                         profileImage={user.profile_pic}
                         isProvider={false}
+                        onPress={() => handlePostPress(service.id)}
+                        onReportPress={() => handleReportPress(service.id)}
                       />
                     ))
                   )}
@@ -270,6 +332,24 @@ export function UserProfile() {
           )}
         </Center>
       </ScrollView>
+      <ServiceDetailsModal
+        visible={isModalVisible}
+        serviceId={selectedServiceId}
+        onClose={handleCloseModal}
+        isInitiallyFavorited={favoriteIds.has(selectedServiceId || '')}
+      />
+      <ReportChoiceModal
+        visible={isReportChoiceModalVisible}
+        onClose={() => setIsReportChoiceModalVisible(false)}
+        onReportService={handleReportService}
+        onReportProvider={handleReportProvider}
+      />
+      <ReportModal
+        visible={isReportModalVisible}
+        type={reportType}
+        targetId={getReportTargetId()}
+        onClose={handleCloseReportModal}
+      />
     </SafeAreaView>
   )
 }
