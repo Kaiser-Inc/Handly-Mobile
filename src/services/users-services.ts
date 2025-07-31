@@ -88,3 +88,12 @@ export async function getProfileByCpfCnpj(cpf_cnpj: string) {
   const response = await api.get(`/provider-profile/${cpf_cnpj}`)
   return response.data
 }
+
+export async function favoriteProvider(cpf_cnpj: string) {
+  const response = await api.post('/protected/favorites', {
+    target_id: cpf_cnpj,
+    target_type: 'provider',
+  })
+
+  return response
+}

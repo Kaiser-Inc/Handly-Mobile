@@ -25,7 +25,13 @@ import {
   getProviderRatings,
 } from '@services/users-services'
 import { formatPhoneNumber } from '@utils/formatPhone'
-import { ChevronLeft, Flag, Star, TriangleAlert } from 'lucide-react-native'
+import {
+  ChevronLeft,
+  Flag,
+  Heart,
+  Star,
+  TriangleAlert,
+} from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -359,6 +365,19 @@ export function UserProfile() {
           )}
         </Center>
       </ScrollView>
+      <View className=" absolute bottom-8 flex flex-col w-full mx-auto mt-8">
+        <Button
+          onPress={() => console.log('favoritar')}
+          className=" flex flex-row bg-steam-100 w-10/12 rounded-2xl mx-auto py-6"
+        >
+          <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
+            <Heart width={30} height={30} />
+          </View>
+          <ButtonText className=" text-gray-600 text-xl p-2">
+            Favoritar este prestador
+          </ButtonText>
+        </Button>
+      </View>
       <ServiceDetailsModal
         visible={isModalVisible}
         serviceId={selectedServiceId}
