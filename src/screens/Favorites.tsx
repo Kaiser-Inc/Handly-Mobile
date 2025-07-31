@@ -15,7 +15,7 @@ import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { fetchServices } from '@services/services-services'
+import { fetchServices, getService } from '@services/services-services'
 import { listFavoriteUsers } from '@services/users-services'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -105,16 +105,27 @@ export function Favorites() {
     loadFavorites()
   }, [loadFavorites])
 
-  function handleUnfavorite(serviceId: string) {
-    setServices((prevServices) =>
-      prevServices.filter((service) => service.id !== serviceId),
-    )
-    setFavoritedServiceIds((prev) => {
-      const newSet = new Set(prev)
-      newSet.delete(serviceId)
-      return newSet
-    })
-  }
+  const handleUnfavorite = useCallback(
+    (serviceId: string) => {
+      setFavoritedServiceIds((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(serviceId)
+        return newSet
+      })
+
+      const unfavoritedService = services.find((s) => s.id === serviceId)
+
+      if (
+        unfavoritedService &&
+        !favoritedProviderIds.has(unfavoritedService.provider.cpf_cnpj)
+      ) {
+        setServices((prevServices) =>
+          prevServices.filter((service) => service.id !== serviceId),
+        )
+      }
+    },
+    [services, favoritedProviderIds],
+  )
 
   const selectedService = services.find((s) => s.id === selectedServiceId)
 
@@ -129,13 +140,29 @@ export function Favorites() {
     loadFavorites()
   }
 
-  const handleFavoriteChange = (serviceId: string, isFavorited: boolean) => {
-    if (!isFavorited) {
-      handleUnfavorite(serviceId)
-    } else {
-      setFavoritedServiceIds((prev) => new Set(prev).add(serviceId))
-    }
-  }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <it is necessary in this case>
+  const handleFavoriteChange = useCallback(
+    async (serviceId: string, isFavorited: boolean) => {
+      if (!isFavorited) {
+        handleUnfavorite(serviceId)
+      } else {
+        setFavoritedServiceIds((prev) => new Set(prev).add(serviceId))
+        try {
+          const newService = await getService(serviceId)
+          setServices((prevServices) => {
+            const updatedServices = [...prevServices]
+            if (!updatedServices.some((s) => s.id === newService.id)) {
+              updatedServices.push(newService)
+            }
+            return updatedServices
+          })
+        } catch (error) {
+          console.error('Erro ao buscar serviço favoritado:', error)
+        }
+      }
+    },
+    [handleUnfavorite, setServices, setFavoritedServiceIds],
+  )
 
   const handleRatePress = (serviceId: string) => {
     setSelectedServiceId(serviceId)
