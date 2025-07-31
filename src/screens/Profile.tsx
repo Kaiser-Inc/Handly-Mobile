@@ -441,10 +441,15 @@ export function Profile() {
                 </View>
               ) : (
                 <ScrollView
-                  className="mt-8 w-10/12"
+                  className=" w-10/12"
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={{ paddingBottom: 80 }}
                 >
+                  <View className=" flex flex-col items-center my-4">
+                    <Text className="font-bold text-lg mb-8">
+                      Minhas Avaliações
+                    </Text>
+                  </View>
                   {ratings.length === 0 ? (
                     <VStack className="flex-1 justify-center items-center">
                       <Text className="text-lg text-gray-600">

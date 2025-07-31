@@ -273,7 +273,7 @@ export function UserProfile() {
               </View>
               {showing === 'services' ? (
                 <View className=" flex flex-col items-center w-full">
-                  <Text className="font-bold text-lg mb-8">
+                  <Text className="font-bold text-lg my-8 mx-auto">
                     Serviços de {user.name.split(' ')[0]}
                   </Text>
                   {services.length === 0 ? (
@@ -298,10 +298,13 @@ export function UserProfile() {
                 </View>
               ) : (
                 <ScrollView
-                  className="mt-8 w-10/12"
+                  className=" w-10/12"
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={{ paddingBottom: 80 }}
                 >
+                  <Text className="font-bold text-lg my-8 mx-auto">
+                    Avaliações de {user.name.split(' ')[0]}
+                  </Text>
                   {ratings.length === 0 ? (
                     <VStack className="flex-1 justify-center items-center">
                       <Text className="text-lg text-gray-600">
