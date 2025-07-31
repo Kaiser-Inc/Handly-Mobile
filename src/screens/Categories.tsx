@@ -18,7 +18,11 @@ import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { fetchFavorites, fetchServices, getCategories } from '@services/services-services'
+import {
+  fetchFavorites,
+  fetchServices,
+  getCategories,
+} from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
 export function Categories() {
@@ -27,7 +31,7 @@ export function Categories() {
   const [categories, setCategories] = useState<string[]>([])
   const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [filteredServices, setFilteredServices] = useState<
-    ServiceWithProviderDTO
+    ServiceWithProviderDTO[]
   >([])
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [toastVisible, setToastVisible] = useState(false)
@@ -41,7 +45,8 @@ export function Categories() {
     null,
   )
 
-  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] = useState(false)
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
+    useState(false)
   const [isRateModalVisible, setIsRateModalVisible] = useState(false)
   const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
 

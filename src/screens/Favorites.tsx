@@ -27,7 +27,8 @@ export function Favorites() {
     null,
   )
 
-  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] = useState(false)
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
+    useState(false)
   const [isRateModalVisible, setIsRateModalVisible] = useState(false)
   const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
 
