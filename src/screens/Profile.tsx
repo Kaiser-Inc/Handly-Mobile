@@ -404,7 +404,7 @@ export function Profile() {
                 </Button>
               </View>
               {showing === 'services' ? (
-                <View className=" flex flex-col items-center">
+                <View className=" flex flex-col items-center w-full">
                   <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
                   {services.length === 0 ? (
                     <Text>Nenhum serviço encontrado.</Text>

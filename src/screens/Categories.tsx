@@ -18,7 +18,11 @@ import { ToastMessage } from '@components/ToastMessage'
 import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { fetchFavorites, fetchServices, getCategories } from '@services/services-services'
+import {
+  fetchFavorites,
+  fetchServices,
+  getCategories,
+} from '@services/services-services'
 import { useCallback, useEffect, useState } from 'react'
 
 export function Categories() {
@@ -27,7 +31,7 @@ export function Categories() {
   const [categories, setCategories] = useState<string[]>([])
   const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [filteredServices, setFilteredServices] = useState<
-    ServiceWithProviderDTO
+    ServiceWithProviderDTO[]
   >([])
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [toastVisible, setToastVisible] = useState(false)
@@ -41,7 +45,8 @@ export function Categories() {
     null,
   )
 
-  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] = useState(false)
+  const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
+    useState(false)
   const [isRateModalVisible, setIsRateModalVisible] = useState(false)
   const [rateType, setRateType] = useState<'service' | 'provider' | null>(null)
 
@@ -77,7 +82,12 @@ export function Categories() {
         (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
       )
 
-      setCategories(categoriesData.categories)
+      setCategories(
+        Array.isArray(categoriesData?.categories)
+          ? categoriesData.categories
+          : [],
+      )
+
       setServices(servicesData as ServiceWithProviderDTO[])
       setFavoriteIds(favIds)
       setFilteredServices([])
@@ -207,9 +217,11 @@ export function Categories() {
       : selectedService.provider.cpf_cnpj
   }
 
-  const filteredCategories = categories.filter((category) =>
-    category.toLowerCase().includes(search.toLowerCase()),
-  )
+  const filteredCategories = Array.isArray(categories)
+    ? categories.filter((category) =>
+        category.toLowerCase().includes(search.toLowerCase()),
+      )
+    : []
 
   const badgesToShow =
     filteredServices.length > 0 ? selected : filteredCategories
@@ -260,20 +272,34 @@ export function Categories() {
         </View>
         <GradientButton text="Filtrar Categorias" onPress={handleFilter} />
         <View>
-          {filteredServices.map((service) => (
-            <Post
-              key={service.id}
-              serviceId={service.id}
-              isInitiallyFavorited={favoriteIds.has(service.id)}
-              name={service.provider.name}
-              categories={service.categories}
-              profileImage={service.provider.profile_pic}
-              serviceImage={service.image}
-              onPress={() => handlePostPress(service.id)}
-              onRatePress={() => handleRatePress(service.id)}
-              onReportPress={() => handleReportPress(service.id)}
-            />
-          ))}
+          {filteredServices.length > 0 ? (
+            filteredServices.map((service) => (
+              <Post
+                key={service.id}
+                serviceId={service.id}
+                isInitiallyFavorited={favoriteIds.has(service.id)}
+                name={service.provider.name}
+                categories={service.categories}
+                profileImage={service.provider.profile_pic}
+                serviceImage={service.image}
+                onPress={() => handlePostPress(service.id)}
+                onRatePress={() => handleRatePress(service.id)}
+                onReportPress={() => handleReportPress(service.id)}
+              />
+            ))
+          ) : categories.length === 0 ? (
+            <View className="flex-1 justify-center items-center mt-10">
+              <Text className="text-lg text-gray-600">
+                Nenhum serviço ou categoria encontrado.
+              </Text>
+            </View>
+          ) : (
+            <View className="flex-1 justify-center items-center mt-10">
+              <Text className="text-lg text-gray-600">
+                Nenhum serviço filtrado.
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
 
