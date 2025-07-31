@@ -21,6 +21,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { apiUrl } from '@services/api/api'
 import { fetchFavorites, fetchServices } from '@services/services-services'
 import {
+  favoriteProvider,
   getProfileByCpfCnpj,
   getProviderRatings,
 } from '@services/users-services'
@@ -71,6 +72,7 @@ export function UserProfile() {
 
   const [showing, setShowing] = useState('services')
   const [ratings, setRatings] = useState<Rating[]>([])
+  const [isProviderFavorited, setIsProviderFavorited] = useState(false)
   const route = useRoute()
   const { provider_key } = route.params as RouteParams
 
@@ -105,6 +107,7 @@ export function UserProfile() {
         (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
       )
       setFavoriteIds(favIds)
+      setIsProviderFavorited(favIds.has(provider_key))
 
       const userServices = (servicesData as ServiceWithProviderDTO[]).filter(
         (service) => service.provider.cpf_cnpj === userData.cpf_cnpj,
@@ -169,6 +172,23 @@ export function UserProfile() {
   const handleCloseReportModal = () => {
     setIsReportModalVisible(false)
     setReportType(null)
+  }
+
+  async function handleFavoriteProvider() {
+    const originalState = isProviderFavorited
+    setIsProviderFavorited(!originalState)
+    try {
+      await favoriteProvider(provider_key)
+      showToast(
+        originalState
+          ? 'Prestador desfavoritado.'
+          : 'Prestador favoritado com sucesso!',
+        'success',
+      )
+    } catch (error) {
+      showToast('Erro ao favoritar/desfavoritar o prestador.', 'error')
+      setIsProviderFavorited(originalState)
+    }
   }
 
   const handleReportProviderPress = () => {
@@ -367,14 +387,23 @@ export function UserProfile() {
       </ScrollView>
       <View className=" absolute bottom-8 flex flex-col w-full mx-auto mt-8">
         <Button
-          onPress={() => console.log('favoritar')}
-          className=" flex flex-row bg-steam-100 w-10/12 rounded-2xl mx-auto py-6"
+          onPress={handleFavoriteProvider}
+          className={` flex flex-row  w-10/12 rounded-2xl mx-auto py-6 ${isProviderFavorited ? 'bg-purple-500' : 'bg-steam-100'}  `}
         >
-          <View className=" flex flex-row bg-white p-2 rounded-full mx-4">
-            <Heart width={30} height={30} />
+          <View
+            className={` flex flex-row  p-2 rounded-full mx-4 ${isProviderFavorited ? 'bg-danger-100' : 'bg-white'}  `}
+          >
+            <Heart
+              width={30}
+              height={30}
+              fill={isProviderFavorited ? '#F05D6C' : 'none'}
+              stroke={isProviderFavorited ? '#F05D6C' : '#95A1B1'}
+            />
           </View>
-          <ButtonText className=" text-gray-600 text-xl p-2">
-            Favoritar este prestador
+          <ButtonText
+            className={`  text-xl p-2 ${isProviderFavorited ? 'text-white' : 'text-gray-800'}  `}
+          >
+            {isProviderFavorited ? 'Desfavoritar' : 'Favoritar'} este prestador
           </ButtonText>
         </Button>
       </View>
