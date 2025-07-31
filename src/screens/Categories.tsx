@@ -82,7 +82,12 @@ export function Categories() {
         (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
       )
 
-      setCategories(categoriesData.categories)
+      setCategories(
+        Array.isArray(categoriesData?.categories)
+          ? categoriesData.categories
+          : [],
+      )
+
       setServices(servicesData as ServiceWithProviderDTO[])
       setFavoriteIds(favIds)
       setFilteredServices([])
@@ -212,9 +217,11 @@ export function Categories() {
       : selectedService.provider.cpf_cnpj
   }
 
-  const filteredCategories = categories.filter((category) =>
-    category.toLowerCase().includes(search.toLowerCase()),
-  )
+  const filteredCategories = Array.isArray(categories)
+    ? categories.filter((category) =>
+        category.toLowerCase().includes(search.toLowerCase()),
+      )
+    : []
 
   const badgesToShow =
     filteredServices.length > 0 ? selected : filteredCategories
@@ -280,10 +287,16 @@ export function Categories() {
                 onReportPress={() => handleReportPress(service.id)}
               />
             ))
+          ) : categories.length === 0 ? (
+            <View className="flex-1 justify-center items-center mt-10">
+              <Text className="text-lg text-gray-600">
+                Nenhum serviço ou categoria encontrado.
+              </Text>
+            </View>
           ) : (
             <View className="flex-1 justify-center items-center mt-10">
               <Text className="text-lg text-gray-600">
-                Nenhum serviço encontrado com os filtros selecionados.
+                Nenhum serviço filtrado.
               </Text>
             </View>
           )}
