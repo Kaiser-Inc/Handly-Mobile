@@ -265,20 +265,28 @@ export function Categories() {
         </View>
         <GradientButton text="Filtrar Categorias" onPress={handleFilter} />
         <View>
-          {filteredServices.map((service) => (
-            <Post
-              key={service.id}
-              serviceId={service.id}
-              isInitiallyFavorited={favoriteIds.has(service.id)}
-              name={service.provider.name}
-              categories={service.categories}
-              profileImage={service.provider.profile_pic}
-              serviceImage={service.image}
-              onPress={() => handlePostPress(service.id)}
-              onRatePress={() => handleRatePress(service.id)}
-              onReportPress={() => handleReportPress(service.id)}
-            />
-          ))}
+          {filteredServices.length > 0 ? (
+            filteredServices.map((service) => (
+              <Post
+                key={service.id}
+                serviceId={service.id}
+                isInitiallyFavorited={favoriteIds.has(service.id)}
+                name={service.provider.name}
+                categories={service.categories}
+                profileImage={service.provider.profile_pic}
+                serviceImage={service.image}
+                onPress={() => handlePostPress(service.id)}
+                onRatePress={() => handleRatePress(service.id)}
+                onReportPress={() => handleReportPress(service.id)}
+              />
+            ))
+          ) : (
+            <View className="flex-1 justify-center items-center mt-10">
+              <Text className="text-lg text-gray-600">
+                Nenhum serviço encontrado com os filtros selecionados.
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
 
