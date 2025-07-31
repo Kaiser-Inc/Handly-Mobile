@@ -15,8 +15,14 @@ import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { fetchFavorites, fetchServices } from '@services/services-services'
+import { fetchServices } from '@services/services-services'
+import { listFavoriteUsers } from '@services/users-services'
 import { useCallback, useEffect, useState } from 'react'
+
+interface Favorite {
+  target_type: 'service' | 'provider'
+  target_id: string
+}
 
 export function Favorites() {
   const { isLoadingUserStorageData, token } = useAuth()
@@ -25,6 +31,9 @@ export function Favorites() {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
     null,
+  )
+  const [favoritedServiceIds, setFavoritedServiceIds] = useState<Set<string>>(
+    new Set(),
   )
 
   const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
@@ -54,18 +63,31 @@ export function Favorites() {
       return
     }
     try {
-      const [servicesData, favoritesData] = await Promise.all([
-        fetchServices(),
-        fetchFavorites(),
-      ])
+      const [servicesData, favoritesData]: [
+        ServiceWithProviderDTO[],
+        Favorite[],
+      ] = await Promise.all([fetchServices(), listFavoriteUsers()])
 
-      const favIds = new Set(
-        (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
+      const serviceIds = new Set(
+        favoritesData
+          .filter((fav: Favorite) => fav.target_type === 'service')
+          .map((fav: Favorite) => fav.target_id),
+      )
+      setFavoritedServiceIds(serviceIds)
+
+      const favoriteProviderIds = new Set(
+        favoritesData
+          .filter((fav: Favorite) => fav.target_type === 'provider')
+          .map((fav: Favorite) => fav.target_id),
       )
 
       const favoriteServices = (
         servicesData as ServiceWithProviderDTO[]
-      ).filter((service) => favIds.has(service.id))
+      ).filter(
+        (service) =>
+          serviceIds.has(service.id) ||
+          favoriteProviderIds.has(service.provider.cpf_cnpj),
+      )
 
       setServices(favoriteServices)
     } catch (error) {
@@ -83,6 +105,11 @@ export function Favorites() {
     setServices((prevServices) =>
       prevServices.filter((service) => service.id !== serviceId),
     )
+    setFavoritedServiceIds((prev) => {
+      const newSet = new Set(prev)
+      newSet.delete(serviceId)
+      return newSet
+    })
   }
 
   const selectedService = services.find((s) => s.id === selectedServiceId)
@@ -95,12 +122,14 @@ export function Favorites() {
   const handleCloseModal = () => {
     setIsModalVisible(false)
     setSelectedServiceId(null)
-    loadFavorites() // Recarrega os favoritos para refletir as mudanças
+    loadFavorites()
   }
 
   const handleFavoriteChange = (serviceId: string, isFavorited: boolean) => {
     if (!isFavorited) {
       handleUnfavorite(serviceId)
+    } else {
+      setFavoritedServiceIds((prev) => new Set(prev).add(serviceId))
     }
   }
 
@@ -192,7 +221,7 @@ export function Favorites() {
             <Post
               key={service.id}
               serviceId={service.id}
-              isInitiallyFavorited={true}
+              isInitiallyFavorited={favoritedServiceIds.has(service.id)}
               name={service.provider.name}
               categories={service.categories}
               profileImage={service.provider.profile_pic}
@@ -216,7 +245,7 @@ export function Favorites() {
         visible={isModalVisible}
         serviceId={selectedServiceId}
         onClose={handleCloseModal}
-        isInitiallyFavorited={true}
+        isInitiallyFavorited={favoritedServiceIds.has(selectedServiceId || '')}
         onFavoriteChange={handleFavoriteChange}
       />
 

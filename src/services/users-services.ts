@@ -97,3 +97,8 @@ export async function favoriteProvider(cpf_cnpj: string) {
 
   return response
 }
+
+export async function listFavoriteUsers() {
+  const response = await api.get('/protected/favorites')
+  return response.data
+}
