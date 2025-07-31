@@ -15,8 +15,14 @@ import { ServiceDetailsModal } from '@components/ServiceDetailsModal'
 import type { ServiceWithProviderDTO } from '@dtos/serviceDTO'
 import { useAuth } from '@hooks/useAuth'
 import { useScreenRefresh } from '@hooks/useScreenRefresh'
-import { fetchFavorites, fetchServices } from '@services/services-services'
+import { fetchServices, getService } from '@services/services-services'
+import { listFavoriteUsers } from '@services/users-services'
 import { useCallback, useEffect, useState } from 'react'
+
+interface Favorite {
+  target_type: 'service' | 'provider'
+  target_id: string
+}
 
 export function Favorites() {
   const { isLoadingUserStorageData, token } = useAuth()
@@ -25,6 +31,12 @@ export function Favorites() {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedServiceId, setSelectedServiceId] = useState<string | null>(
     null,
+  )
+  const [favoritedServiceIds, setFavoritedServiceIds] = useState<Set<string>>(
+    new Set(),
+  )
+  const [favoritedProviderIds, setFavoritedProviderIds] = useState<Set<string>>(
+    new Set(),
   )
 
   const [isRateChoiceModalVisible, setIsRateChoiceModalVisible] =
@@ -54,18 +66,32 @@ export function Favorites() {
       return
     }
     try {
-      const [servicesData, favoritesData] = await Promise.all([
-        fetchServices(),
-        fetchFavorites(),
-      ])
+      const [servicesData, favoritesData]: [
+        ServiceWithProviderDTO[],
+        Favorite[],
+      ] = await Promise.all([fetchServices(), listFavoriteUsers()])
 
-      const favIds = new Set(
-        (favoritesData as { target_id: string }[]).map((fav) => fav.target_id),
+      const serviceIds = new Set(
+        favoritesData
+          .filter((fav: Favorite) => fav.target_type === 'service')
+          .map((fav: Favorite) => fav.target_id),
       )
+      setFavoritedServiceIds(serviceIds)
+
+      const favoriteProviderIds = new Set(
+        favoritesData
+          .filter((fav: Favorite) => fav.target_type === 'provider')
+          .map((fav: Favorite) => fav.target_id),
+      )
+      setFavoritedProviderIds(favoriteProviderIds)
 
       const favoriteServices = (
         servicesData as ServiceWithProviderDTO[]
-      ).filter((service) => favIds.has(service.id))
+      ).filter(
+        (service) =>
+          serviceIds.has(service.id) ||
+          favoriteProviderIds.has(service.provider.cpf_cnpj),
+      )
 
       setServices(favoriteServices)
     } catch (error) {
@@ -79,11 +105,27 @@ export function Favorites() {
     loadFavorites()
   }, [loadFavorites])
 
-  function handleUnfavorite(serviceId: string) {
-    setServices((prevServices) =>
-      prevServices.filter((service) => service.id !== serviceId),
-    )
-  }
+  const handleUnfavorite = useCallback(
+    (serviceId: string) => {
+      setFavoritedServiceIds((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(serviceId)
+        return newSet
+      })
+
+      const unfavoritedService = services.find((s) => s.id === serviceId)
+
+      if (
+        unfavoritedService &&
+        !favoritedProviderIds.has(unfavoritedService.provider.cpf_cnpj)
+      ) {
+        setServices((prevServices) =>
+          prevServices.filter((service) => service.id !== serviceId),
+        )
+      }
+    },
+    [services, favoritedProviderIds],
+  )
 
   const selectedService = services.find((s) => s.id === selectedServiceId)
 
@@ -95,14 +137,32 @@ export function Favorites() {
   const handleCloseModal = () => {
     setIsModalVisible(false)
     setSelectedServiceId(null)
-    loadFavorites() // Recarrega os favoritos para refletir as mudanças
+    loadFavorites()
   }
 
-  const handleFavoriteChange = (serviceId: string, isFavorited: boolean) => {
-    if (!isFavorited) {
-      handleUnfavorite(serviceId)
-    }
-  }
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <it is necessary in this case>
+  const handleFavoriteChange = useCallback(
+    async (serviceId: string, isFavorited: boolean) => {
+      if (!isFavorited) {
+        handleUnfavorite(serviceId)
+      } else {
+        setFavoritedServiceIds((prev) => new Set(prev).add(serviceId))
+        try {
+          const newService = await getService(serviceId)
+          setServices((prevServices) => {
+            const updatedServices = [...prevServices]
+            if (!updatedServices.some((s) => s.id === newService.id)) {
+              updatedServices.push(newService)
+            }
+            return updatedServices
+          })
+        } catch (error) {
+          console.error('Erro ao buscar serviço favoritado:', error)
+        }
+      }
+    },
+    [handleUnfavorite, setServices, setFavoritedServiceIds],
+  )
 
   const handleRatePress = (serviceId: string) => {
     setSelectedServiceId(serviceId)
@@ -162,11 +222,21 @@ export function Favorites() {
       : selectedService.provider.cpf_cnpj
   }
 
-  const filteredServices = services.filter(
+  const filteredServicesBySearch = services.filter(
     (service: ServiceWithProviderDTO) =>
       service.name.toLowerCase().includes(search.toLowerCase()) ||
       service.description?.toLowerCase().includes(search.toLowerCase()) ||
       service.provider.name.toLowerCase().includes(search.toLowerCase()),
+  )
+
+  const directlyFavoritedServices = filteredServicesBySearch.filter((service) =>
+    favoritedServiceIds.has(service.id),
+  )
+
+  const otherFavoritedProviderServices = filteredServicesBySearch.filter(
+    (service) =>
+      !favoritedServiceIds.has(service.id) &&
+      favoritedProviderIds.has(service.provider.cpf_cnpj),
   )
 
   return (
@@ -187,35 +257,72 @@ export function Favorites() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40, flexGrow: 1 }}
       >
-        {filteredServices.length > 0 ? (
-          filteredServices.map((service: ServiceWithProviderDTO) => (
-            <Post
-              key={service.id}
-              serviceId={service.id}
-              isInitiallyFavorited={true}
-              name={service.provider.name}
-              categories={service.categories}
-              profileImage={service.provider.profile_pic}
-              serviceImage={service.image}
-              onUnfavorite={handleUnfavorite}
-              onPress={() => handlePostPress(service.id)}
-              onRatePress={() => handleRatePress(service.id)}
-              onReportPress={() => handleReportPress(service.id)}
-            />
-          ))
-        ) : (
-          <View className="flex-1 justify-center items-center">
-            <Text className="text-lg text-gray-600">
-              Nenhum serviço favoritado.
+        {directlyFavoritedServices.length > 0 && (
+          <View className="w-full flex flex-col items-center">
+            <Text className="text-xl font-bold text-gray-800 mb-4 px-auto">
+              Meus Serviços Favoritos
             </Text>
+            {directlyFavoritedServices.map(
+              (service: ServiceWithProviderDTO) => (
+                <Post
+                  key={service.id}
+                  serviceId={service.id}
+                  isInitiallyFavorited={favoritedServiceIds.has(service.id)}
+                  name={service.provider.name}
+                  categories={service.categories}
+                  profileImage={service.provider.profile_pic}
+                  serviceImage={service.image}
+                  onUnfavorite={handleUnfavorite}
+                  onPress={() => handlePostPress(service.id)}
+                  onRatePress={() => handleRatePress(service.id)}
+                  onReportPress={() => handleReportPress(service.id)}
+                  providerCpfCnpj={service.provider.cpf_cnpj}
+                />
+              ),
+            )}
           </View>
         )}
+
+        {otherFavoritedProviderServices.length > 0 && (
+          <View className="w-full flex flex-col items-center">
+            <Text className="text-xl font-bold text-gray-800 mb-4 px-auto">
+              Outros Serviços de Usuários Favoritados
+            </Text>
+            {otherFavoritedProviderServices.map(
+              (service: ServiceWithProviderDTO) => (
+                <Post
+                  key={service.id}
+                  serviceId={service.id}
+                  isInitiallyFavorited={favoritedServiceIds.has(service.id)}
+                  name={service.provider.name}
+                  categories={service.categories}
+                  profileImage={service.provider.profile_pic}
+                  serviceImage={service.image}
+                  onUnfavorite={handleUnfavorite}
+                  onPress={() => handlePostPress(service.id)}
+                  onRatePress={() => handleRatePress(service.id)}
+                  onReportPress={() => handleReportPress(service.id)}
+                  providerCpfCnpj={service.provider.cpf_cnpj}
+                />
+              ),
+            )}
+          </View>
+        )}
+
+        {directlyFavoritedServices.length === 0 &&
+          otherFavoritedProviderServices.length === 0 && (
+            <View className="flex-1 justify-center items-center">
+              <Text className="text-lg text-gray-600">
+                Nenhum serviço favoritado encontrado.
+              </Text>
+            </View>
+          )}
       </ScrollView>
       <ServiceDetailsModal
         visible={isModalVisible}
         serviceId={selectedServiceId}
         onClose={handleCloseModal}
-        isInitiallyFavorited={true}
+        isInitiallyFavorited={favoritedServiceIds.has(selectedServiceId || '')}
         onFavoriteChange={handleFavoriteChange}
       />
 

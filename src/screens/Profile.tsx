@@ -49,6 +49,7 @@ import { formatPhoneNumber } from '../utils/formatPhone'
 
 import Reaching from '@assets/Reaching.svg'
 import AngryEmoji from '@assets/angry.svg'
+import { GradientButton } from '@components/GradientButton'
 
 export function Profile() {
   const { signOut } = useAuth()
@@ -299,7 +300,7 @@ export function Profile() {
               className="absolute bottom-2 right-2 bg-white rounded-full p-1"
               onPress={handleSelectImage}
             >
-              <Camera size={20} color="#4B5563" />
+              <Camera size={24} color="#4B5563" />
             </TouchableOpacity>
           </View>
 
@@ -317,7 +318,7 @@ export function Profile() {
                     className="ml-2"
                     onPress={handleUpdateProfile}
                   >
-                    <ThumbsUp size={20} color="#9356FC" />
+                    <ThumbsUp size={24} color="#9356FC" />
                   </TouchableOpacity>
                 </Input>
               </VStack>
@@ -327,7 +328,7 @@ export function Profile() {
                   {user?.name || 'Usuário'}
                 </Text>
                 <TouchableOpacity onPress={() => setIsEditingName(true)}>
-                  <Pencil size={18} color="#4B5563" />
+                  <Pencil size={20} color="#4B5563" />
                 </TouchableOpacity>
               </>
             )}
@@ -360,7 +361,7 @@ export function Profile() {
                           className="ml-2"
                           onPress={handleUpdateProfile}
                         >
-                          <ThumbsUp size={20} color="#9356FC" />
+                          <ThumbsUp size={24} color="#9356FC" />
                         </TouchableOpacity>
                       </Input>
                     </VStack>
@@ -373,7 +374,7 @@ export function Profile() {
                         <TouchableOpacity
                           onPress={() => setIsEditingPhone(true)}
                         >
-                          <Pencil size={18} color="#4B5563" />
+                          <Pencil size={20} color="#4B5563" />
                         </TouchableOpacity>
                       </View>
                       <Text className=" text-gray-400">Contato</Text>
@@ -405,7 +406,16 @@ export function Profile() {
               </View>
               {showing === 'services' ? (
                 <View className=" flex flex-col items-center w-full">
-                  <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
+                  <View className=" flex flex-col items-center my-4">
+                    <Text className="font-bold text-lg mb-8">
+                      Meus Serviços
+                    </Text>
+                    <GradientButton
+                      text="Cadastrar um novo serviço"
+                      onPress={() => navigation.navigate('Serviço')}
+                    />
+                  </View>
+
                   {services.length === 0 ? (
                     <Text>Nenhum serviço encontrado.</Text>
                   ) : (
@@ -424,16 +434,22 @@ export function Profile() {
                         onUploadImage={() =>
                           handleUploadServiceImage(service.id)
                         }
+                        providerCpfCnpj={service.provider.cpf_cnpj}
                       />
                     ))
                   )}
                 </View>
               ) : (
                 <ScrollView
-                  className="mt-8 w-10/12"
+                  className=" w-10/12"
                   showsVerticalScrollIndicator={false}
                   contentContainerStyle={{ paddingBottom: 80 }}
                 >
+                  <View className=" flex flex-col items-center my-4">
+                    <Text className="font-bold text-lg mb-8">
+                      Minhas Avaliações
+                    </Text>
+                  </View>
                   {ratings.length === 0 ? (
                     <VStack className="flex-1 justify-center items-center">
                       <Text className="text-lg text-gray-600">
