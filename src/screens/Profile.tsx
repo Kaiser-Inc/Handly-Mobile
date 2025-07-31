@@ -300,7 +300,7 @@ export function Profile() {
               className="absolute bottom-2 right-2 bg-white rounded-full p-1"
               onPress={handleSelectImage}
             >
-              <Camera size={20} color="#4B5563" />
+              <Camera size={24} color="#4B5563" />
             </TouchableOpacity>
           </View>
 
@@ -318,7 +318,7 @@ export function Profile() {
                     className="ml-2"
                     onPress={handleUpdateProfile}
                   >
-                    <ThumbsUp size={20} color="#9356FC" />
+                    <ThumbsUp size={24} color="#9356FC" />
                   </TouchableOpacity>
                 </Input>
               </VStack>
@@ -328,7 +328,7 @@ export function Profile() {
                   {user?.name || 'Usuário'}
                 </Text>
                 <TouchableOpacity onPress={() => setIsEditingName(true)}>
-                  <Pencil size={18} color="#4B5563" />
+                  <Pencil size={20} color="#4B5563" />
                 </TouchableOpacity>
               </>
             )}
@@ -361,7 +361,7 @@ export function Profile() {
                           className="ml-2"
                           onPress={handleUpdateProfile}
                         >
-                          <ThumbsUp size={20} color="#9356FC" />
+                          <ThumbsUp size={24} color="#9356FC" />
                         </TouchableOpacity>
                       </Input>
                     </VStack>
@@ -374,7 +374,7 @@ export function Profile() {
                         <TouchableOpacity
                           onPress={() => setIsEditingPhone(true)}
                         >
-                          <Pencil size={18} color="#4B5563" />
+                          <Pencil size={20} color="#4B5563" />
                         </TouchableOpacity>
                       </View>
                       <Text className=" text-gray-400">Contato</Text>

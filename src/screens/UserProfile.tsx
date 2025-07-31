@@ -11,12 +11,13 @@ import {
   ButtonText,
   Center,
   Image,
+  Pressable,
   Text,
   VStack,
   View,
 } from '@gluestack-ui/themed'
 import { useAuth } from '@hooks/useAuth'
-import { useRoute } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { apiUrl } from '@services/api/api'
 import { fetchFavorites, fetchServices } from '@services/services-services'
 import {
@@ -24,7 +25,7 @@ import {
   getProviderRatings,
 } from '@services/users-services'
 import { formatPhoneNumber } from '@utils/formatPhone'
-import { Star } from 'lucide-react-native'
+import { ChevronLeft, Flag, Star, TriangleAlert } from 'lucide-react-native'
 import { useCallback, useEffect, useState } from 'react'
 import { ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -32,6 +33,7 @@ import type { Rating } from '../@types/profileSchema'
 
 import Reaching from '@assets/Reaching.svg'
 import BackgroundImg from '@assets/bg.png'
+import type { AppNavigatorRoutesProps } from '@routes/app.routes'
 
 type RouteParams = {
   provider_key: string
@@ -46,7 +48,7 @@ export function UserProfile() {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>(
     'error',
   )
-
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
   const [services, setServices] = useState<ServiceWithProviderDTO[]>([])
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -163,7 +165,15 @@ export function UserProfile() {
     setReportType(null)
   }
 
+  const handleReportProviderPress = () => {
+    setReportType('provider')
+    setIsReportModalVisible(true)
+  }
+
   const getReportTargetId = () => {
+    if (reportType === 'provider') {
+      return provider_key
+    }
     if (!reportType || !selectedService) return ''
     return reportType === 'service'
       ? selectedService.id
@@ -187,7 +197,21 @@ export function UserProfile() {
         contentContainerStyle={{ paddingBottom: 80 }}
       >
         <Center className="w-full items-center py-8">
-          <Text className="font-bold text-xl mb-8">Perfil do Prestador</Text>
+          <View className="w-10/12 flex-row items-center justify-center relative mb-8">
+            <Pressable
+              onPress={() => navigation.goBack()}
+              className="absolute left-0 p-2 z-10"
+            >
+              <ChevronLeft size={28} color="#4B5563" />
+            </Pressable>
+            <Text className="font-bold text-xl">Perfil do Prestador</Text>
+            <Pressable
+              onPress={handleReportProviderPress}
+              className="absolute right-0 p-2 z-10"
+            >
+              <TriangleAlert size={28} color="#F05D6C" />
+            </Pressable>
+          </View>
 
           <Center className="w-10/12 h-32 shadow-2xl rounded-3xl overflow-hidden bg-white">
             <Image

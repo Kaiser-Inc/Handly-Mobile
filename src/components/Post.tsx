@@ -159,13 +159,13 @@ export function Post({
           {isProvider && (
             <HStack className=" mx-auto w-full flex flex-row justify-around">
               <TouchableOpacity onPress={onEdit}>
-                <SquarePen size={24} stroke="#9356FC" />
+                <SquarePen size={28} stroke="#9356FC" />
               </TouchableOpacity>
               <TouchableOpacity onPress={onUploadImage}>
-                <Camera size={24} stroke="#4B5563" />
+                <Camera size={28} stroke="#4B5563" />
               </TouchableOpacity>
               <TouchableOpacity onPress={onDelete}>
-                <Trash2 size={24} stroke="#FF4B4B" />
+                <Trash2 size={28} stroke="#FF4B4B" />
               </TouchableOpacity>
             </HStack>
           )}
