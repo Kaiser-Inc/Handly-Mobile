@@ -285,6 +285,7 @@ export function Categories() {
                 onPress={() => handlePostPress(service.id)}
                 onRatePress={() => handleRatePress(service.id)}
                 onReportPress={() => handleReportPress(service.id)}
+                providerCpfCnpj={service.provider.cpf_cnpj}
               />
             ))
           ) : categories.length === 0 ? (

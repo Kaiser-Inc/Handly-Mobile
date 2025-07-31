@@ -424,6 +424,7 @@ export function Profile() {
                         onUploadImage={() =>
                           handleUploadServiceImage(service.id)
                         }
+                        providerCpfCnpj={service.provider.cpf_cnpj}
                       />
                     ))
                   )}
