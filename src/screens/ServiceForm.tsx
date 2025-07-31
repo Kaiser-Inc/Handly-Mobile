@@ -178,7 +178,7 @@ export function ServiceForm() {
 
                   <GradientButton
                     onPress={handleSubmit(handleOnSubmit)}
-                    testID='serviceSubmitButton'
+                    testID="serviceSubmitButton"
                     isLoading={isLoading}
                     text={isEditing ? 'Atualizar serviço' : 'Cadastrar serviço'}
                   />

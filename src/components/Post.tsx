@@ -13,12 +13,15 @@ import { TouchableOpacity } from 'react-native'
 import DefaultService from '../assets/defaut-service.svg'
 import { UserPhoto } from './UserPhoto'
 
+import { useNavigation } from '@react-navigation/native'
+import type { AppNavigatorRoutesProps } from '@routes/app.routes'
 import { favoriteService } from '@services/services-services'
 import { useEffect, useState } from 'react'
 
 interface PostProps {
   serviceId: string
   name: string
+  providerCpfCnpj: string
   categories: string[]
   profileImage: string | null
   serviceImage: string | null
@@ -48,8 +51,14 @@ export function Post({
   onPress,
   onRatePress,
   onReportPress,
+  providerCpfCnpj,
 }: PostProps) {
   const [isFavorited, setIsFavorited] = useState(isInitiallyFavorited)
+  const navigation = useNavigation<AppNavigatorRoutesProps>()
+
+  function handleNavigateToProfile() {
+    navigation.navigate('UserProfile', { provider_key: providerCpfCnpj })
+  }
 
   async function handleReport() {
     if (onReportPress) {
@@ -93,7 +102,9 @@ export function Post({
             alt="Foto de perfil de usuário"
           />
           <HStack className=" flex flex-col my-auto">
-            <Text className=" font-bold text-lg ">{name}</Text>
+            <TouchableOpacity onPress={handleNavigateToProfile}>
+              <Text className=" font-bold text-lg ">{name}</Text>
+            </TouchableOpacity>
             <Text className=" text-gray-300 font-thin text-sm ">
               {categories.join(', ').length > 35
                 ? `${categories.join(', ').substring(0, 32)}...`
@@ -125,7 +136,7 @@ export function Post({
               <TouchableOpacity onPress={handleFavorite}>
                 <VStack className=" felx flex-row gap-2 justify-center items-center">
                   <Heart
-                    size={24}
+                    size={28}
                     fill={isFavorited ? '#F05D6C' : 'none'}
                     stroke={isFavorited ? '#F05D6C' : '#95A1B1'}
                   />
@@ -133,13 +144,13 @@ export function Post({
               </TouchableOpacity>
               <TouchableOpacity onPress={onRatePress}>
                 <VStack className=" felx flex-row gap-2 justify-center items-center">
-                  <MessageCircleMore size={24} stroke="#95A1B1" />
+                  <MessageCircleMore size={28} stroke="#95A1B1" />
                 </VStack>
               </TouchableOpacity>
               <HStack className=" ml-auto ">
                 <TouchableOpacity onPress={handleReport}>
                   <VStack className=" felx flex-row gap-2 justify-center items-center">
-                    <TriangleAlert size={24} stroke="#F05D6C" />
+                    <TriangleAlert size={28} stroke="#F05D6C" />
                   </VStack>
                 </TouchableOpacity>
               </HStack>
@@ -148,13 +159,13 @@ export function Post({
           {isProvider && (
             <HStack className=" mx-auto w-full flex flex-row justify-around">
               <TouchableOpacity onPress={onEdit}>
-                <SquarePen size={24} stroke="#9356FC" />
+                <SquarePen size={28} stroke="#9356FC" />
               </TouchableOpacity>
               <TouchableOpacity onPress={onUploadImage}>
-                <Camera size={24} stroke="#4B5563" />
+                <Camera size={28} stroke="#4B5563" />
               </TouchableOpacity>
               <TouchableOpacity onPress={onDelete}>
-                <Trash2 size={24} stroke="#FF4B4B" />
+                <Trash2 size={28} stroke="#FF4B4B" />
               </TouchableOpacity>
             </HStack>
           )}

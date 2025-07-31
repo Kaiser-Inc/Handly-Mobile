@@ -23,7 +23,7 @@ interface FormSelectorProps<T extends FieldValues> {
   name: Path<T>
   label: string
   error?: string
-  testID?: string;
+  testID?: string
 }
 
 export function FormSelector<T extends FieldValues>({
@@ -31,7 +31,7 @@ export function FormSelector<T extends FieldValues>({
   label,
   name,
   error,
-  testID
+  testID,
 }: FormSelectorProps<T>) {
   const [input, setInput] = useState('')
 
