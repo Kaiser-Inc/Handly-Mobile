@@ -2,18 +2,6 @@ import {
   type BottomTabNavigationProp,
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs'
-
-type AppRoutes = {
-  Home: undefined
-  Categorias: undefined
-  Favoritos: undefined
-  Perfil: undefined
-  Serviço: { serviceId?: string } | undefined
-  UserProfile: { provider_key: string }
-}
-
-const { Navigator, Screen } = createBottomTabNavigator<AppRoutes>()
-
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import { Categories } from '@screens/Categories'
@@ -27,7 +15,6 @@ import {
   Clock,
   House,
   LayoutGrid,
-  Wrench,
 } from 'lucide-react-native'
 import { Platform } from 'react-native'
 
@@ -36,12 +23,12 @@ type TabRoutes = {
   Categorias: undefined
   Favoritos: undefined
   Perfil: undefined
-  Serviço: { serviceId?: string } | undefined
 }
 
 type StackRoutes = {
   Tabs: undefined
   UserProfile: { provider_key: string }
+  Serviço: { serviceId?: string } | undefined
 }
 
 export type AppNavigatorRoutesProps = BottomTabNavigationProp<TabRoutes> & {
@@ -91,13 +78,6 @@ function TabNavigator() {
           tabBarIcon: ({ color }) => <CircleUserRound color={color} />,
         }}
       />
-      <Tab.Screen
-        name="Serviço"
-        component={ServiceForm}
-        options={{
-          tabBarIcon: ({ color }) => <Wrench color={color} />,
-        }}
-      />
     </Tab.Navigator>
   )
 }
@@ -107,6 +87,7 @@ export function AppRoutes() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Tabs" component={TabNavigator} />
       <Stack.Screen name="UserProfile" component={UserProfile} />
+      <Stack.Screen name="Serviço" component={ServiceForm} />
     </Stack.Navigator>
   )
 }

@@ -49,6 +49,7 @@ import { formatPhoneNumber } from '../utils/formatPhone'
 
 import Reaching from '@assets/Reaching.svg'
 import AngryEmoji from '@assets/angry.svg'
+import { GradientButton } from '@components/GradientButton'
 
 export function Profile() {
   const { signOut } = useAuth()
@@ -405,7 +406,16 @@ export function Profile() {
               </View>
               {showing === 'services' ? (
                 <View className=" flex flex-col items-center w-full">
-                  <Text className="font-bold text-lg mb-8">Meus Serviços</Text>
+                  <View className=" flex flex-col items-center my-4">
+                    <Text className="font-bold text-lg mb-8">
+                      Meus Serviços
+                    </Text>
+                    <GradientButton
+                      text="Cadastrar um novo serviço"
+                      onPress={() => navigation.navigate('Serviço')}
+                    />
+                  </View>
+
                   {services.length === 0 ? (
                     <Text>Nenhum serviço encontrado.</Text>
                   ) : (
