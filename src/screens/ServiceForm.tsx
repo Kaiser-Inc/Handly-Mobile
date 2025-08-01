@@ -109,7 +109,7 @@ export function ServiceForm() {
       setToastVisible(true)
 
       setTimeout(() => {
-        navigation.navigate('Perfil')
+        navigation.goBack()
       }, 1500)
     } catch (error) {
       const isAppError = error instanceof AppError
