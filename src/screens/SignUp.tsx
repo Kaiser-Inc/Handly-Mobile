@@ -88,7 +88,7 @@ export function SignUp() {
       reset()
       setTimeout(() => {
         handleSignIn()
-      }, 2000)
+      }, 1000)
     } catch (error) {
       const isAppError = error instanceof AppError
       const message = isAppError
