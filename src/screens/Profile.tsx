@@ -474,9 +474,15 @@ export function Profile() {
               )}
             </View>
           ) : (
-            <Text className="text-gray-400 mt-2">
-              {user?.email || 'Carregando...'}
-            </Text>
+            <View>
+              <Text className="text-gray-400 mt-2">
+                {user?.email || 'Carregando...'}
+              </Text>
+              <GradientButton
+                text="Tornar-se um prestador"
+                onPress={() => navigation.navigate('Serviço')}
+              />
+            </View>
           )}
         </Center>
       </ScrollView>
