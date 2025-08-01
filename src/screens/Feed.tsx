@@ -66,9 +66,7 @@ export function Feed() {
 
       setServices(servicesData as ServiceWithProviderDTO[])
       setFavoriteIds(favIds)
-    } catch (error) {
-      console.error('Erro ao carregar dados do feed:', error)
-    }
+    } catch (error) {}
   }, [isLoadingUserStorageData, token])
 
   useFocusEffect(

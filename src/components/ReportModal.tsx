@@ -70,7 +70,6 @@ export function ReportModal({
   }
 
   const handleOnSubmit = async () => {
-    console.log(targetId, selectedReason, description)
     if (!selectedReason) {
       showToast('Por favor, selecione um motivo para a denúncia.', 'error')
       return

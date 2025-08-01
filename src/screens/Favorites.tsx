@@ -94,9 +94,7 @@ export function Favorites() {
       )
 
       setServices(favoriteServices)
-    } catch (error) {
-      console.error('Erro ao carregar favoritos:', error)
-    }
+    } catch (error) {}
   }, [isLoadingUserStorageData, token])
 
   useScreenRefresh(loadFavorites)
@@ -156,9 +154,7 @@ export function Favorites() {
             }
             return updatedServices
           })
-        } catch (error) {
-          console.error('Erro ao buscar serviço favoritado:', error)
-        }
+        } catch (error) {}
       }
     },
     [handleUnfavorite, setServices, setFavoritedServiceIds],

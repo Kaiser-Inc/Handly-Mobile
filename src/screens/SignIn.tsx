@@ -79,12 +79,6 @@ export function SignIn() {
     }
   }
 
-  React.useEffect(() => {
-    if (token) {
-      console.log('Usuário autenticado:', token)
-    }
-  }, [token])
-
   return (
     <KeyboardAvoidingView
       className=" flex-1 "

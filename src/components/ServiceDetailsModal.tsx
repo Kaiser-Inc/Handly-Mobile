@@ -74,10 +74,6 @@ export function ServiceDetailsModal({
             setAverageRating(calculatedAverage)
           })
           .catch((error) => {
-            console.error(
-              'Erro ao buscar detalhes ou avaliações do serviço:',
-              error,
-            )
             setServiceDetails(null)
             setAverageRating(null)
             setAllRatings([])
@@ -109,7 +105,6 @@ export function ServiceDetailsModal({
       await favoriteService(serviceId)
       onFavoriteChange?.(serviceId, !originalState)
     } catch (error) {
-      console.error('Erro ao favoritar/desfavoritar serviço:', error)
       setIsFavorited(originalState)
     }
   }

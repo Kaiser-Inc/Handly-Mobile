@@ -91,9 +91,7 @@ export function Categories() {
       setServices(servicesData as ServiceWithProviderDTO[])
       setFavoriteIds(favIds)
       setFilteredServices([])
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error)
-    }
+    } catch (error) {}
   }, [token])
 
   useScreenRefresh(loadData)

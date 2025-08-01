@@ -1,7 +1,7 @@
 import { AppError } from '@utils/AppError'
 import axios from 'axios'
 
-export const apiUrl = 'https://45acfcb2ad0f.ngrok-free.app'
+export const apiUrl = 'https://35a2a1d7dd4e.ngrok-free.app'
 
 export const api = axios.create({
   baseURL: apiUrl,

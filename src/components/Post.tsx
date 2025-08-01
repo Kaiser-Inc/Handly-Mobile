@@ -76,7 +76,6 @@ export function Post({
         onUnfavorite(serviceId)
       }
     } catch (error) {
-      console.error('Erro ao favoritar/desfavoritar serviço:', error)
       setIsFavorited(originalState)
     }
   }
