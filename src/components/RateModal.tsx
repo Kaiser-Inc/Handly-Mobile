@@ -8,7 +8,7 @@ import { rateService } from '@services/services-services'
 import { rateUser } from '@services/users-services'
 import { AppError } from '@utils/AppError'
 import { GradientButton } from './GradientButton'
-import { ToastMessage } from './ToastMessage' // Importe o ToastMessage
+import { ToastMessage } from './ToastMessage'
 
 interface RateModalProps {
   visible: boolean
@@ -152,12 +152,12 @@ export function RateModal({
             ))}
           </View>
           <Text className="text-xl text-gray-800 mb-4 w-11/12">
-            Quer deixar um comentário?
+            Deixe seu comentario
           </Text>
 
           <TextInput
             className="w-11/12 h-28 bg-steam-100 rounded-lg p-4 mb-8"
-            placeholder="Opcional"
+            placeholder="Justifique a sua nota"
             value={comment}
             onChangeText={setComment}
             multiline
